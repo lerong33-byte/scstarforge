@@ -500,15 +500,15 @@ option,optgroup{background:var(--bg2)}
 
 /* tgtPanel collapsible */
 #tgtPanel.collapsed #tgtContent{display:none!important}
-#tgtPanel .lp-card-hd::after{content:'▾';font-size:10px;color:var(--t3);transition:transform .2s}
-#tgtPanel.collapsed .lp-card-hd::after{transform:rotate(-90deg)}
+#tgtPanel .tgt-title::after{content:'▾';font-size:10px;color:var(--t3);transition:transform .2s;margin-left:auto}
+#tgtPanel.collapsed .tgt-title::after{transform:rotate(-90deg)}
 
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.77</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.78</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
@@ -756,8 +756,8 @@ option,optgroup{background:var(--bg2)}
         <div id="verdictWrap" style="display:none;flex-shrink:0"></div>
 
         <!-- ── TARGET ANALYSIS (collapsible) ── -->
-        <div class="tgt-panel-inner lp-card" id="tgtPanel">
-          <div class="lp-card-hd tgt-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+        <div class="tgt-panel-inner" id="tgtPanel">
+          <div class="tgt-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between">
             <span>TARGET ANALYSIS</span>
           </div>
           <div id="tgtContent" style="font-size:11px">
@@ -5723,7 +5723,10 @@ function _applyLiveStats(d) {
   }
 
   function initAll(){
-    document.querySelectorAll('.lp-card, .dps-block').forEach(initCard);
+    document.querySelectorAll('.lp-card, .dps-block').forEach(function(card) {
+      if (card.id === 'tgtPanel') return; // tgtPanel has its own collapse handler
+      initCard(card);
+    });
   }
 
   window.addEventListener('load', function(){
@@ -5771,17 +5774,17 @@ document.addEventListener('click', function(e) {
 });
 
 
-// tgtPanel collapsible toggle
-document.addEventListener('DOMContentLoaded', function() {
+// tgtPanel collapsible toggle — uses own storage key, independent of lp-card system
+window.addEventListener('load', function() {
   var panel = document.getElementById('tgtPanel');
   if (!panel) return;
-  var hd = panel.querySelector('.lp-card-hd');
+  var hd = panel.querySelector('.tgt-title');
   if (!hd) return;
   hd.addEventListener('click', function() {
     panel.classList.toggle('collapsed');
     try { localStorage.setItem('sc_tgt_collapsed', panel.classList.contains('collapsed') ? '1' : '0'); } catch(e){}
   });
-  // Restore state
+  // Restore state from own key only
   try { if (localStorage.getItem('sc_tgt_collapsed') === '1') panel.classList.add('collapsed'); } catch(e){}
 });
 
