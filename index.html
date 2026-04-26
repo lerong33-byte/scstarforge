@@ -508,7 +508,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.75</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.76</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
@@ -4526,10 +4526,7 @@ function updateTargetAnalysis(forceName) {
         + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">MY SH TTK</div><div class="tgt-dps-val" style="color:var(--warn)">' + inShTTK + '</div></div>'
         + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">MY HULL TTK</div><div class="tgt-dps-val" style="color:var(--accent)">' + inHullTTK + '</div></div>'
         + '</div>'
-        + '<div style="background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--r-sm);padding:10px 14px;margin-top:8px">'
-        + '<div style="font-size:9px;letter-spacing:1.5px;color:var(--red);font-family:var(--fmono);margin-bottom:4px">THEY KILL YOU IN</div>'
-        + '<div style="font-size:16px;font-weight:700;font-family:var(--fmono);color:' + inColor + '">' + inTotalTTK + '</div>'
-        + '</div>';
+;  // TTK moved to verdict
 
       
     }
@@ -4554,6 +4551,10 @@ function updateTargetAnalysis(forceName) {
       vw.innerHTML = '<div style="background:'+(iWin?'rgba(34,197,94,.1)':tie?'rgba(234,179,8,.1)':'rgba(239,68,68,.1)')+';border:2px solid '+vc+';border-radius:var(--r);padding:10px 14px;text-align:center">'
         +'<div style="font-size:20px;font-weight:700;font-family:var(--fmono);color:'+vc+';letter-spacing:1px">'+vi+' '+vt+'</div>'
         +'<div style="font-size:10px;color:var(--t3);font-family:var(--fmono);margin-top:3px;letter-spacing:.5px">'+vs+'</div>'
+        +(inTotalTTK ? '<div style="border-top:1px solid '+vc+'33;margin-top:8px;padding-top:8px">'
+          +'<div style="font-size:9px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);margin-bottom:3px">THEY KILL YOU IN</div>'
+          +'<div style="font-size:18px;font-weight:700;font-family:var(--fmono);color:'+inColor+'">'+inTotalTTK+'</div>'
+        +'</div>' : '')
         +'</div>';
     } else if (!isNaN(myTTK) && myTTK > 0) {
       vw.style.display = 'block';
