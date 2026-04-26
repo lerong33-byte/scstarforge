@@ -80,7 +80,7 @@ option,optgroup{background:var(--bg2)}
 .kpi-unit{font-size:10px;color:var(--t3);font-weight:400}
 
 /* Left scroll area */
-.lp-scroll{flex:1;overflow-y:scroll;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.lp-scroll{flex:1;overflow-y:scroll;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
 .lp-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px}
 .lp-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .lp-card-title{font-size:10px;font-weight:500;letter-spacing:1.5px;color:var(--t2);font-family:var(--fmono)}
@@ -273,7 +273,7 @@ option,optgroup{background:var(--bg2)}
 
 /* ── RIGHT PANEL ── */
 .rp{width:28%;min-width:260px;max-width:380px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid var(--border);background:var(--bg2);overflow:hidden}
-.rp-scroll{flex:1;overflow-y:scroll;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:0;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.rp-scroll{flex:1;overflow-y:scroll;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:0}
 
 /* Target analysis */
 .tgt-panel-inner{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px;display:flex;flex-direction:column;gap:3px}
@@ -480,25 +480,32 @@ option,optgroup{background:var(--bg2)}
 .reset-pwr:hover{border-color:var(--accent);color:var(--text);background:var(--bg4)}
 
 
-/* LP scrollbar */
-.lp-scroll::-webkit-scrollbar{width:4px}
-.lp-scroll::-webkit-scrollbar-track{background:transparent}
-.lp-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.lp-scroll::-webkit-scrollbar-thumb:hover{background:var(--t2)}
 
 
-/* RP scrollbar */
-.rp-scroll::-webkit-scrollbar{width:4px}
-.rp-scroll::-webkit-scrollbar-track{background:transparent}
-.rp-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.rp-scroll::-webkit-scrollbar-thumb:hover{background:var(--t2)}
+
+
+
+
+/* ── Panel scrollbars ── */
+.lp-scroll, .rp-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg2);
+}
+.lp-scroll::-webkit-scrollbar,
+.rp-scroll::-webkit-scrollbar { width: 6px; }
+.lp-scroll::-webkit-scrollbar-track,
+.rp-scroll::-webkit-scrollbar-track { background: var(--bg2); border-radius: 3px; }
+.lp-scroll::-webkit-scrollbar-thumb,
+.rp-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; opacity: 0.6; }
+.lp-scroll::-webkit-scrollbar-thumb:hover,
+.rp-scroll::-webkit-scrollbar-thumb:hover { background: var(--text); }
 
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.67</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.69</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
