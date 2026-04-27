@@ -537,7 +537,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.89</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.90</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
@@ -3504,25 +3504,24 @@ function updatePower() {
       var poolMin = 0;
       var compCount = 1;
       if (c.sys.key === 'Shield' && sgDb) {
-        poolMax = Math.min(sgDb.drawMax * (compCounts.sg||1), genTotal);
-        poolMin = sgDb.drawMin * (compCounts.sg||1);
-        compCount = compCounts.sg || 1;
+        poolMax = Math.min(sgDb.drawMax, genTotal);
+        poolMin = sgDb.drawMin || 0;
       } else if (c.sys.key === 'Cooler' && coolDb) {
-        poolMax = Math.min(coolDb.drawMax * (compCounts.cooler||1), genTotal);
-        poolMin = coolDb.drawMin * (compCounts.cooler||1);
-        compCount = compCounts.cooler || 1;
+        poolMax = Math.min(coolDb.drawMax, genTotal);
+        poolMin = coolDb.drawMin || 0;
       } else if (c.sys.key === 'QuantumDrive' && qdDb) {
-        poolMax = Math.min(qdDb.drawMax * (compCounts.qd||1), genTotal);
-        poolMin = qdDb.drawMin * (compCounts.qd||1);
+        poolMax = Math.min(qdDb.drawMax, genTotal);
+        poolMin = qdDb.drawMin || 0;
       }
 
-      var filled = Math.min(Math.round(c.segs), genTotal);
+      var colHeight = poolMax > 0 ? poolMax : genTotal;
+      var filled = Math.min(Math.round(c.segs), colHeight);
 
       var html = '';
-      for (var i = 0; i < genTotal; i++) {
+      for (var i = 0; i < colHeight; i++) {
         var isFilled   = i < filled;
         var isMinBlock = i < poolMin;
-        var isOverMax  = i >= poolMax;
+        var isOverMax  = i >= colHeight;
         var isGrpStart = (i > 0 && i % GRP_SZ === 0);
         var mt = (BLK_GAP + (isGrpStart ? GRP_GAP : 0));
         var bg = isFilled
@@ -3546,7 +3545,7 @@ function updatePower() {
       var isOffOpacity = isOff ? '0.2' : '1';
       var iconHtml = '<div class="spv-col-icon" data-togglekey="' + c.sys.key + '" style="color:' + (isOff ? 'rgba(255,255,255,0.2)' : c.sys.color) + ';opacity:' + isOffOpacity + '">' + c.sys.icon + '</div>';
       return '<div class="spv-col' + (c.sys.adj ? ' adj' : '') + (isOff ? ' col-off' : '') + '"'
-        + ' title="' + c.sys.label + ': ' + filled + '/' + genTotal + ' seg">'
+        + ' title="' + c.sys.label + ': ' + filled + '/' + colHeight + ' seg">'
         + html + valHtml + cntHtml + iconHtml + '</div>';
     }).join('');
 
@@ -3693,7 +3692,7 @@ function updatePower() {
     if (chartEl_f) {
       chartEl_f.innerHTML = cols_f.map(function(col){
         var filled_f = Math.min(col.segs, genTotal_f);
-        var compCount_f = col.key === 'Shield' ? (cC.sg||1) : col.key === 'Cooler' ? (cC.cooler||1) : 1;
+        var compCount_f = 1; // per-instance columns — count=1 per column
         var html_f = '';
         for (var i = 0; i < genTotal_f; i++) {
           var isFilled = i < filled_f;
@@ -3711,7 +3710,7 @@ function updatePower() {
             + attrs_f + '></div>';
         }
         var valHtml_f = filled_f > 0 ? '<div class="spv-col-val">' + filled_f + '</div>' : '';
-        var cntHtml_f = compCount_f > 1 ? '<div class="spv-col-count" style="' + (col.key==='Cooler'?'color:'+col.sys.color+';font-weight:700;font-size:10px;opacity:1':'') + '">×' + compCount_f + '</div>' : '';
+        var cntHtml_f = ''; // per-instance — no count label
         var fbOff = (filled_f === 0 && userPwrAdj[selShip] && userPwrAdj[selShip][col.key] === 0);
         var iconHtml_f = '<div class="spv-col-icon" data-togglekey="' + col.key + '" style="color:' + (filled_f===0?'rgba(255,255,255,0.2)':col.sys.color) + ';opacity:' + (filled_f===0?'0.2':'1') + '">' + col.sys.icon + '</div>';
         return '<div class="spv-col' + (filled_f===0?' col-off':'') + '"'
