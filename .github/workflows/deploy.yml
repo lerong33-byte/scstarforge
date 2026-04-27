@@ -6,14 +6,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-main:
-    if: github.ref == 'refs/heads/main'
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy main to GitHub Pages
+
+      - name: Deploy main to gh-pages
+        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -22,14 +23,8 @@ jobs:
           force_orphan: true
           exclude_assets: '.github'
 
-  deploy-dev:
-    if: github.ref == 'refs/heads/dev'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy dev to preview branch
+      - name: Deploy dev to gh-pages-dev
+        if: github.ref == 'refs/heads/dev'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
