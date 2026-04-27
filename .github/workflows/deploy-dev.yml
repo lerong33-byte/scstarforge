@@ -1,0 +1,23 @@
+name: Deploy DEV Preview
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+      - name: Deploy dev preview
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages-dev
+          force_orphan: true
+          exclude_assets: '.github'
