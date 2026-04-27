@@ -537,7 +537,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.91</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.89</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
@@ -3504,24 +3504,25 @@ function updatePower() {
       var poolMin = 0;
       var compCount = 1;
       if (c.sys.key === 'Shield' && sgDb) {
-        poolMax = Math.min(sgDb.drawMax, genTotal);
-        poolMin = sgDb.drawMin || 0;
+        poolMax = Math.min(sgDb.drawMax * (compCounts.sg||1), genTotal);
+        poolMin = sgDb.drawMin * (compCounts.sg||1);
+        compCount = compCounts.sg || 1;
       } else if (c.sys.key === 'Cooler' && coolDb) {
-        poolMax = Math.min(coolDb.drawMax, genTotal);
-        poolMin = coolDb.drawMin || 0;
+        poolMax = Math.min(coolDb.drawMax * (compCounts.cooler||1), genTotal);
+        poolMin = coolDb.drawMin * (compCounts.cooler||1);
+        compCount = compCounts.cooler || 1;
       } else if (c.sys.key === 'QuantumDrive' && qdDb) {
-        poolMax = Math.min(qdDb.drawMax, genTotal);
-        poolMin = qdDb.drawMin || 0;
+        poolMax = Math.min(qdDb.drawMax * (compCounts.qd||1), genTotal);
+        poolMin = qdDb.drawMin * (compCounts.qd||1);
       }
 
-      var colHeight = poolMax > 0 ? poolMax : genTotal;
-      var filled = Math.min(Math.round(c.segs), colHeight);
+      var filled = Math.min(Math.round(c.segs), genTotal);
 
       var html = '';
-      for (var i = 0; i < colHeight; i++) {
+      for (var i = 0; i < genTotal; i++) {
         var isFilled   = i < filled;
         var isMinBlock = i < poolMin;
-        var isOverMax  = i >= colHeight;
+        var isOverMax  = i >= poolMax;
         var isGrpStart = (i > 0 && i % GRP_SZ === 0);
         var mt = (BLK_GAP + (isGrpStart ? GRP_GAP : 0));
         var bg = isFilled
@@ -3545,7 +3546,7 @@ function updatePower() {
       var isOffOpacity = isOff ? '0.2' : '1';
       var iconHtml = '<div class="spv-col-icon" data-togglekey="' + c.sys.key + '" style="color:' + (isOff ? 'rgba(255,255,255,0.2)' : c.sys.color) + ';opacity:' + isOffOpacity + '">' + c.sys.icon + '</div>';
       return '<div class="spv-col' + (c.sys.adj ? ' adj' : '') + (isOff ? ' col-off' : '') + '"'
-        + ' title="' + c.sys.label + ': ' + filled + '/' + colHeight + ' seg">'
+        + ' title="' + c.sys.label + ': ' + filled + '/' + genTotal + ' seg">'
         + html + valHtml + cntHtml + iconHtml + '</div>';
     }).join('');
 
@@ -3603,8 +3604,7 @@ function updatePower() {
       };   }
 
   } else {
-    // ── DB-only fallback: SPViewer-style power chart ──
-    // One column per physical component instance, height = component's segment draw
+    // ── DB-only fallback: estimate segment distribution matching live API style ──
     var cC = (def.comps && def.comps.counts) || {pp:1, sg:1, cooler:1, qd:1};
     if(curComps._effectiveCounts){
       cC=Object.assign({},cC);
@@ -3618,59 +3618,58 @@ function updatePower() {
     var qdDb_f   = COMP_DB.qd    && COMP_DB.qd[curComps.qd];
     var szF = def.compSz === 'S3' ? 3 : def.compSz === 'S2' ? 2 : 1;
 
-    // Power plant total output (segments)
-    var ppOut_f = ppDb_f ? ppDb_f.out : 100 * szF;
-    // genTotal = total segments available (PP output ÷ segment_size)
-    // SPViewer uses 20 segments as the visual max (each segment = ppOut/20)
+    // Fixed genTotal = 20, BLK_H = 5 for consistent look across all ships
     var genTotal_f = 20;
-    var segSize_f = ppOut_f / genTotal_f; // EU per segment
+    var BLK_H_f = 5, BLK_GAP_f = 1, GRP_GAP_f = 2, GRP_SZ_f = 4;
 
-    // Per-component segment draws (from erkul data, converted to segments)
-    var sgSegs    = sgDb_f   ? Math.max(1, Math.round(sgDb_f.drawMax   / segSize_f)) : 3 * szF;
-    var coolSegs  = coolDb_f ? Math.max(1, Math.round(coolDb_f.drawMax / segSize_f)) : 2 * szF;
-    var qdSegs    = qdDb_f   ? Math.max(1, Math.round(qdDb_f.drawMax   / segSize_f)) : 1 * szF;
-    var numSlots  = def.slots ? def.slots.filter(function(s){return s.type==='WeaponGun';}).length : 2;
-    if(numSlots===0) numSlots = def.slots ? def.slots.length : 2;
-    var wepSegs   = Math.max(2, Math.round(numSlots * szF * 2));
-    var boostSegs = Math.max(1, 2 * szF);
-    var fltSegs   = Math.max(1, 1 * szF);
-    var radSegs   = Math.max(1, 1);
-    var lifeSegs  = Math.max(1, 1);
+    // Build segment draws proportional to component EU draw
+    // Mirroring the live API grouped format: each value = segments used
+    var ppOut_f  = ppDb_f   ? ppDb_f.out  * (cC.pp     || 1) : 100 * szF;
+    var sgDraw_f = sgDb_f   ? sgDb_f.drawMax  * (cC.sg     || 1) : 8   * szF;
+    var clDraw_f = coolDb_f ? coolDb_f.drawMax * (cC.cooler || 1) : 5   * szF;
+    var qdDraw_f = qdDb_f   ? qdDb_f.drawMax  * (cC.qd    || 1) : 6   * szF;
+    var wepDraw_f = szF * 8;
+    var boostDraw_f = szF * 4;
+    var flightDraw_f = szF * 3;
+    var radarDraw_f = szF * 2;
+    var lifeDraw_f = szF * 1;
 
-    // Total draw across all instances
-    var wepCount  = cC.wep  || 1;
-    var sgCount   = cC.sg   || 1;
-    var coolCount = cC.cooler|| 1;
-    var qdCount   = cC.qd   || 1;
-
-    var totalDraw = wepSegs + boostSegs + fltSegs + radSegs + lifeSegs +
-                    sgSegs * sgCount + coolSegs * coolCount + qdSegs * qdCount;
-
-    // Scale everything proportionally so total = genTotal
-    function scaleSegs(s) {
-      return Math.max(1, Math.round(s / totalDraw * genTotal_f));
+    // Total EU draw → scale each to genTotal segments
+    var totalDraw_f = sgDraw_f + clDraw_f + qdDraw_f + wepDraw_f + boostDraw_f + flightDraw_f + radarDraw_f + lifeDraw_f;
+    function toSegs_f(eu) {
+      return totalDraw_f > 0 ? Math.max(eu > 0 ? 1 : 0, Math.round(eu / totalDraw_f * genTotal_f)) : 0;
     }
-    wepSegs  = scaleSegs(wepSegs);
-    boostSegs= scaleSegs(boostSegs);
-    fltSegs  = scaleSegs(fltSegs);
-    radSegs  = scaleSegs(radSegs);
-    lifeSegs = scaleSegs(lifeSegs);
-    sgSegs   = scaleSegs(sgSegs);
-    coolSegs = scaleSegs(coolSegs);
-    qdSegs   = scaleSegs(qdSegs);
 
-    // Build cols like live path: one entry per system, then expand multi-instance
-    var grouped_f = {
-      WeaponGun:            wepSegs,
-      Boost:                boostSegs,
-      FlightController:     fltSegs,
-      Radar:                radSegs,
-      LifeSupportGenerator: lifeSegs,
-      Shield:               sgSegs,
-      Cooler:               coolSegs,
-      QuantumDrive:         qdSegs,
+    // Scale draws by actual component counts from SHIP_DATA
+    // This reflects real ship config: Hammerhead 3xSG, F8C 2xSG etc.
+    var sgCount_f   = cC.sg     || 1;
+    var coolCount_f = cC.cooler || 1;
+    var ppCount_f   = cC.pp     || 1;
+    var qdCount_f   = cC.qd     || 1;
+    var numSlots_f  = def.slots ? def.slots.length : 2;
+
+    // Base EU draws — scale each by component count
+    var rawDraws_f = {
+      WeaponGun:            Math.max(1, numSlots_f) * 3,
+      Boost:                3 * szF,
+      FlightController:     2 * szF,
+      Radar:                1 * szF,
+      LifeSupportGenerator: 1 * szF,
+      Cooler:               (coolDb_f ? coolDb_f.drawMax : 5) * coolCount_f,
+      Shield:               (sgDb_f   ? sgDb_f.drawMax   : 8) * sgCount_f,
+      QuantumDrive:         (qdDb_f   ? qdDb_f.drawMax   : 6) * qdCount_f,
       EMP:                  0
     };
+
+    // Scale all draws to genTotal=20 segments proportionally
+    var totalRaw_f = 0;
+    Object.keys(rawDraws_f).forEach(function(k){ totalRaw_f += rawDraws_f[k]; });
+    var grouped_f = {};
+    Object.keys(rawDraws_f).forEach(function(k){
+      grouped_f[k] = totalRaw_f > 0
+        ? Math.max(rawDraws_f[k]>0 ? 1 : 0, Math.round(rawDraws_f[k] / totalRaw_f * 20))
+        : 0;
+    });
 
     // Build cols exactly like live path, respecting user power adjustments
     var cols_f = SPV_SYSTEMS.map(function(s){
@@ -3680,17 +3679,6 @@ function updatePower() {
                  ? userPwrAdj[selShip][s.key] : baseSegs;
       return {sys:s, segs:segs, base:baseSegs, key:s.key};
     });
-
-    // SPViewer style: expand multi-instance components into separate columns
-    var cols_f_expanded = [];
-    cols_f.forEach(function(col){
-      var count = (col.key === 'Cooler') ? coolCount :
-                  (col.key === 'Shield') ? sgCount : 1;
-      for(var ci=0; ci<count; ci++){
-        cols_f_expanded.push({sys:col.sys, segs:col.segs, base:col.base, key:col.key, instIdx:ci, instTotal:count});
-      }
-    });
-    cols_f = cols_f_expanded;
 
     var usedSegs_f = cols_f.reduce(function(a,col){return a+col.segs;},0);
     var pct_f = genTotal_f > 0 ? Math.round(usedSegs_f / genTotal_f * 100) : 0;
@@ -3702,76 +3690,2236 @@ function updatePower() {
     if (pwrPctEl_f) pwrPctEl_f.style.color = pct_f > 100 ? '#ff4455' : pct_f > 85 ? '#ffaa00' : '#00ee88';
 
     var chartEl_f = document.getElementById('spvChart');
-    var iconsEl_f = document.getElementById('spvIcons');
-    if (!chartEl_f) return;
-
-    // SPViewer: each column height = that component's segment draw (not genTotal)
-    // BLK_H scales so the TALLEST column fits TARGET_H
-    var BLK_H_f = 5, BLK_GAP_f = 1, GRP_GAP_f = 2, GRP_SZ_f = 4;
-    var maxColSegs_f = cols_f.reduce(function(m,c){return Math.max(m, c.segs||1);}, 1);
-    var TARGET_H_f = 120;
-    var tallGaps_f = maxColSegs_f > 1 ? (maxColSegs_f-1)*BLK_GAP_f + Math.floor((maxColSegs_f-1)/GRP_SZ_f)*GRP_GAP_f : 0;
-    BLK_H_f = maxColSegs_f > 0 ? Math.max(2, Math.floor((TARGET_H_f - tallGaps_f) / maxColSegs_f)) : 5;
-
-    chartEl_f.innerHTML = cols_f.map(function(col) {
-      if (!col.segs && col.segs !== 0) return '';
-      var colHeight = Math.max(1, col.segs);
-      var filled = colHeight; // DB fallback: assume full allocation
-      var isOff = (col.segs === 0 && col.sys.adj);
-      if (isOff) { filled = 0; colHeight = 1; }
-
-      var html = '';
-      for (var i = 0; i < colHeight; i++) {
-        var isFilled = i < filled;
-        var isGrpStart = (i > 0 && i % GRP_SZ_f === 0);
-        var mt = BLK_GAP_f + (isGrpStart ? GRP_GAP_f : 0);
-        var bg = isFilled ? col.sys.color : 'rgba(255,255,255,0.07)';
-        var canClick = col.sys.adj && !isOff;
-        var attrs = canClick ? ' data-key="'+col.key+'" data-idx="'+i+'" data-gen="'+colHeight+'" data-min="0"' : '';
-        html += '<div class="spv-block '+(isFilled?'filled':'empty')+'"'
-          +' style="height:'+BLK_H_f+'px;margin-top:'+mt+'px;background:'+bg+';'+(canClick?'cursor:pointer;':'')+'"'
-          +attrs+'></div>';
-      }
-
-      var segDisp = !isOff && filled > 0 ? filled : '';
-      var valHtml = segDisp ? '<div class="spv-col-val">'+segDisp+'</div>'
-                  : (isOff ? '<div class="spv-col-val spv-off-lbl">OFF</div>' : '');
-      var isOffOpacity = isOff ? '0.2' : '1';
-      var iconHtml = '<div class="spv-col-icon" data-togglekey="'+col.key
-        +'" style="color:'+(isOff?'rgba(255,255,255,0.2)':col.sys.color)+';opacity:'+isOffOpacity+'">'+col.sys.icon+'</div>';
-
-      return '<div class="spv-col'+(col.sys.adj?' adj':'')+(isOff?' col-off':'')+'" title="'+col.sys.label+': '+filled+'/'+colHeight+' seg">'
-        +html+valHtml+iconHtml+'</div>';
-    }).join('');
-
-    // Click handler
-    chartEl_f.onclick = function(e) {
-      var el = e.target;
-      if (el.dataset && el.dataset.togglekey) { toggleSystem(el.dataset.togglekey); return; }
-      var block = el.closest ? el : el.parentElement;
-      if (!block || !block.dataset || !block.dataset.key) return;
-      pwrBlockClick(block.dataset.key, parseInt(block.dataset.idx), parseInt(block.dataset.gen), 0);
-    };
-
-    if (iconsEl_f) {
-      iconsEl_f.innerHTML = cols_f.map(function(col) {
-        var off = (col.segs === 0 && col.sys.adj);
-        var savedPrev = userPwrAdj[selShip] && userPwrAdj[selShip]['_prev_'+col.key];
-        var restoreSegs = off ? (savedPrev || col.base || 1) : (col.segs > 0 ? col.segs : col.base || 1);
-        return '<div class="spv-icon'+(col.segs>0?' active':'')+(col.sys.adj?' spv-icon-adj':'')+(off?' icon-off':'')+'"'
-          +' title="'+(off?'Turn on ':'Turn off ')+col.sys.label+'"'
-          +' style="color:'+(off?'rgba(255,255,255,0.2)':col.sys.color)+';'+(col.sys.adj?'cursor:pointer;':'')+'"'
-          +(col.sys.adj?' data-togglekey="'+col.key+'" data-restore="'+restoreSegs+'"':'')
-          +'>'+col.sys.icon+'</div>';
+    if (chartEl_f) {
+      chartEl_f.innerHTML = cols_f.map(function(col){
+        var filled_f = Math.min(col.segs, genTotal_f);
+        var compCount_f = col.key === 'Shield' ? (cC.sg||1) : col.key === 'Cooler' ? (cC.cooler||1) : 1;
+        var html_f = '';
+        for (var i = 0; i < genTotal_f; i++) {
+          var isFilled = i < filled_f;
+          var isGrpStart = (i > 0 && i % GRP_SZ_f === 0);
+          var mt = (BLK_GAP_f + (isGrpStart ? GRP_GAP_f : 0));
+          var isMinBlock_f = false;
+          var isOverMax_f  = i >= genTotal_f;
+          var bg = isFilled ? col.sys.color : 'rgba(255,255,255,0.07)';
+          var canClick_f = col.sys.adj && !isMinBlock_f && !isOverMax_f;
+          var attrs_f = canClick_f
+            ? ' data-key="' + col.sys.key + '" data-idx="' + i + '" data-gen="' + genTotal_f + '" data-min="0"'
+            : '';
+          html_f += '<div class="spv-block ' + (isFilled ? 'filled' : 'empty') + '"'
+            + ' style="height:' + BLK_H_f + 'px;margin-top:' + mt + 'px;background:' + bg + ';' + (canClick_f?'cursor:pointer;':'') + '"'
+            + attrs_f + '></div>';
+        }
+        var valHtml_f = filled_f > 0 ? '<div class="spv-col-val">' + filled_f + '</div>' : '';
+        var cntHtml_f = compCount_f > 1 ? '<div class="spv-col-count" style="' + (col.key==='Cooler'?'color:'+col.sys.color+';font-weight:700;font-size:10px;opacity:1':'') + '">×' + compCount_f + '</div>' : '';
+        var fbOff = (filled_f === 0 && userPwrAdj[selShip] && userPwrAdj[selShip][col.key] === 0);
+        var iconHtml_f = '<div class="spv-col-icon" data-togglekey="' + col.key + '" style="color:' + (filled_f===0?'rgba(255,255,255,0.2)':col.sys.color) + ';opacity:' + (filled_f===0?'0.2':'1') + '">' + col.sys.icon + '</div>';
+        return '<div class="spv-col' + (filled_f===0?' col-off':'') + '"'
+          + ' title="' + col.sys.label + ': ' + filled_f + '/' + genTotal_f + ' seg">'
+          + html_f + valHtml_f + cntHtml_f + iconHtml_f + '</div>';
       }).join('');
-      iconsEl_f.onclick = function(e) {
-        var icon = e.target;
-        while (icon && icon !== iconsEl_f) {
-          if (icon.dataset && icon.dataset.togglekey) { toggleSystem(icon.dataset.togglekey, parseFloat(icon.dataset.restore)); return; }
-          icon = icon.parentElement;
+    }
+
+    // Click handler for DB fallback (toggle icon on/off via userPwrAdj)
+    if (chartEl_f) {
+      chartEl_f.onclick = function(e) {
+        var el = e.target;
+        if (el.dataset && el.dataset.togglekey) {
+          toggleSystem(el.dataset.togglekey);
         }
       };
     }
+
+    var conBar_f = document.getElementById('conBar');
+    if (conBar_f) {
+      conBar_f.style.width = Math.min(100, pct_f) + '%';
+      conBar_f.style.background = pct_f > 100 ? 'linear-gradient(90deg,#aa0022,#ff4455)' : pct_f > 85 ? 'linear-gradient(90deg,#aa6600,#ffaa00)' : 'linear-gradient(90deg,#00aa55,#00ee88)';
+    }
+  }
+
+  // ── Shield (from live API or COMP_DB fallback) ──
+  var shieldSection = document.getElementById('shieldSection');
+  if (shieldSection) shieldSection.style.opacity = isNAV ? '0.4' : '1';
+
+  if (live && live.shield && !isNAV) {
+    U('shpTotal', live.shield.hp ? live.shield.hp.toLocaleString() : '—');
+    U('shpRegen', live.shield.regeneration ? Math.round(live.shield.regeneration) + '/s' : '—');
+    var _kpiShield=document.getElementById('kpiShield');
+    if(_kpiShield)_kpiShield.innerHTML=live.shield.hp?(Math.round(live.shield.hp/1000*10)/10)+'k <span class="kpi-unit">HP</span>':'—';
+    var faceHP = live.shield.hp ? Math.round(live.shield.hp / 4) : 0; // bubble = hp/4 per face
+    U('shpFace', faceHP ? faceHP.toLocaleString() : '—');
+  } else if (isNAV) {
+    U('shpTotal', 'BUFFERED'); U('shpRegen', '—'); U('shpFace', '—');
+  } else {
+    var sgDb = COMP_DB.sg && COMP_DB.sg[curComps.sg];
+    U('shpTotal', sgDb ? sgDb.totalHP.toLocaleString() : '—');
+    U('shpRegen', sgDb ? sgDb.regen + '/s' : '—');
+    U('shpFace', sgDb ? sgDb.faceHP.toLocaleString() : '—');
+  }
+
+  // ── Signatures ──
+  if (live && live.emission) {
+    var irVal  = isNAV ? live.emission.ir  : live.emission.ir;
+    var emIdle = live.emission.em_idle;
+    var emMax  = live.emission.em_max;
+    U('sigIR',    irVal  ? irVal.toLocaleString()  : '—');
+    U('sigEM',    emIdle ? emIdle.toLocaleString() : '—');
+    U('sigEMmax', emMax  ? emMax.toLocaleString()  : '—');
+  } else {
+    U('sigIR','—'); U('sigEM','—'); U('sigEMmax','—');
+  }
+
+  // ── Cooling Segments ──
+  if (live && live.cooling) {
+    var cooling = live.cooling;
+    var coolGen  = cooling.generation_segments || 0;
+    var coolUsed = isNAV ? (cooling.used_segments_quantum || 0) : (cooling.used_segments_shields || 0);
+    U('coolTotal', coolGen);
+    U('coolUsed', coolUsed.toFixed(1));
+    renderSegBar('coolBar', coolUsed, coolGen,
+      coolUsed > coolGen * 0.85 ? '#ff4455' : '#00aaff',
+      'rgba(255,255,255,0.06)');
+  }
+
+  // ── QD ──
+  U('qdRange', qdDb ? qdDb.range + ' Gm' : '—');
+  U('qdSpool', qdDb ? (isNAV ? '⟳ ' + qdDb.spool + 's' : qdDb.spool + 's') : '—');
+
+  // ── DPS ──
+  var activeW = [];
+  Object.keys(curSlots).forEach(function(k) {
+    var w = WEAPONS.find(function(x) { return x.id === curSlots[k]; });
+    if (w && !w.type.includes('missile') && w.type !== 'torpedo' && w.type !== 'rack') activeW.push(w);
+  });
+  var wMul = isNAV ? 0 : (0.5 + pipsW / 8);
+  var totDPS = 0, totAlpha = 0, maxRng = 0;
+  if (!isNAV) activeW.forEach(function(w) { totDPS += w.dps; totAlpha += w.alpha; if (w.range > maxRng) maxRng = w.range; });
+  var adjDPS = isNAV ? 0 : Math.round(totDPS * wMul);
+  U('totalDPS', adjDPS); U('totalAlpha', totAlpha);
+  var _kpiDps=document.getElementById('kpiDps');
+  if(_kpiDps)_kpiDps.innerHTML=(adjDPS?adjDPS+' <span class="kpi-unit">DPS</span>':'—');
+  // Fallback kpiShield from COMP_DB if no live data
+  if(!liveShipData[selShip]){
+    var _sgDb=COMP_DB.sg&&COMP_DB.sg[curComps.sg];
+    var _sgCnt=(SHIP_DATA[selShip]&&SHIP_DATA[selShip].comps&&SHIP_DATA[selShip].comps.counts&&SHIP_DATA[selShip].comps.counts.sg)||1;
+    var _kpiSh=document.getElementById('kpiShield');
+    if(_kpiSh&&_sgDb){
+      var _shpK=Math.round(_sgDb.totalHP*_sgCnt/1000*10)/10;
+      _kpiSh.innerHTML=_shpK+'k <span class="kpi-unit">HP</span>';
+    }
+  }
+  var _mr=document.getElementById('maxRange');if(_mr)_mr.textContent=maxRng?maxRng+'m':'—';
+
+  var dpsEl = document.getElementById('dpsBars');
+  if (!dpsEl) return;
+  if (isNAV || activeW.length === 0) {
+    dpsEl.innerHTML = '<div style="color:var(--muted);font-family:var(--fmono);font-size:9px;padding:4px">'
+      + (isNAV ? 'Weapons offline in NAV mode' : 'No weapons equipped') + '</div>';
+    return;
+  }
+  var mDPS = Math.max.apply(null, activeW.map(function(w) { return w.dps; }));
+  dpsEl.innerHTML = activeW.map(function(w) {
+    var pct = Math.round(w.dps / mDPS * 100);
+    var adjW = Math.round(w.dps * wMul);
+    var isB = w.type === 'ballistic';
+    var col = isB ? 'linear-gradient(90deg,#993300,#ff6622)' : 'linear-gradient(90deg,#005588,#00aaff)';
+    var typeTag = '<span style="font-size:6px;padding:1px 3px;border-radius:1px;background:'
+      + (isB ? 'rgba(255,100,0,0.2)' : 'rgba(0,170,255,0.2)') + '">' + (isB ? 'BAL' : 'NRG') + '</span>';
+    return '<div class="dps-bar-row">'
+      + '<div class="dps-bar-hd"><span class="dps-bar-name">' + w.name.substring(0, 18) + '</span>'
+      + '<span class="dps-bar-v">' + adjW + ' ' + typeTag + '</span></div>'
+      + '<div class="dps-bg"><div style="height:100%;border-radius:1px;width:' + pct + '%;' + col
+      + ';transition:width .5s"></div></div></div>';
+  }).join('');
+}
+
+// ═══ PIP ALLOCATOR ═══
+function buildPips(){renderPips('pipsW',pipsW,'pw');renderPips('pipsE',pipsE,'pe');renderPips('pipsS',pipsS,'ps');}
+function renderPips(id,count,cls){
+  var valMap={'pipsW':'pipWval','pipsE':'pipEval','pipsS':'pipSval'};
+  var vEl=document.getElementById(valMap[id]);if(vEl)vEl.textContent=count;
+  var el=document.getElementById(id);if(!el)return;el.innerHTML='';
+  var hs=[14,18,22,26,28,26,22,18];
+  for(var i=0;i<8;i++){
+    var p=document.createElement('div');p.style.height=hs[i]+'px';
+    p.className='pip '+(i<count?cls:'pi');
+    p.onclick=(function(idx,gid,c){return function(){
+      if(gid==='pipsW')pipsW=idx+1;else if(gid==='pipsE')pipsE=idx+1;else pipsS=idx+1;
+      renderPips(gid,idx+1,c);updatePower();
+    };})(i,id,cls);
+    el.appendChild(p);
+  }
+}
+function setPips(w,e,s){pipsW=w;pipsE=e;pipsS=s;buildPips();updatePower();}
+function toggleSystem(sysKey, restoreSegs) {
+  if (!selShip) return;
+  if (!userPwrAdj[selShip]) userPwrAdj[selShip] = {};
+  var adj = userPwrAdj[selShip];
+  var live = (liveShipData&&liveShipData[selShip]);
+  var genSegsVal = (live && live.power) ? live.power.generation_segments : 20;
+
+  // Seed ALL system values from current chart state if not yet adjusted
+  if (adj[sysKey] === undefined) {
+    if (live && live.power && live.power.used_segments_grouped) {
+      // Live data: seed from API grouped values scaled to genTotal=20
+      var grouped2 = live.power.used_segments_grouped || {};
+      var totalDraw2 = Object.keys(grouped2).reduce(function(s,k){return s+(grouped2[k]||0);},0);
+      SPV_SYSTEMS.forEach(function(s){
+        if (adj[s.key]===undefined)
+          adj[s.key] = totalDraw2>0 ? Math.round((grouped2[s.key]||0)/totalDraw2*20*10)/10 : 0;
+      });
+    } else {
+      // DB fallback: read segs from chart using label→key map
+      var chartEl2 = document.getElementById('spvChart');
+      if (chartEl2) {
+        var labelMap2 = {Weapons:'WeaponGun',Boost:'Boost',Flight:'FlightController',Radar:'Radar',Life:'LifeSupportGenerator',Cooler:'Cooler',Shield:'Shield',QD:'QuantumDrive',EMP:'EMP'};
+        var re2 = /title="([^:]+):\s*(\d+)\/(\d+)/g;
+        var m2;
+        while ((m2 = re2.exec(chartEl2.innerHTML)) !== null) {
+          var key2 = labelMap2[m2[1].trim()];
+          if (key2 && adj[key2] === undefined) adj[key2] = +m2[2];
+        }
+      }
+    }
+  }
+
+  var current = adj[sysKey] !== undefined ? adj[sysKey] : 2;
+  if (current > 0) {
+    adj['_prev_' + sysKey] = current;
+    adj[sysKey] = 0;
+  } else {
+    var prev = adj['_prev_' + sysKey] || restoreSegs || 2;
+    // Restore exactly the previous value — don't constrain by budget
+    // (user explicitly turned it on, so restore what it was)
+    adj[sysKey] = prev;
+    delete adj['_prev_' + sysKey];
+  }
+  updatePower();
+}
+
+function pwrBlockClick(sysKey, blockIdx, poolMax, poolMin) {
+  // blockIdx = segment index clicked (0=bottom), poolMax = max segs for this pool
+  // poolMin = minimum segments (floor, passed as 4th arg)
+  var live = (liveShipData&&liveShipData[selShip]);
+  if (!live || !live.power) return;
+  poolMin = poolMin || 0;
+
+  if (!userPwrAdj[selShip]) {
+    // Seed from proportionally scaled values so total <= generation_segments
+    userPwrAdj[selShip] = {};
+    var grouped2 = live.power.used_segments_grouped || {};
+    var totalDraw2 = Object.keys(grouped2).reduce(function(s,k){ return s+(grouped2[k]||0); }, 0);
+    var gen2 = live.power.generation_segments || 1;
+    Object.keys(grouped2).forEach(function(k) {
+      userPwrAdj[selShip][k] = totalDraw2 > 0
+        ? Math.round((grouped2[k]||0) / totalDraw2 * gen2 * 10) / 10
+        : 0;
+    });
+  }
+
+  var currentSegs = userPwrAdj[selShip][sysKey] !== undefined ? userPwrAdj[selShip][sysKey] : 0;
+  var currentPips = Math.round(currentSegs * PIPS_PER_SEG);
+  // Click filled pip = reduce to that level; click empty = fill up to it
+  // poolMin = floor (passed via data-min attr), poolMax = ceiling (data-gen)
+  var minPips = arguments[3] || 0;
+  var newPips = pipIdx < currentPips ? pipIdx : pipIdx + 1;
+  // Never go below minimum
+  // Shields can be turned off (go to 0); other components respect their minPips floor
+  if (!isShield) newPips = Math.max(newPips, minPips);
+  var newSegs = newPips / PIPS_PER_SEG;
+
+  // Cap to generation capacity
+  var genSegs = live.power.generation_segments || 0;
+  var otherTotal = 0;
+  Object.keys(userPwrAdj[selShip]).forEach(function(k) {
+    if (k !== sysKey) otherTotal += (userPwrAdj[selShip][k] || 0);
+  });
+  newSegs = Math.max(minPips / PIPS_PER_SEG, Math.min(newSegs, genSegs - otherTotal));
+  // Cap to component max
+  newSegs = Math.min(newSegs, totalPips / PIPS_PER_SEG);
+
+  userPwrAdj[selShip][sysKey] = newSegs;
+  updatePower();
+}
+
+function resetPwrAdj() {
+  // Clear all per-shield keys too
+  if (userPwrAdj[selShip]) {
+    Object.keys(userPwrAdj[selShip]).forEach(function(k) {
+      if (k.indexOf('Shield_') === 0) delete userPwrAdj[selShip][k];
+    });
+  }
+  delete userPwrAdj[selShip];
+  updatePower();
+}
+
+function setMode(m){
+  mode=m;
+  try{localStorage.setItem('sc_mode',m);}catch(e){}
+  var _mscm=document.getElementById('mSCM');if(_mscm)_mscm.classList.toggle('on',m==='SCM');
+  var _mnav=document.getElementById('mNAV');if(_mnav)_mnav.classList.toggle('on',m==='NAV');
+
+  // NAV mode: weapons offline, shields collapsed, QD spooling
+  // SCM mode: full combat systems active
+  var navBanner = document.getElementById('navModeBanner');
+  var pipGroups = document.getElementById('pipGroupsWrap');
+  var shieldSec = document.getElementById('shieldSection');
+  var dpsSec    = document.getElementById('dpsBarsWrap');
+
+  if(m==='NAV'){
+    if(navBanner) navBanner.style.display='block';
+    if(pipGroups) pipGroups.style.opacity='0.35';
+    if(shieldSec) shieldSec.style.opacity='0.35';
+    if(dpsSec)    dpsSec.style.opacity='0.35';
+  } else {
+    if(navBanner) navBanner.style.display='none';
+    if(pipGroups) pipGroups.style.opacity='1';
+    if(shieldSec) shieldSec.style.opacity='1';
+    if(dpsSec)    dpsSec.style.opacity='1';
+  }
+
+  updatePower();
+}
+
+// ═══ WIKI API SYNC ═══
+var WIKI_API='https://api.star-citizen.wiki/api/items';
+var lastSyncTime=null;
+var syncedPatch='';
+
+function syncFromWiki(){
+  var btn=document.getElementById('syncBtn');
+  var status=document.getElementById('syncStatus');
+  if(!btn||!status)return;
+  btn.classList.add('syncing');
+  btn.textContent='⟳ SYNCING…';
+  status.textContent='Fetching component data…';
+  status.style.color='var(--warn)';
+
+  var types=['PowerPlant','Shield','Cooler','QuantumDrive','Radar'];
+  var promises=types.map(function(type){
+    return fetch(WIKI_API+'?filter%5Btype%5D='+encodeURIComponent(type)+'&locale=en_EN&limit=100')
+      .then(function(r){return r.json();})
+      .then(function(d){return {type:type,items:d.data||[]};})
+      .catch(function(){return {type:type,items:[]};});
+  });
+
+  Promise.all(promises).then(function(results){
+    var updated=0;
+    results.forEach(function(result){
+      result.items.forEach(function(item){
+        var name=item.name;
+        if(!name)return;
+        if(result.type==='PowerPlant'&&COMP_DB.pp&&COMP_DB.pp[name]){
+          var pp=item.power_plant;
+          if(pp){
+            var gen=pp.power_segment_generation||pp.power_output||null;
+            if(gen&&gen>0){COMP_DB.pp[name].out=Math.round(gen);updated++;}
+          }
+        }
+        if(result.type==='Shield'&&COMP_DB.sg&&COMP_DB.sg[name]){
+          var sg=item.shield;
+          if(sg){
+            if(sg.max_shield_health)COMP_DB.sg[name].totalHP=Math.round(sg.max_shield_health);
+            if(sg.face_max_shield_health)COMP_DB.sg[name].faceHP=Math.round(sg.face_max_shield_health/4);
+            if(sg.shield_regen)COMP_DB.sg[name].regen=Math.round(sg.shield_regen);
+            updated++;
+          }
+        }
+        if(result.type==='Cooler'&&COMP_DB.cooler&&COMP_DB.cooler[name]){
+          var co=item.cooler;
+          var rn=item.resource_network;
+          if(co&&co.cooling_rate){COMP_DB.cooler[name].cool=Math.round(co.cooling_rate);}
+          if(rn&&rn.usage&&rn.usage.power){
+            if(rn.usage.power.minimum!=null)COMP_DB.cooler[name].drawMin=Math.round(rn.usage.power.minimum);
+            if(rn.usage.power.maximum!=null)COMP_DB.cooler[name].drawMax=Math.round(rn.usage.power.maximum);
+          }
+          updated++;
+        }
+        if(result.type==='QuantumDrive'&&COMP_DB.qd&&COMP_DB.qd[name]){
+          var qd=item.quantum_drive;
+          if(qd){
+            if(qd.range)COMP_DB.qd[name].range=Math.round(qd.range*100)/100;
+            if(qd.spool_up_time)COMP_DB.qd[name].spool=Math.round(qd.spool_up_time);
+            if(qd.drive_speed)COMP_DB.qd[name].speed=Math.round(qd.drive_speed);
+            updated++;
+          }
+        }
+        if(result.type==='Radar'&&COMP_DB.radar&&COMP_DB.radar[name]){
+          updated++;
+        }
+      });
+    });
+
+    btn.classList.remove('syncing');
+    btn.textContent='⟳ SYNC';
+    lastSyncTime=new Date();
+    var patchStr=results[0]&&results[0].items[0]?'4.7.2':'?';
+    var t=lastSyncTime.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    status.textContent='✓ '+updated+' components synced · '+t;
+    status.style.color='var(--green)';
+
+    // Rebuild comp option labels then refresh power panel
+    if(selShip)updatePower();
+
+    setTimeout(function(){status.style.color='var(--muted)';},4000);
+  }).catch(function(err){
+    btn.classList.remove('syncing');
+    btn.textContent='⟳ SYNC';
+    status.textContent='✗ Sync failed — check connection';
+    status.style.color='var(--red)';
+    setTimeout(function(){status.textContent='';},4000);
+  });
+}
+
+// ═══ AI ADVISOR ═══
+var AI_SYS="You are SC-ShipForge LIVE Ship Advisor, expert Star Citizen assistant, patch 4.7.2.\n\nPATCH 4.7 META: Ballistics dominate post-engineering — bypass shields, damage components directly. TOP WEAPONS: S1 NN-13 Neutron 253DPS 2002m (Levski 17,970 aUEC). S2 NN-14 Neutron 382DPS (Levski 40,430 aUEC). S3 NN-15 Neutron 552DPS 2604m BEST S3 IN GAME (Levski 90,970 aUEC), Tarantula Mk3 185DPS. S4 AD4B Gatling 348DPS. S5 Deadbolt V 488DPS (Grim HEX). COMPONENTS: REMET SEPPA PP (high output); Yorm's Lament PP (stealth low EM); FR-66 shield (high HP); AllWeather shield (best regen); Zero Rush cooler (best); Bracer cooler (stealth low IR); PYMANCER QD (fast spool 5s); Atlas QD (max range). For ERT bounties: dual FR-66 shields, Deadbolt V or Klaus Broadsword S5 nose gun, ballistic loadout throughout. Be practical and direct.";
+
+function saveKey(){
+  apiKey=document.getElementById('apiKeyInput').value.trim();if(!apiKey)return;
+  try{localStorage.setItem('sc_api_key',apiKey);}catch(e){}
+  document.getElementById('aiBanner').style.display='none';document.getElementById('aiActive').style.display='block';
+  addAI('a','API key saved. ✓ AI online. Ask me anything — ship comparisons, ERT builds, component meta, upgrade priorities.');
+}
+function addAI(role,html){
+  var c=document.getElementById('aiMsgs');if(!c)return;var d=document.createElement('div');d.className='msg';
+  d.innerHTML='<div class="av '+role+'">'+(role==='u'?'YOU':'AI')+'</div><div class="bub">'+html+'</div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function setTyping(on){
+  var r=document.getElementById('aiTyping');
+  r.querySelectorAll('.td').forEach(function(d){d.classList.toggle('on',on);});
+  var l=r.querySelector('.tlbl');if(l)l.style.display=on?'block':'none';
+}
+function fmt(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n[-*•] /g,'<br>• ').replace(/\n/g,'<br>');}
+function sendAI(){
+  if(!apiKey){addAI('a','Enter your Anthropic API key above to enable AI.');return;}
+  var inp=document.getElementById('aiInput');var t=inp.value.trim();if(!t)return;
+  inp.value='';document.getElementById('aiSend').disabled=true;
+  addAI('u',fmt(t));aiHistory.push({role:'user',content:t});setTyping(true);
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:AI_SYS,messages:aiHistory})
+  }).then(function(r){return r.json();}).then(function(d){
+    setTyping(false);document.getElementById('aiSend').disabled=false;
+    if(d.error){addAI('a','Error: '+d.error.message);return;}
+    var res=(d.content&&d.content[0]&&d.content[0].text)||'';
+    aiHistory.push({role:'assistant',content:res});addAI('a',fmt(res));
+  }).catch(function(e){setTyping(false);document.getElementById('aiSend').disabled=false;addAI('a','Error: '+e.message);});
+}
+var _aii=document.getElementById('aiInput');if(_aii)_aii.addEventListener('keydown',function(e){if(e.key==='Enter')sendAI();});
+
+// ═══ WEAPONS DB ═══
+function buildWeaponsDB(szF,tyF){
+  var ws=WEAPONS.filter(function(w){return !w.type.includes('missile')&&w.type!=='torpedo';});
+  if(szF!=='all')ws=ws.filter(function(w){return w.sz===parseInt(szF);});
+  if(tyF!=='all')ws=ws.filter(function(w){return w.type===tyF;});
+  ws.sort(function(a,b){return b.dps-a.dps;});
+  var fb=document.getElementById('wfiltBar');
+  if(fb && !fb.children.length){
+    [['all','ALL'],['1','S1'],['2','S2'],['3','S3'],['4','S4'],['5','S5+']].forEach(function(sz){
+      var b=document.createElement('button');b.className='wfb'+(szF===sz[0]?' on':'');b.textContent=sz[1];b.dataset.sz=sz[0];
+      b.onclick=function(){document.querySelectorAll('[data-sz]').forEach(function(x){x.classList.remove('on');});b.classList.add('on');buildWeaponsDB(sz[0],document.querySelector('[data-ty].on')&&document.querySelector('[data-ty].on').dataset.ty||'all');};
+      fb.appendChild(b);
+    });
+    var sep=document.createElement('span');sep.style.cssText='width:1px;background:var(--border);display:inline-block;height:14px;margin:0 5px;';fb.appendChild(sep);
+    [['all','ALL TYPES'],['ballistic','BALLISTIC'],['energy','ENERGY']].forEach(function(ty){
+      var b=document.createElement('button');b.className='wfb'+(tyF===ty[0]?' on':'');b.textContent=ty[1];b.dataset.ty=ty[0];
+      b.onclick=function(){document.querySelectorAll('[data-ty]').forEach(function(x){x.classList.remove('on');});b.classList.add('on');buildWeaponsDB(document.querySelector('[data-sz].on')&&document.querySelector('[data-sz].on').dataset.sz||'all',ty[0]);};
+      fb.appendChild(b);
+    });
+  }else{
+    document.querySelectorAll('[data-sz]').forEach(function(b){b.classList.toggle('on',b.dataset.sz===szF);});
+    document.querySelectorAll('[data-ty]').forEach(function(b){b.classList.toggle('on',b.dataset.ty===tyF);});
+  }
+  var _wg=document.getElementById('wgrid');if(_wg)_wg.innerHTML=ws.map(function(w){
+    var tc=w.type==='ballistic'?'wc-b':'wc-e';
+    return '<div class="wcard"><div class="wc-top"><span class="wc-name">'+w.name+'</span><span class="wc-sz">S'+w.sz+'</span></div>'
+      +'<div class="wc-mfr">'+w.mfr+' <span class="'+tc+'">'+w.type+'</span>'+(w.new?'&nbsp;<span class="wc-new">4.7 NEW</span>':'')+'</div>'
+      +'<div class="wc-stats">'
+      +'<span class="wcs"><span class="wcs-k">DPS</span><span class="wcs-v">'+w.dps+'</span></span>'
+      +'<span class="wcs"><span class="wcs-k">ALPHA</span><span class="wcs-v">'+w.alpha+'</span></span>'
+      +'<span class="wcs"><span class="wcs-k">RANGE</span><span class="wcs-v">'+w.range+'m</span></span>'
+      +'<span class="wcs"><span class="wcs-k">DRAW</span><span class="wcs-v">'+w.draw+'EU</span></span>'
+      +'<span class="wcs"><span class="wcs-k">HEAT</span><span class="wcs-v">'+w.heat+'/s</span></span>'
+      +'</div><div class="wc-loc">'+(w.loc.startsWith('⭐')?'<span style="color:var(--green)">⭐ </span>':'')+w.loc.replace('⭐ ','')+'</div></div>';
+  }).join('');
+}
+
+// ═══ LOCATIONS ═══
+function buildLocations(){
+  var _lg=document.getElementById('locGrid');if(_lg)_lg.innerHTML=LOCATIONS.map(function(l){
+    var tags=l.tags.map(function(t){return '<span class="ltag '+(t==='weapons'?'ltag-w':t==='components'?'ltag-c':'ltag-o')+'">'+t+'</span>';}).join('');
+    return '<div class="lcard"><div class="lcard-n">'+l.name+'</div><div class="lcard-s">'+l.sys+'</div>'
+      +'<div class="lcard-tags">'+tags+'</div><div class="lcard-st">'+l.st+'</div>'
+      +'<div class="lcard-tip"><span>TIP: </span>'+l.tip+'</div></div>';
+  }).join('');
+}
+
+// ═══ WIKI API LIVE SYNC ═══
+var WIKI_BASE = 'https://api.star-citizen.wiki/api';
+var wikiSynced = false;
+
+// Name-matching map: our COMP_DB names → wiki search terms
+// Wiki items use their in-game class name; we search by display name fragment
+var WIKI_NAME_MAP = {
+  pp: {
+    'Regulus S1':'Regulus','Regulus S2':'Regulus','Regulus S3':'Regulus',
+    'White Dwarf S1':'White Dwarf','White Dwarf S2':'White Dwarf','White Dwarf S3':'White Dwarf',
+    'REMET SEPPA S1':'REMET SEPPA','REMET SEPPA S2':'REMET SEPPA','REMET SEPPA S3':'REMET SEPPA',
+    "Yorm's Lament S1":"Yorm's Lament","Yorm's Lament S2":"Yorm's Lament",
+    'Shubin S1':'Shubin',
+    'Lightning Power S2':'Lightning Power','Lightning Power S3':'Lightning Power',
+    'Maelstrom S2':'Maelstrom','Maelstrom S3':'Maelstrom',
+    'Ginzel S2':'Ginzel','Ginzel S3':'Ginzel',
+    'Centurion S2':'Centurion','Centurion S3':'Centurion',
+    'Trommel S1':'Trommel','Trommel S2':'Trommel','Trommel S3':'Trommel',
+    'DayBreak S1':'DayBreak','DayBreak S2':'DayBreak','DayBreak S3':'DayBreak',
+    'LightBlossom S1':'LightBlossom','LightBlossom S2':'LightBlossom','LightBlossom S3':'LightBlossom',
+    'Fortitude S1':'Fortitude','Fortitude S2':'Fortitude','Fortitude S3':'Fortitude'
+  },
+  sg: {
+    'Palisade S1':'Palisade','Palisade S2':'Palisade','Palisade S3':'Palisade',
+    'FR-66 S1':'FR-66','FR-66 S2':'FR-66','FR-66 S3':'FR-66',
+    'AllWeather S1':'AllWeather','AllWeather S2':'AllWeather','AllWeather S3':'AllWeather',
+    'ASAS MiliGrade S2':'ASAS MiliGrade',
+    'Rampart S2':'Rampart','Rampart S3':'Rampart',
+    'AllStop S1':'AllStop','AllStop S2':'AllStop','AllStop S3':'AllStop',
+    'FullStop S2':'FullStop','FullStop S3':'FullStop',
+    'Stronghold S2':'Stronghold','Stronghold S3':'Stronghold',
+    'HEX S1':'HEX','HEX S2':'HEX',
+    'STOP S1':'STOP','STOP S2':'STOP',
+    'Bulwark S2':'Bulwark','Bulwark S3':'Bulwark'
+  },
+  cooler: {
+    'Polar S1':'Polar','Polar S2':'Polar','Polar S3':'Polar',
+    'Zero Rush S1':'Zero Rush','Zero Rush S2':'Zero Rush','Zero Rush S3':'Zero Rush',
+    'Bracer S1':'Bracer','Bracer S2':'Bracer',
+    'Arctic S1':'Arctic','Arctic S2':'Arctic','Arctic S3':'Arctic',
+    'Orca S2':'Orca','Orca S3':'Orca',
+    'ThermalCore S2':'ThermalCore','ThermalCore S3':'ThermalCore',
+    'Blizzard S2':'Blizzard','Blizzard S3':'Blizzard',
+    'ColdSnap S1':'ColdSnap','ColdSnap S2':'ColdSnap',
+    'BlastChill S1':'BlastChill','BlastChill S2':'BlastChill',
+    'Snowfall S2':'Snowfall','Snowfall S3':'Snowfall',
+    'Eco-Flow S2':'Eco-Flow','Eco-Flow S3':'Eco-Flow'
+  },
+  qd: {
+    'Drift S1':'Drift','Drift S2':'Drift','Drift S3':'Drift',
+    'PYMANCER S1':'PYMANCER','PYMANCER S2':'PYMANCER','PYMANCER S3':'PYMANCER',
+    'Atlas S1':'Atlas','Atlas S2':'Atlas','Atlas S3':'Atlas',
+    "Siren's Regret S1":"Siren's Regret","Siren's Regret S2":"Siren's Regret","Siren's Regret S3":"Siren's Regret",
+    'VK-00 S1':'VK-00','VK-00 S2':'VK-00','VK-00 S3':'VK-00',
+    'Beacon S1':'Beacon','Beacon S2':'Beacon',
+    'FoxFire S1':'FoxFire','FoxFire S2':'FoxFire',
+    'Crossfield S2':'Crossfield','Crossfield S3':'Crossfield',
+    'Kama S2':'Kama','Kama S3':'Kama',
+    'SparkFire S2':'SparkFire','SparkFire S3':'SparkFire',
+    'Odyssey S1':'Odyssey','Odyssey S2':'Odyssey',
+    'Eos S1':'Eos','Eos S2':'Eos',
+    'Goliath S2':'Goliath','Goliath S3':'Goliath',
+    'Colossus S2':'Colossus','Colossus S3':'Colossus'
+  },
+  radar: {
+    'Capston S1':'Capston','Surveyor-Lite S1':'Surveyor-Lite',
+    'Surveyor S2':'Surveyor','Klescher Mk4 S2':'Klescher Mk4',
+    'LongLook S5':'LongLook'
+  }
+};
+
+function setSyncStatus(msg, cls) {
+  var el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = '';
+  if (cls) el.classList.add(cls);
+}
+
+function wikiGet(path) {
+  return fetch(WIKI_BASE + path + (path.includes('?')?'&':'?') + 'locale=en_EN', {
+    headers: {'Accept': 'application/json'}
+  }).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  });
+}
+
+// Fetch all pages of a component type, return flat array of items
+function fetchAll(type, limit) {
+  limit = limit || 100;
+  var url = '/items?filter%5Btype%5D=' + encodeURIComponent(type) + '&limit=' + limit + '&page=1';
+  return wikiGet(url).then(function(data) {
+    var items = (data && data.data) || [];
+    // If paginated, fetch remaining pages
+    var lastPage = data && data.meta && data.meta.last_page || 1;
+    if (lastPage <= 1) return items;
+    var promises = [];
+    for (var p = 2; p <= lastPage; p++) {
+      promises.push(wikiGet('/items?filter%5Btype%5D=' + encodeURIComponent(type) + '&limit=' + limit + '&page=' + p)
+        .then(function(d){ return (d && d.data) || []; }));
+    }
+    return Promise.all(promises).then(function(pages) {
+      pages.forEach(function(pg) { items = items.concat(pg); });
+      return items;
+    });
+  });
+}
+
+// Match a wiki item to a COMP_DB key by checking if the item name contains our search term
+// Also match by size
+function matchItem(items, searchTerm, size) {
+  var term = searchTerm.toLowerCase();
+  var candidates = items.filter(function(it) {
+    return it.name && it.name.toLowerCase().indexOf(term) !== -1
+      && (it.size === size || it.size === String(size));
+  });
+  // Prefer exact or shorter name match
+  if (candidates.length === 1) return candidates[0];
+  if (candidates.length > 1) {
+    candidates.sort(function(a,b){ return a.name.length - b.name.length; });
+    return candidates[0];
+  }
+  return null;
+}
+
+function extractSize(key) {
+  var m = key.match(/S(\d)$/);
+  return m ? parseInt(m[1]) : 1;
+}
+
+async function syncWikiData() {
+  var btn = document.getElementById('syncBtn');
+  btn.disabled = true;
+  setSyncStatus('Connecting to wiki API…', 'sync-busy');
+
+  try {
+    // Fetch all 4 component types in parallel
+    setSyncStatus('Fetching components (PP/Shield/Cooler/QD/Radar)…', 'sync-busy');
+    var [ppItems, sgItems, coolerItems, qdItems, radarItems] = await Promise.all([
+      fetchAll('PowerPlant'),
+      fetchAll('Shield'),
+      fetchAll('Cooler'),
+      fetchAll('QuantumDrive'),
+      fetchAll('Radar')
+    ]);
+
+    var updated = 0, failed = 0;
+
+    // ── Power Plants ──
+    // Field: resource_network.generation.power → out (EU)
+    Object.keys(WIKI_NAME_MAP.pp).forEach(function(key) {
+      var term = WIKI_NAME_MAP.pp[key];
+      var sz = extractSize(key);
+      var item = matchItem(ppItems, term, sz);
+      if (!item) { failed++; return; }
+      var power = item.resource_network && item.resource_network.generation && item.resource_network.generation.power;
+      var em = item.emission && item.emission.em_max;
+      if (power != null && COMP_DB.pp[key]) {
+        COMP_DB.pp[key].out = Math.round(power);
+        if (em != null) COMP_DB.pp[key].em = parseFloat(em.toFixed(2));
+        updated++;
+      } else failed++;
+    });
+
+    // ── Shields ──
+    // Fields: shield.face_hp, shield.total_hp, shield.regen_rate, resource_network.usage.power.maximum
+    Object.keys(WIKI_NAME_MAP.sg).forEach(function(key) {
+      var term = WIKI_NAME_MAP.sg[key];
+      var sz = extractSize(key);
+      var item = matchItem(sgItems, term, sz);
+      if (!item) { failed++; return; }
+      var sh = item.shield;
+      var rn = item.resource_network;
+      if (sh && COMP_DB.sg[key]) {
+        if (sh.face_hp != null)   COMP_DB.sg[key].faceHP  = Math.round(sh.face_hp);
+        if (sh.total_hp != null)  COMP_DB.sg[key].totalHP = Math.round(sh.total_hp);
+        if (sh.regen_rate != null) COMP_DB.sg[key].regen  = Math.round(sh.regen_rate);
+        if (rn && rn.usage && rn.usage.power) {
+          if (rn.usage.power.minimum != null) COMP_DB.sg[key].drawMin = Math.round(rn.usage.power.minimum);
+          if (rn.usage.power.maximum != null) COMP_DB.sg[key].drawMax = Math.round(rn.usage.power.maximum);
+        }
+        updated++;
+      } else failed++;
+    });
+
+    // ── Coolers ──
+    // Field: cooler.cooling_rate → cool
+    Object.keys(WIKI_NAME_MAP.cooler).forEach(function(key) {
+      var term = WIKI_NAME_MAP.cooler[key];
+      var sz = extractSize(key);
+      var item = matchItem(coolerItems, term, sz);
+      if (!item) { failed++; return; }
+      var cl = item.cooler;
+      var ir = item.emission && item.emission.ir;
+      if (cl && COMP_DB.cooler[key]) {
+        if (cl.cooling_rate != null) COMP_DB.cooler[key].cool = Math.round(cl.cooling_rate);
+        if (ir != null) COMP_DB.cooler[key].ir = parseFloat(ir.toFixed(2));
+        var rn2 = item.resource_network;
+        if (rn2 && rn2.usage && rn2.usage.power) {
+          if (rn2.usage.power.minimum != null) COMP_DB.cooler[key].drawMin = Math.round(rn2.usage.power.minimum);
+          if (rn2.usage.power.maximum != null) COMP_DB.cooler[key].drawMax = Math.round(rn2.usage.power.maximum);
+        }
+        updated++;
+      } else failed++;
+    });
+
+    // ── Quantum Drives ──
+    // Fields: quantum_drive.range, quantum_drive.drive_speed, quantum_drive.spool_up_time
+    Object.keys(WIKI_NAME_MAP.qd).forEach(function(key) {
+      var term = WIKI_NAME_MAP.qd[key];
+      var sz = extractSize(key);
+      var item = matchItem(qdItems, term, sz);
+      if (!item) { failed++; return; }
+      var qd = item.quantum_drive;
+      if (qd && COMP_DB.qd[key]) {
+        if (qd.range != null)         COMP_DB.qd[key].range  = parseFloat((qd.range / 1e9).toFixed(1));  // convert m → Gm
+        if (qd.drive_speed != null)   COMP_DB.qd[key].speed  = Math.round(qd.drive_speed);
+        if (qd.spool_up_time != null) COMP_DB.qd[key].spool  = parseFloat(qd.spool_up_time.toFixed(1));
+        var rn3 = item.resource_network;
+        if (rn3 && rn3.usage && rn3.usage.power) {
+          if (rn3.usage.power.minimum != null) COMP_DB.qd[key].drawMin = Math.round(rn3.usage.power.minimum);
+          if (rn3.usage.power.maximum != null) COMP_DB.qd[key].drawMax = Math.round(rn3.usage.power.maximum);
+        }
+        updated++;
+      } else failed++;
+    });
+
+    // ── Radar ──
+    // Fields: resource_network.usage.power.minimum/maximum
+    Object.keys(WIKI_NAME_MAP.radar || {}).forEach(function(key) {
+      var term = WIKI_NAME_MAP.radar[key];
+      var sz = extractSize(key);
+      var item = matchItem(radarItems, term, sz);
+      if (!item) { failed++; return; }
+      var rn = item.resource_network;
+      if (rn && rn.usage && rn.usage.power && COMP_DB.radar && COMP_DB.radar[key]) {
+        if (rn.usage.power.minimum != null) COMP_DB.radar[key].drawMin = Math.round(rn.usage.power.minimum);
+        if (rn.usage.power.maximum != null) COMP_DB.radar[key].drawMax = Math.round(rn.usage.power.maximum);
+        // Range from radar-specific field if available
+        if (item.radar && item.radar.detection_range) COMP_DB.radar[key].range = Math.round(item.radar.detection_range);
+        updated++;
+      } else failed++;
+    });
+
+    // Grab patch version from meta
+    var patchVer = '4.7.2';
+    try {
+      var stats = await fetch('/.netlify/functions/proxy?url=' + encodeURIComponent('https://api.star-citizen.wiki/api/stats'), {headers:{'Accept':'application/json'}}).then(function(r){return r.json();});
+      if (stats && stats.data && stats.data.live_version) patchVer = stats.data.live_version;
+    } catch(e) {}
+
+    wikiSynced = true;
+    var now = new Date();
+    var ts = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+    setSyncStatus('✓ Synced patch '+patchVer+' at '+ts+' — '+updated+' components updated'+(failed?' ('+failed+' no match)':''), 'sync-ok');
+
+    // Refresh power panel with live data
+    updatePower();
+
+  } catch(err) {
+    setSyncStatus('✗ Sync failed: ' + err.message, 'sync-err');
+    console.error('Wiki sync error:', err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+
+// ═══ STOCK LOADOUT SYNC ═══
+// Maps wiki item class_name fragments → our WEAPONS array IDs
+var WIKI_WEAPON_MAP = {
+  // Klaus & Werner repeaters
+  'KLWE_LaserRepeater_S1': 'cf117', 'KLWE_LaserRepeater_S2': 'cf227',
+  'KLWE_LaserRepeater_S3': 'cf337', 'KLWE_LaserRepeater_S4': 'cf447',
+  // Attrition
+  'HDSR_LaserRepeater_S1': 'att1', 'HDSR_LaserRepeater_S2': 'att2',
+  'HDSR_LaserRepeater_S3': 'att3', 'HDSR_LaserRepeater_S4': 'att4',
+  'HDSR_LaserRepeater_S5': 'att5',
+  // Omnisky
+  'AMRS_Cannon_S1': 'omni3', 'AMRS_Cannon_S2': 'omni6', 'AMRS_Cannon_S3': 'omni9',
+  // M-series cannons
+  'BEHR_Cannon_S1': 'm3a', 'BEHR_Cannon_S2': 'm4a', 'BEHR_Cannon_S3': 'm6a',
+  'BEHR_Cannon_S4': 'm7a',
+  // Mantis / Tarantula / Gallenson
+  'GALL_Cannon_S2_Mantis': 'gt220', 'GALL_Cannon_S3_Mantis': 'gt220s3',
+  'GALL_Cannon_S2_Tarantula': 'tar2', 'GALL_Cannon_S3_Tarantula': 'tar3',
+  'GALL_MachineGun_S2': 'saw',
+  // Deadbolt
+  'APAA_Cannon_S1': 'db1', 'APAA_Cannon_S2': 'db2', 'APAA_Cannon_S3': 'db3',
+  'APAA_Cannon_S4': 'db4', 'APAA_Cannon_S5': 'db5', 'APAA_Cannon_S6': 'db6',
+  // Behring gatlings
+  'BEHR_Gatling_S4': 'ad4b', 'BEHR_Gatling_S5': 'ad5b',
+  // Scorpion / YellowJacket
+  'GALL_Shotgun_S1': 'sc215', 'GALL_MachineGun_S1': 'yj210',
+  // SF7
+  'CRUS_SF7B': 'sf7b', 'BEHR_SF7E': 'sf7e',
+  // S8 cannon
+  'BEHR_BallisticCannon_S8': 's8bc',
+  // NN Neutron
+  'MAXO_NeutronCannon_S1': 'nn13', 'MAXO_NeutronCannon_S2': 'nn14', 'MAXO_NeutronCannon_S3': 'nn15',
+  // Missiles
+  'BEHR_MissileRack_S2_Ignite': 'ignite2', 'BEHR_MissileRack_S2_Arrester': 'arr2',
+  'BEHR_MissileRack_S3_Arrester': 'arr3', 'UNKN_MissileRack_S3_Thunderbolt': 'tbolt3',
+  'UNKN_MissileRack_S5_Thunderbolt': 'tbolt5',
+};
+
+function classToWeaponId(className) {
+  if (!className) return null;
+  // Try exact match first, then substring match
+  if (WIKI_WEAPON_MAP[className]) return WIKI_WEAPON_MAP[className];
+  for (var key in WIKI_WEAPON_MAP) {
+    if (className.indexOf(key) !== -1 || key.indexOf(className) !== -1) return WIKI_WEAPON_MAP[key];
+  }
+  return null;
+}
+
+async function syncStockLoadout() {
+  if (!selShip) { setSyncStatus('Select a ship first', 'sync-err'); return; }
+  var btn = document.getElementById('syncLoadoutBtn');
+  btn.disabled = true;
+  setSyncStatus('Fetching hardpoints for ' + selShip + '…', 'sync-busy');
+
+  try {
+    var def = SHIP_DATA[selShip];
+    if (!def) throw new Error('Ship not in local data');
+
+    // Get class name from module-level map, or fall back to live data
+    var shipClass = SHIP_CLASS_MAP[selShip];
+    if (!shipClass) {
+      var live = (liveShipData&&liveShipData[selShip]) || await fetchLiveShipData(selShip);
+      shipClass = live && live.class_name;
+    }
+    if (!shipClass) throw new Error('Cannot determine ship class name for: ' + selShip);
+
+    // Fetch hardpoints via the items endpoint filtered by ship
+    var url = 'https://api.star-citizen.wiki/api/vehicles/' + encodeURIComponent(shipClass) + '?locale=en_EN&include=hardpoints';
+    var resp = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var json = await resp.json();
+
+    var hardpoints = json.data && json.data.hardpoints;
+    if (!hardpoints || !hardpoints.length) throw new Error('No hardpoints in response');
+
+    // Extract weapon slots and their stock items
+    var weaponSlots = hardpoints.filter(function(hp) {
+      return hp.type === 'WeaponGun' || hp.type === 'Turret' || hp.type === 'MissileLauncher';
+    });
+
+    var matched = 0, unmatched = [];
+    weaponSlots.forEach(function(hp, i) {
+      var stockClass = hp.item && hp.item.class_name;
+      var wepId = classToWeaponId(stockClass);
+      if (wepId && def.slots[i]) {
+        def.slots[i].default = wepId;
+        curSlots['sl' + i] = wepId;
+        matched++;
+      } else if (stockClass) {
+        unmatched.push(stockClass);
+      }
+    });
+
+    // Regenerate to show updated defaults
+    generate();
+    setSyncStatus('✓ Loadout synced — ' + matched + ' slots matched' + (unmatched.length ? ' (' + unmatched.length + ' unknown: ' + unmatched[0] + ')' : ''), 'sync-ok');
+
+  } catch(e) {
+    setSyncStatus('✗ ' + e.message, 'sync-err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ═══ ARMOR DATA ═══
+var ARMOR_DATA={
+  // phys/energy = damage resistance % | hull = hull HP
+  // Source: starcitizen.tools (4.7)
+  // Light Fighters
+  "Gladius":{phys:14,energy:10,hull:3500},"Sabre":{phys:14,energy:10,hull:4200},"Arrow":{phys:10,energy:8,hull:2800},
+  "Hawk":{phys:12,energy:8,hull:2400},"Eclipse":{phys:14,energy:10,hull:3800},"Fury":{phys:6,energy:4,hull:1600},"Fury MX":{phys:6,energy:4,hull:1600},
+  "L-21 Wolf":{phys:16,energy:12,hull:4800},"Mantis":{phys:14,energy:10,hull:3200},
+  // Medium Fighters
+  "Avenger Titan":{phys:12,energy:9,hull:3600},"Avenger Stalker":{phys:12,energy:9,hull:3600},"Avenger Warlock":{phys:12,energy:9,hull:3600},
+  "F7C Hornet Mk2":{phys:16,energy:12,hull:5200},"F7A Hornet Mk2":{phys:18,energy:13,hull:6000},
+  "F7C-M Super Hornet Mk2":{phys:18,energy:13,hull:6400},"F7C-S Hornet Ghost Mk2":{phys:14,energy:10,hull:4800},
+  "F7C-R Hornet Tracker Mk2":{phys:16,energy:12,hull:5200},"Gladiator":{phys:16,energy:12,hull:5600},
+  "Scorpius":{phys:16,energy:12,hull:5800},"Scorpius Antares":{phys:16,energy:12,hull:5800},
+  // Heavy Fighters
+  "F8C Lightning":{phys:20,energy:14,hull:8500},"Hurricane":{phys:20,energy:14,hull:7200},
+  "Vanguard Warden":{phys:22,energy:16,hull:9600},"Vanguard Harbinger":{phys:22,energy:16,hull:9600},
+  "Vanguard Sentinel":{phys:22,energy:16,hull:9600},"Vanguard Hoplite":{phys:22,energy:16,hull:9600},
+  "Ares Inferno":{phys:18,energy:12,hull:7800},"Ares Ion":{phys:18,energy:12,hull:7800},
+  "Guardian":{phys:20,energy:14,hull:7600},"Guardian MX":{phys:20,energy:14,hull:7600},"Guardian QI":{phys:20,energy:14,hull:7600},
+  "Paladin":{phys:24,energy:16,hull:12000},
+  // Multi-Crew Combat
+  "Hammerhead":{phys:22,energy:15,hull:42000},"Redeemer":{phys:20,energy:14,hull:18000},
+  "Perseus":{phys:28,energy:20,hull:95000},"Polaris":{phys:30,energy:22,hull:180000},
+  // Exploration / Multi-Crew
+  "Constellation Andromeda":{phys:16,energy:12,hull:14000},"Constellation Aquila":{phys:16,energy:12,hull:14000},
+  "Constellation Phoenix":{phys:16,energy:12,hull:14000},"Constellation Taurus":{phys:16,energy:12,hull:14000},
+  "Carrack":{phys:22,energy:16,hull:48000},"Mercury Star Runner":{phys:16,energy:12,hull:12000},
+  "Freelancer":{phys:14,energy:10,hull:10000},"Corsair":{phys:18,energy:13,hull:14000},
+  // Cutlass series
+  "Cutlass Black":{phys:14,energy:10,hull:8500},"Cutlass Blue":{phys:14,energy:10,hull:8500},"Cutlass Red":{phys:14,energy:10,hull:8500},
+  // Industrial / Haulers
+  "Caterpillar":{phys:20,energy:14,hull:38000},"Valkyrie":{phys:20,energy:14,hull:22000},
+  "Reclaimer":{phys:22,energy:16,hull:85000},"Hercules C2":{phys:20,energy:14,hull:45000},
+  "Hercules M2":{phys:24,energy:16,hull:55000},"Hercules A2":{phys:28,energy:20,hull:65000},
+  "MOLE":{phys:18,energy:12,hull:32000},"Prospector":{phys:14,energy:10,hull:9600},
+  // Starter / Small
+  "Aurora MR":{phys:8,energy:6,hull:2200},"300i":{phys:10,energy:8,hull:2800},"400i":{phys:14,energy:10,hull:9200},
+  "Spirit C1":{phys:14,energy:10,hull:8400},"Spirit A1":{phys:14,energy:10,hull:8400}
+};
+
+
+// Component data sourced live from server.erkul.games — power plants, shields, coolers, QDs
+// ═══ TARGET ANALYSIS ═══
+var _currentTarget = '';
+
+function updateTargetAnalysis(forceName) {
+  var tgt = forceName || _currentTarget || '';
+  if (forceName) _currentTarget = forceName;
+  var tgtContent = document.getElementById('tgtContent');
+  if (!tgtContent) return;
+  if (!tgt) {
+    tgtContent.innerHTML = '<div style="font-size:13px;color:var(--t3);text-align:center;padding:12px 0;font-style:italic">Select a target ship to analyse</div>';
+    var _vw=document.getElementById('verdictWrap');if(_vw)_vw.style.display='none';
+    return;
+  }
+  var armor = ARMOR_DATA[tgt] || {phys:0, energy:0};
+  var tgtDef = tgt ? SHIP_DATA[tgt] : null;
+  var tgtSg = tgtDef && tgtDef.comps && tgtDef.comps.sg;
+  var tgtSgDb = tgtSg && COMP_DB.sg && COMP_DB.sg[tgtSg];
+  var tgtSgCnt = (tgtDef && tgtDef.comps && tgtDef.comps.counts && tgtDef.comps.counts.sg) || 1;
+  var tgtHP = tgtSgDb ? tgtSgDb.totalHP * tgtSgCnt : 0;
+  var tgtRegen = tgtSgDb ? (tgtSgDb.regen || 0) * tgtSgCnt : 0;
+
+  var myDef = selShip && SHIP_DATA[selShip];
+  var myW = [];
+  if (myDef) {
+    myDef.slots.forEach(function(sl, i) {
+      if(curSlotEnabled['sl'+i]===false)return;
+      var wid = curSlots['sl' + i] || sl.default;
+      var w = WEAPONS.find(function(x) { return x.id === wid; });
+      if (w && !w.type.includes('missile') && w.type !== 'torpedo') {
+        var ex = myW.find(function(x) { return x.id === w.id; });
+        if (ex) ex.count++;
+        else myW.push({id:w.id, name:w.name, alpha:w.alpha, type:w.type, sz:w.sz, dps:w.dps, count:1});
+      }
+    });
+  }
+
+  var _totalTTK = '—', _inTotalTTK = '—';
+  var pc = armor.phys === 0 ? 'var(--t3)' : armor.phys < 30 ? 'var(--green)' : armor.phys < 70 ? 'var(--amber)' : 'var(--red)';
+  var ec = armor.energy === 0 ? 'var(--t3)' : armor.energy < 30 ? 'var(--green)' : armor.energy < 70 ? 'var(--amber)' : 'var(--red)';
+
+  var html = '<div class="tgt-body">'
+    + '<div class="armor-row">'
+    + '<div class="armor-box"><div class="armor-lbl">PHYSICAL</div><div class="armor-val" style="color:' + pc + '">' + armor.phys + '</div><div class="armor-sub">deflection</div></div>'
+    + '<div class="armor-box"><div class="armor-lbl">ENERGY</div><div class="armor-val" style="color:' + ec + '">' + armor.energy + '</div><div class="armor-sub">deflection</div></div>'
+    + '</div>';
+
+  if (tgtHP > 0) {
+    html += '<div class="tgt-shield-row"><span class="tgt-shield-lbl">SHIELD</span><span class="tgt-shield-hp">' + tgtHP.toLocaleString() + ' HP</span><span class="tgt-shield-regen">+' + tgtRegen.toFixed(1) + '/s</span></div>';
+  }
+
+  if (myW.length > 0) {
+    html += '<div class="tgt-wep-hd">DAMAGE vs ARMOR</div><div class="wep-check-list">';
+    var effDPS = 0, effAlpha = 0;
+    var hasArmor = armor.phys > 0 || armor.energy > 0;
+    myW.forEach(function(w) {
+      var isE = w.type === 'energy';
+      var deflect = isE ? armor.energy : armor.phys;
+      var mult = 1 - (deflect / 100);
+      var effAlphaW = Math.round(w.alpha * mult);
+      var effDpsW   = Math.round(w.dps   * mult);
+      var cnt = w.count > 1 ? ' ×' + w.count : '';
+      var color = deflect <= 0 ? 'var(--green)' : deflect < 20 ? 'var(--green)' : deflect < 40 ? 'var(--warn)' : 'var(--red)';
+      html += '<div class="wep-check penetrates">'
+        + '<span class="wc-icon" style="color:' + color + '">' + (deflect > 0 ? Math.round(deflect) + '%↓' : '✓') + '</span>'
+        + '<span class="wc-name">' + (isE ? '⚡' : '⚫') + ' S' + w.sz + ' ' + w.name + cnt + '</span>'
+        + '<span class="wc-alpha" style="color:' + color + '">α' + effAlphaW + (deflect > 0 ? '<span style="color:var(--t3);font-size:9px"> (' + w.alpha + ')</span>' : '') + '</span>'
+        + '</div>';
+      effDPS   += effDpsW   * w.count;
+      effAlpha += effAlphaW * w.count;
+    });
+    html += '</div>';
+    // Full TTK: shield phase + hull phase
+    var tgtHull = armor.hull || 0;
+    var netDPS = effDPS - tgtRegen;
+    var shieldTTK = netDPS > 0 && tgtHP > 0 ? (tgtHP / netDPS).toFixed(1) + 's'
+                    : effDPS > 0 && tgtHP > 0 ? '\u221E (regen)' : '\u2014';
+    var hullTTK = effDPS > 0 && tgtHull > 0 ? (tgtHull / effDPS).toFixed(1) + 's' : '\u2014';
+    var totalTTK = '\u2014';
+    if (effDPS > 0) {
+      var shTime = netDPS > 0 && tgtHP > 0 ? tgtHP / netDPS : (tgtHP > 0 ? null : 0);
+      var hlTime = tgtHull > 0 ? tgtHull / effDPS : 0;
+      if (shTime !== null) totalTTK = (shTime + hlTime).toFixed(1) + 's';
+    }
+    _totalTTK = totalTTK;
+    var ttkColor = totalTTK === '\u2014' ? 'var(--t3)'
+                 : parseFloat(totalTTK) < 10 ? 'var(--red)'
+                 : parseFloat(totalTTK) < 30 ? 'var(--warn)' : 'var(--green)';
+    html += '<div class="tgt-dps-row" style="flex-wrap:wrap">'
+      + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">EFF DPS</div><div class="tgt-dps-val" style="color:var(--green)">' + Math.round(effDPS) + '</div></div>'
+      + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">EFF \u03B1</div><div class="tgt-dps-val" style="color:var(--cyan)">' + effAlpha + '</div></div>'
+      + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">SHIELD TTK</div><div class="tgt-dps-val" style="color:var(--warn)">' + shieldTTK + '</div></div>'
+      + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">HULL TTK</div><div class="tgt-dps-val" style="color:var(--accent)">' + hullTTK + '</div></div>'
+      + '</div>'
+      + '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;margin-top:8px">'
+      + '<div style="font-size:9px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);margin-bottom:4px">TOTAL TTK</div>'
+      + '<div style="font-size:16px;font-weight:700;font-family:var(--fmono);color:' + ttkColor + '">' + totalTTK + '</div>'
+      + '</div';
+  } else {
+    html += '<div style="font-size:12px;color:var(--t3);text-align:center;padding:8px 0;font-style:italic">Load a ship to check damage</div>';
+  }
+  if (!ARMOR_DATA[tgt]) html += '<div style="font-size:11px;color:var(--amber);opacity:.5;text-align:center;margin-top:4px">⚠ Armor estimated</div>';
+
+  // ── INCOMING: target's weapons vs MY ship ──
+  if (tgtDef && tgtDef.slots && selShip) {
+    var myArmor   = ARMOR_DATA[selShip] || {phys:0, energy:0, hull:0};
+    var mySgDb    = COMP_DB.sg && COMP_DB.sg[curComps.sg];
+    var mySgCnt   = (SHIP_DATA[selShip] && SHIP_DATA[selShip].comps && SHIP_DATA[selShip].comps.counts && SHIP_DATA[selShip].comps.counts.sg) || 1;
+    var myShields = mySgDb ? mySgDb.totalHP * mySgCnt : 0;
+    var myRegen   = mySgDb ? (mySgDb.regen  || 0) * mySgCnt : 0;
+    var myHull    = myArmor.hull || 0;
+
+    // Collect target's default weapons
+    var tgtW = [];
+    tgtDef.slots.forEach(function(sl) {
+      var wid = sl.default;
+      var w = wid && WEAPONS.find(function(x){ return x.id === wid; });
+      if (w && !w.type.includes('missile') && w.type !== 'torpedo') {
+        var ex = tgtW.find(function(x){ return x.id === w.id; });
+        if (ex) ex.count++; else tgtW.push({id:w.id,name:w.name,alpha:w.alpha,type:w.type,sz:w.sz,dps:w.dps,count:1});
+      }
+    });
+
+    if (tgtW.length > 0) {
+      html += '<div class="tgt-wep-hd" style="color:var(--red);margin-top:12px">INCOMING</div>';
+      var inDPS = 0, inAlpha = 0;
+      tgtW.forEach(function(w) {
+        var isE = w.type === 'energy';
+        var deflect = isE ? myArmor.energy : myArmor.phys;
+        var mult = 1 - (deflect / 100);
+        var effA = Math.round(w.alpha * mult);
+        var effD = Math.round(w.dps   * mult);
+        var cnt  = w.count > 1 ? ' ×' + w.count : '';
+        var color = deflect <= 0 ? 'var(--red)' : deflect < 20 ? 'var(--warn)' : 'var(--green)';
+        html += '<div class="wep-check penetrates">'
+          + '<span class="wc-icon" style="color:' + color + '">' + (deflect > 0 ? Math.round(deflect) + '%↓' : '⚠') + '</span>'
+          + '<span class="wc-name">' + (isE ? '⚡' : '⚫') + ' S' + w.sz + ' ' + w.name + cnt + '</span>'
+          + '<span class="wc-alpha" style="color:var(--red)">α' + effA + (deflect > 0 ? '<span style="color:var(--t3);font-size:9px"> (' + w.alpha + ')</span>' : '') + '</span>'
+          + '</div>';
+        inDPS   += effD * w.count;
+        inAlpha += effA * w.count;
+      });
+
+      // Incoming TTK vs my ship
+      var inNetDPS   = inDPS - myRegen;
+      var inShTTK    = inNetDPS > 0 && myShields > 0 ? (myShields / inNetDPS).toFixed(1) + 's'
+                       : inDPS > 0 && myShields > 0 ? '∞ (regen)' : '—';
+      var inHullTTK  = inDPS > 0 && myHull > 0 ? (myHull / inDPS).toFixed(1) + 's' : '—';
+      var inTotalTTK = '—';
+      if (inDPS > 0) {
+        var inShTime = inNetDPS > 0 && myShields > 0 ? myShields / inNetDPS : (myShields > 0 ? null : 0);
+        var inHlTime = myHull > 0 ? myHull / inDPS : 0;
+        if (inShTime !== null) inTotalTTK = (inShTime + inHlTime).toFixed(1) + 's';
+      }
+      var inColor = inTotalTTK === '—' ? 'var(--t3)'
+                  : parseFloat(inTotalTTK) < 10 ? 'var(--red)'
+                  : parseFloat(inTotalTTK) < 30 ? 'var(--warn)' : 'var(--green)';
+
+      html += '<div class="tgt-dps-row" style="flex-wrap:wrap;margin-top:6px">'
+        + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">THEIR DPS</div><div class="tgt-dps-val" style="color:var(--red)">' + Math.round(inDPS) + '</div></div>'
+        + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">MY SH TTK</div><div class="tgt-dps-val" style="color:var(--warn)">' + inShTTK + '</div></div>'
+        + '<div class="tgt-dps-box"><div class="tgt-dps-lbl">MY HULL TTK</div><div class="tgt-dps-val" style="color:var(--accent)">' + inHullTTK + '</div></div>'
+        + '</div>'
+;  // TTK moved to verdict
+
+      
+    }
+  }
+
+  html += '</div>';
+  tgtContent.innerHTML = html;
+
+  // Update verdict wrap (above target panel)
+  var vw = document.getElementById('verdictWrap');
+  if (vw) {
+    var myTTK = parseFloat((_totalTTK||'').toString().replace('s',''));
+    var theirTTK = parseFloat((_inTotalTTK||'').toString().replace('s',''));
+    if (!isNaN(myTTK) && myTTK > 0 && !isNaN(theirTTK) && theirTTK > 0) {
+      var iWin = myTTK < theirTTK, tie = Math.abs(myTTK-theirTTK) < 0.1;
+      var adv = tie ? 0 : Math.round(Math.abs(theirTTK-myTTK)*10)/10;
+      var vc = iWin?'var(--green)':tie?'var(--warn)':'var(--red)';
+      var vi = iWin?'&#9650;':tie?'&#9670;':'&#9660;';
+      var vt = iWin?'YOU WIN':tie?'EVEN MATCH':'YOU LOSE';
+      var vs = tie?'Equal TTK':(iWin?'Kill '+adv+'s faster':'Die '+adv+'s sooner');
+      vw.style.display = 'block';
+      vw.innerHTML = '<div style="background:'+(iWin?'rgba(34,197,94,.1)':tie?'rgba(234,179,8,.1)':'rgba(239,68,68,.1)')+';border:2px solid '+vc+';border-radius:var(--r);padding:10px 14px;text-align:center">'
+        +'<div style="font-size:20px;font-weight:700;font-family:var(--fmono);color:'+vc+';letter-spacing:1px">'+vi+' '+vt+'</div>'
+        +'<div style="font-size:11px;color:var(--text);font-family:var(--fmono);margin-top:4px;letter-spacing:.5px">'+vs+'</div>'
+        +(_inTotalTTK && _inTotalTTK !== '—' ? '<div style="border-top:1px solid '+vc+'33;margin-top:8px;padding-top:8px">'
+          +'<div style="font-size:9px;letter-spacing:1.5px;color:var(--text);font-family:var(--fmono);margin-bottom:3px">THEY KILL YOU IN</div>'
+          +'<div style="font-size:22px;font-weight:700;font-family:var(--fmono);color:'+inColor+';text-shadow:0 0 12px '+inColor+'66">'+inTotalTTK+'</div>'
+        +'</div>' : '')
+        +'</div>';
+    } else if (!isNaN(myTTK) && myTTK > 0) {
+      vw.style.display = 'block';
+      vw.innerHTML = '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px;text-align:center">'
+        +'<div style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Kill in <span style="color:var(--green);font-weight:700">'+totalTTK+'</span></div>'
+        +'</div>';
+    } else {
+      vw.style.display = 'none';
+    }
+  }
+}
+
+function loadTargetImage(shipName) {
+  var wrap = document.getElementById('tgtImgWrap');
+  var img  = document.getElementById('tgtImg');
+  var lbl  = document.getElementById('tgtImgLabel');
+  var ph   = document.getElementById('tgtImgPh');
+  if (!img) return;
+  if (!shipName) {
+    // Only hide if _currentTarget is truly empty (i.e. user cleared it)
+    if (_currentTarget) { loadTargetImage(_currentTarget); return; }
+    if (wrap) wrap.style.display = 'none';
+    img.style.display = 'none';
+    if (ph) ph.style.display = 'flex';
+    return;
+  }
+  if (wrap) wrap.style.display = 'block';
+  if (lbl) lbl.textContent = shipName.toUpperCase();
+  if (ph) { ph.style.display = 'flex'; ph.textContent = 'Loading...'; }
+  var cached = window._shipImgCache = window._shipImgCache || {};
+  var showIt = function(src) {
+    img.src = src;
+    img.style.display = 'block';
+    img.onerror = function(){ console.log('[IMG] onerror for target:',shipName,src); img.style.display='none'; if(ph) ph.style.display='flex'; };
+  };
+  if (cached[shipName]) { showIt(cached[shipName]); return; }
+  // Use same wiki title map as main ship image
+  var title = (window._WIKIMAP && window._WIKIMAP[shipName]) || shipName.replace(/ /g,'_');
+  var _wu2='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(title)+'&prop=pageimages&format=json&pithumbsize=800&pilimit=1&origin=*';
+  console.log('[TGT IMG] Fetching for "'+shipName+'" title="'+title+'"');
+  fetch(_wu2)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var pages=d.query&&d.query.pages;
+      if(!pages)return;
+      var p=pages[Object.keys(pages)[0]];
+      var src=p&&p.thumbnail&&p.thumbnail.source;
+      console.log('[IMG] target wiki result for',shipName,':',src?'found':'no image');
+      if(src){cached[shipName]=src;showIt(src);}
+      else {
+        // Try alternate title (without disambiguation suffix)
+        var altTitle = title.replace('_(ship)','').replace('_(vehicle)','');
+        if(altTitle !== title) {
+          var _wu3='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(altTitle)+'&prop=pageimages&format=json&pithumbsize=800&pilimit=1&origin=*';
+          fetch(_wu3).then(function(r){return r.json();}).then(function(d2){
+            var p2=d2.query&&d2.query.pages;
+            if(!p2)return;
+            var pg2=p2[Object.keys(p2)[0]];
+            var src2=pg2&&pg2.thumbnail&&pg2.thumbnail.source;
+            if(src2){cached[shipName]=src2;showIt(src2);}
+            else if(ph) ph.style.display='flex';
+          }).catch(function(){if(ph) ph.style.display='flex';});
+        } else if(ph) ph.style.display='flex';
+      }
+    }).catch(function(e){ console.log('[IMG] target fetch error:',e.message); if(ph) ph.style.display='flex'; });
+}
+
+function selectTarget(name) {
+  _currentTarget = name;
+  // Update nav target search box
+  var tsi = document.getElementById('tgtSearch'); if(tsi) tsi.value = name;
+  var tsc = document.getElementById('tgtSearchClear'); if(tsc) tsc.style.display = name?'block':'none';
+  // Update RP label
+  var lbl = document.getElementById('tgtSelectedLabel2'); if(lbl) lbl.textContent = name;
+  var sel2 = document.getElementById('tgtSelected2'); if(sel2) sel2.style.display = name?'block':'none';
+  loadTargetImage(name);
+  var _ts=document.getElementById('tgtSel');if(_ts&&_ts.value!==name)_ts.value=name;
+  var inp = document.getElementById('tgtSearch'); if (inp) inp.value = name;
+  var clr = document.getElementById('tgtSearchClear'); if (clr) clr.style.display = name ? 'block' : 'none';
+  var dd = document.getElementById('tgtDropdown'); if (dd) dd.style.display = 'none';
+  var nm = document.getElementById('tgtSelectedName'); if (nm) nm.textContent = name;
+  // tgtSelected hidden
+  updateTargetAnalysis(name);
+}
+
+function clearTarget() {
+  _currentTarget = '';
+  var tsi = document.getElementById('tgtSearch'); if(tsi) tsi.value = '';
+  var tsc = document.getElementById('tgtSearchClear'); if(tsc) tsc.style.display='none';
+  var sel2 = document.getElementById('tgtSelected2'); if(sel2) sel2.style.display='none';
+  var inp = document.getElementById('tgtSearch'); if (inp) inp.value = '';
+  var clr = document.getElementById('tgtSearchClear'); if (clr) clr.style.display = 'none';
+  // Force hide - bypass the guard
+  var wrap = document.getElementById('tgtImgWrap');
+  var img = document.getElementById('tgtImg');
+  var ph = document.getElementById('tgtImgPh');
+  if (wrap) wrap.style.display = 'none';
+  if (img) img.style.display = 'none';
+  if (ph) { ph.style.display = 'flex'; ph.textContent = 'Select a target'; }
+  var _ts=document.getElementById('tgtSel');if(_ts)_ts.value='';
+  var inp = document.getElementById('tgtSearch'); if (inp) inp.value = '';
+  var dd = document.getElementById('tgtDropdown'); if (dd) dd.style.display = 'none';
+  var sw = document.getElementById('tgtSelected'); if (sw) sw.style.display = 'none';
+  updateTargetAnalysis('');
+}
+
+function buildTgtDropdown(q) {
+  var dd = document.getElementById('tgtDropdown'); if (!dd) return;
+  var byMfr = {};
+  Object.keys(SHIPS).sort().forEach(function(mfr) {
+    if (!SHIPS[mfr]) return;
+    SHIPS[mfr].forEach(function(s) {
+      if (!SHIP_DATA[s]) return;
+      if (!q || s.toLowerCase().includes(q) || mfr.toLowerCase().includes(q)) {
+        if (!byMfr[mfr]) byMfr[mfr] = [];
+        byMfr[mfr].push(s);
+      }
+    });
+  });
+  var html = '', total = 0;
+  Object.keys(byMfr).sort().forEach(function(mfr) {
+    html += '<div style="padding:3px 10px 2px;font-size:9px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);background:var(--bg3);border-bottom:1px solid var(--border)">' + mfr + '</div>';
+    byMfr[mfr].forEach(function(s) {
+      var active = s === _currentTarget ? ';background:rgba(239,68,68,.1);color:var(--red)' : '';
+      html += '<div class="tgt-opt" data-s="' + encodeURIComponent(s) + '" style="' + active + '">' + s + '</div>';
+      total++;
+    });
+  });
+  dd.innerHTML = total ? html : '<div style="padding:8px 10px;font-size:11px;color:var(--t3)">No ships found</div>';
+  if (total) {
+    Array.prototype.forEach.call(dd.querySelectorAll('.tgt-opt'), function(el) {
+      el.onmousedown = function(e) {
+        e.preventDefault();
+        var name = decodeURIComponent(this.getAttribute('data-s'));
+        selectTarget(name);
+        var inp = document.getElementById('tgtSearch'); if (inp) inp.value = name;
+        var clr = document.getElementById('tgtSearchClear'); if (clr) clr.style.display = 'block';
+        dd.style.display = 'none';
+      };
+    });
+  }
+  dd.style.display = 'block';
+}
+
+function onTgtSearch(val) {
+  var q = val.trim().toLowerCase();
+  var clr = document.getElementById('tgtSearchClear');
+  if (clr) clr.style.display = val ? 'block' : 'none';
+  buildTgtDropdown(q);
+}
+
+function clearTgtSearch() {
+  var inp = document.getElementById('tgtSearch');
+  var clr = document.getElementById('tgtSearchClear');
+  if (inp) inp.value = '';
+  if (clr) clr.style.display = 'none';
+  buildTgtDropdown('');
+  if (inp) inp.focus();
+}
+
+
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('tgtDropdown');
+  var inp = document.getElementById('tgtSearch');
+  var clr = document.getElementById('tgtSearchClear');
+  if (dd && inp && !dd.contains(e.target) && e.target !== inp && e.target !== clr) dd.style.display = 'none';
+});
+
+// ═══ SAVE / LOAD LOADOUTS ═══
+var SV_KEY = 'sc_loadouts_v2';
+
+function getSavedLoadouts() {
+  try { return JSON.parse(localStorage.getItem(SV_KEY) || '[]'); } catch(e) { return []; }
+}
+
+function putSavedLoadouts(arr) {
+  try { localStorage.setItem(SV_KEY, JSON.stringify(arr)); } catch(e) {}
+}
+
+function saveLoadout() {
+  if (!selShip) return;
+  var nameEl = document.getElementById('svName');
+  var name = (nameEl ? nameEl.value.trim() : '') || selShip + ' #' + (Date.now() % 10000);
+  if (!name) return;
+  var loadout = { id: Date.now(), name: name, ship: selShip, act: selAct,
+    slots: JSON.parse(JSON.stringify(curSlots)),
+    missiles: JSON.parse(JSON.stringify(curMissiles)),
+    comps: JSON.parse(JSON.stringify(curComps)) };
+  var arr = getSavedLoadouts();
+  var existing = arr.findIndex(function(x) { return x.name === name && x.ship === selShip; });
+  if (existing >= 0) arr[existing] = loadout; else arr.unshift(loadout);
+  putSavedLoadouts(arr);
+  if (nameEl) nameEl.value = '';
+  renderSavedList();
+}
+
+function loadLoadout(id) {
+  var arr = getSavedLoadouts();
+  var lo = arr.find(function(x) { return x.id === id; });
+  if (!lo) return;
+  var sSel = document.getElementById('sSel'); if (sSel) sSel.value = lo.ship;
+  selShip = lo.ship; selAct = lo.act || 'Stock Build';
+  var actSel = document.getElementById('actSel'); if (actSel) actSel.value = selAct;
+  generate();
+  Object.keys(lo.slots || {}).forEach(function(k) { curSlots[k] = lo.slots[k]; });
+  Object.keys(lo.missiles || {}).forEach(function(k) { curMissiles[k] = lo.missiles[k]; });
+  Object.keys(lo.comps || {}).forEach(function(k) { curComps[k] = lo.comps[k]; });
+  document.querySelectorAll('[data-slotidx]').forEach(function(sel) {
+    var sk = 'sl' + sel.dataset.slotidx;
+    if (lo.slots[sk] !== undefined) { sel.value = lo.slots[sk]; sel.dispatchEvent(new Event('change')); }
+  });
+  document.querySelectorAll('[data-compkey]').forEach(function(sel) {
+    var k = sel.dataset.compkey;
+    if (lo.comps[k] !== undefined) { sel.value = lo.comps[k]; sel.dispatchEvent(new Event('change')); }
+  });
+  updatePower(); updateTargetAnalysis();
+}
+
+function deleteLoadout(id, e) {
+  e.stopPropagation();
+  putSavedLoadouts(getSavedLoadouts().filter(function(x) { return x.id !== id; }));
+  renderSavedList();
+}
+
+function renderSavedList() {
+  var arr = getSavedLoadouts();
+  ['svList','svList2'].forEach(function(listId) {
+    var el = document.getElementById(listId); if (!el) return;
+    var cnt = listId === 'svList' ? document.getElementById('svCount') : document.getElementById('svCount2');
+    if (cnt) cnt.textContent = arr.length ? arr.length+' builds' : '';
+    if (!arr.length) { el.innerHTML = '<div class="sv-empty">No saved loadouts yet</div>'; return; }
+    el.innerHTML = arr.map(function(lo) {
+      var isCurrent = lo.ship === selShip;
+      return '<div class="sv-item" onclick="loadLoadout(' + lo.id + ')" style="' + (isCurrent ? 'border-color:var(--blue);' : '') + '">'
+        + '<div style="width:7px;height:7px;border-radius:50%;background:' + (isCurrent ? 'var(--blue)' : 'var(--border)') + ';flex-shrink:0"></div>'
+        + '<span class="sv-item-name">' + lo.name.replace(/</g, '&lt;') + '</span>'
+        + '<span class="sv-item-ship">' + lo.ship + '</span>'
+        + '<button class="sv-item-share" onclick="shareLoadout(' + lo.id + ',event)" title="Copy share link">&#128279;</button>'
+        + '<button class="sv-item-del" onclick="deleteLoadout(' + lo.id + ',event)" title="Delete">×</button>'
+        + '</div>';
+    }).join('');
+  });
+}
+function toggleFeedback() {
+  var p = document.getElementById('feedbackPanel');
+  if (!p) return;
+  var open = p.style.display !== 'none';
+  p.style.display = open ? 'none' : 'block';
+  if (!open) {
+    // Show current ship context
+    var ctx = document.getElementById('fbShipCtx');
+    if (ctx && selShip) ctx.textContent = 'Ship: ' + selShip;
+    else if (ctx) ctx.textContent = '';
+    document.getElementById('fbText').focus();
+  }
+}
+
+function setFbType(btn, type) {
+  _fbType = type;
+  document.querySelectorAll('.fb-type-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function fbCharCount() {
+  var t = document.getElementById('fbText');
+  var c = document.getElementById('fbCount');
+  if (!t || !c) return;
+  var len = t.value.length;
+  if (len > 500) t.value = t.value.slice(0, 500);
+  c.textContent = Math.min(len, 500) + ' / 500';
+  c.style.color = len > 400 ? 'var(--warn)' : 'var(--t3)';
+}
+
+function submitFeedback() {
+  var text = (document.getElementById('fbText') || {}).value || '';
+  var email = (document.getElementById('fbEmail') || {}).value || '';
+  var status = document.getElementById('fbStatus');
+  if (!text.trim()) {
+    status.style.display = 'block';
+    status.style.background = 'var(--red-bg)';
+    status.style.color = 'var(--red)';
+    status.textContent = 'Please enter some feedback first';
+    return;
+  }
+  var payload = {
+    type: _fbType,
+    message: text.trim(),
+    ship: selShip || 'none',
+    email: email.trim(),
+    patch: (document.getElementById('rpPatch') || {}).textContent || '',
+    ts: new Date().toISOString()
+  };
+
+  // Save locally always
+  try {
+    var existing = JSON.parse(localStorage.getItem('sc-shipforge-live_feedback') || '[]');
+    existing.push(payload);
+    localStorage.setItem('sc-shipforge-live_feedback', JSON.stringify(existing));
+  } catch(e) {}
+
+  // Send via email
+  var subject = '[SC-ShipForge LIVE] ' + _fbType.toUpperCase() + (selShip ? ' — ' + selShip : '');
+  var body = 'Type: ' + _fbType.toUpperCase()
+    + '\nShip: ' + (selShip || 'none')
+    + '\nPatch: ' + payload.patch
+    + '\n\n' + text.trim()
+    + (email ? '\n\nReply to: ' + email : '')
+    + '\n\nSent: ' + payload.ts;
+  window.location.href = 'mailto:starsquad.feedback@outlook.com'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+
+  // Show success
+  status.style.display = 'block';
+  status.style.background = 'var(--green-bg)';
+  status.style.color = 'var(--green)';
+  status.textContent = '✓ Thanks for the feedback, citizen!';
+  document.getElementById('fbText').value = '';
+  document.getElementById('fbEmail').value = '';
+  fbCharCount();
+  setTimeout(function(){ toggleFeedback(); status.style.display='none'; }, 2000);
+}
+
+// Close panel on outside click
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('feedbackPanel');
+  var btn = document.getElementById('feedbackBtn');
+  if (panel && panel.style.display !== 'none') {
+    if (!panel.contains(e.target) && !btn.contains(e.target)) {
+      panel.style.display = 'none';
+    }
+  }
+});
+
+
+function quickSave() {
+  if (!selShip) return;
+  var name = prompt('Name this loadout:', selShip + ' Build');
+  if (!name || !name.trim()) return;
+  var el = document.getElementById('svName');
+  if (el) el.value = name.trim();
+  saveLoadout();
+}
+
+
+// ── Target image guardian ──
+(function() {
+  var guardian = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (m.type === 'attributes' && m.attributeName === 'style') {
+        var el = m.target;
+        if (_currentTarget && el.style.display === 'none') {
+          // Something hid the wrap while a target is selected - restore it
+          setTimeout(function() {
+            if (_currentTarget) loadTargetImage(_currentTarget);
+          }, 0);
+        }
+      }
+    });
+  });
+  window.addEventListener('load', function() {
+  renderSavedList();
+  renderDashboard();
+    var wrap = document.getElementById('tgtImgWrap');
+    if (wrap) {
+      guardian.observe(wrap, { attributes: true, attributeFilter: ['style'] });
+    }
+  });
+})();
+
+
+// ── Weapon images ──
+var _WMAP_WEP = {"att1":"Attrition-1_Repeater","cf117":"CF-117_Bulldog_Repeater","omni3":"Omnisky_III_Repeater","m3a":"M3A_Cannon","ls1":"Lightstrike_I_Cannon","db1":"Deadbolt_I_Cannon","yj210":"YellowJacket_GT-210_Cannon","sc215":"Scorpion_GT-215_Cannon","nn13":"NN-13_Neutron_Repeater","cf227":"CF-227_Badger_Repeater","att2":"Attrition-2_Repeater","omni6":"Omnisky_VI_Repeater","m4a":"M4A_Cannon","ls2":"Lightstrike_II_Cannon","db2":"Deadbolt_II_Cannon","gt220":"Mantis_GT-220_Cannon","tar2":"Tarantula_GT-870_Mk2_Cannon","saw":"SW16BR2_Sawbuck_Cannon","nn14":"NN-14_Neutron_Repeater","cf337":"CF-337_Panther_Repeater","gt220s3":"Mantis_GT-220_(S3_variant)_Cannon","att3":"Attrition-3_Repeater","omni9":"Omnisky_IX_Repeater","m6a":"M6A_Laser_Cannon","ls3":"Lightstrike_III_Cannon","rl21":"Relentless_L-21_Cannon","tar3":"Tarantula_GT-870_Mk3_Cannon","db3":"Deadbolt_III_Cannon","c788":"C-788_Combine_Cannon","nn15":"NN-15_Neutron_Repeater","cf447":"CF-447_Rhino_Repeater","att4":"Attrition-4_Repeater","m7a":"M7A_Laser_Cannon","ad4b":"AD4B_Cannon_Cannon","bnk":"Breakneck_S4_Gatling","rev":"Revenant_Gatling","tar4":"Tarantula_GT-870_S4_Cannon","db4":"Deadbolt_IV_Cannon","att5":"Attrition-5_Repeater","ksb":"Klaus_Broadsword_S5_Cannon","db5":"Deadbolt_V_Cannon","ad5b":"AD5B_Ballistic_Gatling","db6":"Deadbolt_VI_Cannon","ad6b":"AD6B_Ballistic_Gatling","att6":"Attrition-6_Repeater","sf7b":"SF7B_Gatling_(Ares_Inferno)_Gatling","sf7e":"SF7E_Laser_Cannon_(Ares_Ion)_Repeater","s8bc":"S8_Ballistic_Cannon_Cannon","ignite2":"Ignite_II_Missile","arr2":"Arrester_II_Missile","arr3":"Arrester_III_Missile","tbolt3":"Thunderbolt_III_Missile","tbolt5":"Thunderbolt_V_Missile","s9torp":"S9/S10_Capital_Torpedo","ignite1":"Ignite_I_Missile","dominator2":"Dominator_II_Missile","striker2":"Striker_II_Missile","caterpillar2":"Caterpillar_II_Missile","dominator3":"Dominator_III_Missile","striker3":"Striker_III_Missile","badger3":"Badger_III_Missile","talon4":"Talon_IV_Missile","dominator5":"Dominator_V_Missile","arr4":"Arrester_IV_Missile","s8torp":"S8_Capital_Torpedo","m5a":"M5A_Laser_Cannon","cf557":"CF-557_Galdereen_Repeater","omni5":"Omnisky_IX_Repeater","terra":"Terra_Cannon_Cannon","laser1":"LR-1_LaserRepeater_Repeater","crossbow":"UltiFlex_Crossbow_Cannon"};
+var _wepImgCache = {};
+
+function loadWeaponImages() {
+  var thumbs = document.querySelectorAll('.slot-thumb');
+  thumbs.forEach(function(thumb) {
+    var row = thumb.closest('.slot-row');
+    if (!row) return;
+    // Get weapon id from the select in this row
+    var sel = row.querySelector('select.slot-sel[data-slotidx]');
+    var wid = sel ? (curSlots['sl'+sel.dataset.slotidx] || sel.value) : null;
+    if (!wid) {
+      sel = row.querySelector('select.slot-sel[data-missidx]');
+      wid = sel ? (curMissiles['ms'+sel.dataset.missidx] || sel.value) : null;
+    }
+    if (!wid) return;
+
+    // Set background to dark while loading
+    thumb.style.background = 'var(--bg4)';
+
+    // Get or create img element
+    var img = thumb.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      img.style.cssText = 'width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .3s;padding:4px;box-sizing:border-box';
+      img.onload = function(){ this.style.opacity = 1; };
+      thumb.appendChild(img);
+    }
+
+    if (_wepImgCache[wid]) { img.src = _wepImgCache[wid]; return; }
+
+    var wikiTitle = _WMAP_WEP[wid] || wid.replace(/_/g,' ');
+    var url = 'https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(wikiTitle)+'&prop=pageimages&format=json&pithumbsize=300&pilimit=1&origin=*';
+    (function(capturedWid, capturedImg) {
+      fetch(url).then(function(r){return r.json();}).then(function(d){
+        var pages = d.query && d.query.pages;
+        if (!pages) return;
+        var p = pages[Object.keys(pages)[0]];
+        var src = p && p.thumbnail && p.thumbnail.source;
+        if (src) { _wepImgCache[capturedWid] = src; capturedImg.src = src; }
+      }).catch(function(){});
+    })(wid, img);
+  });
+}
+
+// ── Target image guardian ──
+(function() {
+  var guardian = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (m.type === 'attributes' && m.attributeName === 'style') {
+        var el = m.target;
+        if (_currentTarget && el.style.display === 'none') {
+          // Something hid the wrap while a target is selected - restore it
+          setTimeout(function() {
+            if (_currentTarget) loadTargetImage(_currentTarget);
+          }, 0);
+        }
+      }
+    });
+  });
+  window.addEventListener('load', function() {
+    var wrap = document.getElementById('tgtImgWrap');
+    if (wrap) {
+      guardian.observe(wrap, { attributes: true, attributeFilter: ['style'] });
+    }
+  });
+})();
+
+
+// ── Weapon images ──
+var _WMAP_WEP = {"att1":"Attrition-1_Repeater","cf117":"CF-117_Bulldog_Repeater","omni3":"Omnisky_III_Repeater","m3a":"M3A_Cannon","ls1":"Lightstrike_I_Cannon","db1":"Deadbolt_I_Cannon","yj210":"YellowJacket_GT-210_Cannon","sc215":"Scorpion_GT-215_Cannon","nn13":"NN-13_Neutron_Repeater","cf227":"CF-227_Badger_Repeater","att2":"Attrition-2_Repeater","omni6":"Omnisky_VI_Repeater","m4a":"M4A_Cannon","ls2":"Lightstrike_II_Cannon","db2":"Deadbolt_II_Cannon","gt220":"Mantis_GT-220_Cannon","tar2":"Tarantula_GT-870_Mk2_Cannon","saw":"SW16BR2_Sawbuck_Cannon","nn14":"NN-14_Neutron_Repeater","cf337":"CF-337_Panther_Repeater","gt220s3":"Mantis_GT-220_(S3_variant)_Cannon","att3":"Attrition-3_Repeater","omni9":"Omnisky_IX_Repeater","m6a":"M6A_Laser_Cannon","ls3":"Lightstrike_III_Cannon","rl21":"Relentless_L-21_Cannon","tar3":"Tarantula_GT-870_Mk3_Cannon","db3":"Deadbolt_III_Cannon","c788":"C-788_Combine_Cannon","nn15":"NN-15_Neutron_Repeater","cf447":"CF-447_Rhino_Repeater","att4":"Attrition-4_Repeater","m7a":"M7A_Laser_Cannon","ad4b":"AD4B_Cannon_Cannon","bnk":"Breakneck_S4_Gatling","rev":"Revenant_Gatling","tar4":"Tarantula_GT-870_S4_Cannon","db4":"Deadbolt_IV_Cannon","att5":"Attrition-5_Repeater","ksb":"Klaus_Broadsword_S5_Cannon","db5":"Deadbolt_V_Cannon","ad5b":"AD5B_Ballistic_Gatling","db6":"Deadbolt_VI_Cannon","ad6b":"AD6B_Ballistic_Gatling","att6":"Attrition-6_Repeater","sf7b":"SF7B_Gatling_(Ares_Inferno)_Gatling","sf7e":"SF7E_Laser_Cannon_(Ares_Ion)_Repeater","s8bc":"S8_Ballistic_Cannon_Cannon","ignite2":"Ignite_II_Missile","arr2":"Arrester_II_Missile","arr3":"Arrester_III_Missile","tbolt3":"Thunderbolt_III_Missile","tbolt5":"Thunderbolt_V_Missile","s9torp":"S9/S10_Capital_Torpedo","ignite1":"Ignite_I_Missile","dominator2":"Dominator_II_Missile","striker2":"Striker_II_Missile","caterpillar2":"Caterpillar_II_Missile","dominator3":"Dominator_III_Missile","striker3":"Striker_III_Missile","badger3":"Badger_III_Missile","talon4":"Talon_IV_Missile","dominator5":"Dominator_V_Missile","arr4":"Arrester_IV_Missile","s8torp":"S8_Capital_Torpedo","m5a":"M5A_Laser_Cannon","cf557":"CF-557_Galdereen_Repeater","omni5":"Omnisky_IX_Repeater","terra":"Terra_Cannon_Cannon","laser1":"LR-1_LaserRepeater_Repeater","crossbow":"UltiFlex_Crossbow_Cannon"};
+var _wepImgCache = {};
+var _wepImgObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (!entry.isIntersecting) return;
+    var el = entry.target;
+    var wid = el.dataset.wid;
+    if (!wid) return;
+    _wepImgObserver.unobserve(el);
+    var img = el.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      img.style.cssText = 'width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .3s';
+      img.onload = function(){ this.style.opacity=1; };
+      el.appendChild(img);
+    }
+    if (_wepImgCache[wid]) { img.src = _wepImgCache[wid]; return; }
+    var wikiTitle = _WMAP_WEP[wid] || wid;
+    var url = 'https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(wikiTitle)+'&prop=pageimages&format=json&pithumbsize=300&pilimit=1&origin=*';
+    fetch(url).then(function(r){return r.json();}).then(function(d){
+      var pages = d.query && d.query.pages;
+      if (!pages) return;
+      var p = pages[Object.keys(pages)[0]];
+      var src = p && p.thumbnail && p.thumbnail.source;
+      if (src) { _wepImgCache[wid] = src; img.src = src; }
+    }).catch(function(){});
+  });
+}, {rootMargin: '100px'});
+
+function observeWeaponThumbs() {
+  // Load images for each weapon slot thumb
+  var slotDivs = document.querySelectorAll('.slot-row');
+  slotDivs.forEach(function(row, i) {
+    var sel = row.querySelector('select.slot-sel[data-slotidx]');
+    if (!sel) return;
+    var idx = sel.dataset.slotidx;
+    var wid = curSlots['sl'+idx] || sel.value;
+    if (!wid) return;
+    var thumb = row.querySelector('.slot-thumb');
+    if (!thumb) return;
+    thumb.dataset.wid = wid;
+    _wepImgObserver.observe(thumb);
+  });
+  // Missiles
+  var misRows = document.querySelectorAll('.slot-row');
+  misRows.forEach(function(row) {
+    var sel = row.querySelector('select.slot-sel[data-missidx]');
+    if (!sel) return;
+    var wid = curMissiles['ms'+sel.dataset.missidx] || sel.value;
+    if (!wid) return;
+    var thumb = row.querySelector('.slot-thumb');
+    if (!thumb) return;
+    thumb.dataset.wid = wid;
+    _wepImgObserver.observe(thumb);
+  });
+}
+
+
+// ══ DASHBOARD ══
+function renderDashboard() {
+  var hullCount = Object.values(SHIPS).reduce(function(a,b){return a+(b?b.length:0);},0);
+  var gunCount = WEAPONS.filter(function(w){return !w.type.includes('missile')&&w.type!=='torpedo';}).length;
+  var savedCount = getSavedLoadouts().length;
+  var el;
+  el=document.getElementById('dKpiHulls');    if(el)el.textContent=hullCount;
+  el=document.getElementById('dKpiGuns');     if(el)el.textContent=gunCount;
+  el=document.getElementById('dKpiMfr');      if(el)el.textContent=Object.keys(SHIPS).length;
+  el=document.getElementById('dKpiSaved');    if(el)el.textContent=savedCount;
+  el=document.getElementById('dashHullCount');if(el)el.textContent=hullCount+' HULLS';
+
+  var mfrEl=document.getElementById('dMfrBars');
+  if(mfrEl){
+    var mfrC={};Object.keys(SHIPS).forEach(function(m){if(SHIPS[m])mfrC[m]=SHIPS[m].length;});
+    var sorted=Object.keys(mfrC).sort(function(a,b){return mfrC[b]-mfrC[a];}).slice(0,8);
+    var max=mfrC[sorted[0]]||1;
+    mfrEl.style.display='flex';mfrEl.style.flexDirection='column';mfrEl.style.justifyContent='space-between';mfrEl.style.height='100%';
+  mfrEl.innerHTML=sorted.map(function(m){
+      var pct=Math.round((mfrC[m]/max)*100);
+      var short=m.replace('Aerospace','').replace('Interplanetary','').replace('Jumpworks','').replace('Industries','').replace('Dynamics','').replace('Systems','').trim();
+      return '<div onclick="filterShipsByMfr(\'' + m.replace(/'/g,"\\\\'") + '\')" style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 4px;border-radius:4px;transition:background .1s" onmouseover="this.style.background=\'var(--bg4)\'" onmouseout="this.style.background=\'transparent\'"><div style="font-size:9px;font-family:var(--fmono);color:var(--t2);width:70px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+short+'</div><div style="flex:1;background:var(--bg4);border-radius:2px;height:5px"><div style="width:'+pct+'%;height:100%;background:var(--accent);border-radius:2px"></div></div><div style="font-size:9px;font-family:var(--fmono);color:var(--accent);width:16px;text-align:right">'+mfrC[m]+'</div></div>';
+    }).join('');
+  }
+
+  var sizeEl=document.getElementById('dSizeBars');
+  if(sizeEl){
+    var sC={XS:0,S:0,M:0,L:0,XL:0};
+    var sL={XS:'Extra Small',S:'Small',M:'Medium',L:'Large',XL:'Capital'};
+    var sCol={XS:'var(--cyan)',S:'var(--green)',M:'var(--accent)',L:'var(--warn)',XL:'var(--red)'};
+    Object.values(SHIP_DATA).forEach(function(s){if(s&&s.size&&sC[s.size]!==undefined)sC[s.size]++;});
+    var sT=Object.values(sC).reduce(function(a,b){return a+b;},0)||1;
+    sizeEl.style.display='flex';sizeEl.style.flexDirection='column';sizeEl.style.justifyContent='space-between';sizeEl.style.height='100%';
+  sizeEl.innerHTML=Object.keys(sC).map(function(sz){
+      var pct=Math.round((sC[sz]/sT)*100);
+      return '<div onclick="filterShipsBySize(\'' + sz + '\')" style="cursor:pointer;padding:2px 4px;border-radius:4px;transition:background .1s" onmouseover="this.style.background=\'var(--bg4)\'" onmouseout="this.style.background=\'transparent\'"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:9px;font-family:var(--fmono);color:var(--t2)">'+sz+' &middot; '+sL[sz]+'</span><span style="font-size:9px;font-family:var(--fmono);color:'+sCol[sz]+'">'+sC[sz]+'</span></div><div style="background:var(--bg4);border-radius:2px;height:6px"><div style="width:'+pct+'%;height:100%;background:'+sCol[sz]+';border-radius:2px"></div></div></div>';
+    }).join('');
+  }
+
+  // Role filter buttons
+  var rfEl=document.getElementById('dRoleFilters');
+  if(rfEl && rfEl.children && !rfEl.children.length){
+    var allRoles=['All'];
+    Object.values(SHIP_DATA).forEach(function(s){
+      if(s&&s.role){var r=s.role.split('/')[0].trim();if(allRoles.indexOf(r)<0)allRoles.push(r);}
+    });
+    allRoles.slice(0,12).forEach(function(role,ri){
+      var btn=document.createElement('button');
+      btn.textContent=role;
+      var isActive=ri===0;
+      btn.style.cssText='background:'+(isActive?'var(--accent)':'var(--bg4)')+';border:1px solid '+(isActive?'var(--accent)':'var(--border)')+';border-radius:20px;padding:4px 11px;font-size:10px;font-family:var(--fmono);color:'+(isActive?'#fff':'var(--t2)')+';cursor:pointer;transition:all .15s;letter-spacing:.5px';
+      btn.dataset.role=role;
+      btn.onclick=function(){
+        rfEl.querySelectorAll('button').forEach(function(b){b.style.background='var(--bg4)';b.style.borderColor='var(--border)';b.style.color='var(--t2)';});
+        this.style.background='var(--accent)';this.style.borderColor='var(--accent)';this.style.color='#fff';
+        filterShipsByRole(this.dataset.role==='All'?null:this.dataset.role);
+      };
+      rfEl.appendChild(btn);
+    });
+  }
+  var qlEl=document.getElementById('dQuickLaunch');
+  if(qlEl){
+    var popular=['F8C Lightning','Gladius','Arrow','Sabre','Hammerhead','Carrack','Cutlass Black','Eclipse'].slice(0,8);
+    qlEl.innerHTML='';
+    popular.filter(function(s){return SHIP_DATA[s];}).forEach(function(s){
+      var def=SHIP_DATA[s];
+      var sc={XS:'var(--cyan)',S:'var(--green)',M:'var(--accent)',L:'var(--warn)',XL:'var(--red)'}[def.size]||'var(--t3)';
+      var card=document.createElement('div');
+      card.style.cssText='background:var(--bg4);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 6px;cursor:pointer;transition:border-color .15s';
+      card.innerHTML='<div style="font-size:10px;font-weight:600;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s+'</div><div style="display:flex;gap:3px;align-items:center"><span style="font-size:8px;font-family:var(--fmono);color:'+sc+';border:1px solid '+sc+';padding:1px 4px;border-radius:8px">'+def.size+'</span></div>';
+      card.onmouseover=function(){this.style.borderColor='var(--accent)';};
+      card.onmouseout=function(){this.style.borderColor='var(--border)';};
+      card.onclick=(function(n){return function(){pick(n);};})(s);
+      qlEl.appendChild(card);
+    });
+  }
+}
+
+function showDashboard() {
+  var dash=document.getElementById('mobiDash');
+  var lo=document.getElementById('loContent');
+  if(lo)lo.style.display='none';
+  if(dash){dash.style.display='flex';renderDashboard();}
+  // Switch to loadout tab visually
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on');});
+  var loTab=document.querySelector('[data-t="lo"]');if(loTab)loTab.classList.add('on');
+  var loPan=document.getElementById('pane-lo');if(loPan)loPan.classList.add('on');
+}
+
+function hideDashboard() {
+  var dash=document.getElementById('mobiDash');
+  var lo=document.getElementById('loContent');
+  if(dash)dash.style.display='none';
+  if(lo)lo.style.display='block';
+}
+
+// Show dashboard on load
+window.addEventListener('load',function(){renderDashboard();});
+
+
+function filterShipsByRole(role) {
+  var qlEl = document.getElementById('dQuickLaunch');
+  if (!qlEl) return;
+  qlEl.innerHTML = '';
+  var shown = 0;
+  Object.keys(SHIPS).sort().forEach(function(mfr) {
+    if (!SHIPS[mfr] || shown >= 8) return;
+    SHIPS[mfr].forEach(function(s) {
+      if (shown >= 8) return;
+      var def = SHIP_DATA[s]; if (!def) return;
+      if (role && (!def.role || def.role.split('/')[0].trim() !== role)) return;
+      var sc={XS:'var(--cyan)',S:'var(--green)',M:'var(--accent)',L:'var(--warn)',XL:'var(--red)'}[def.size]||'var(--t3)';
+      var card=document.createElement('div');
+      card.style.cssText='background:var(--bg4);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 6px;cursor:pointer;transition:border-color .15s';
+      card.innerHTML='<div style="font-size:10px;font-weight:600;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s+'</div><span style="font-size:8px;font-family:var(--fmono);color:'+sc+';border:1px solid '+sc+';padding:1px 4px;border-radius:8px">'+def.size+'</span>';
+      card.onmouseover=function(){this.style.borderColor='var(--accent)';};
+      card.onmouseout=function(){this.style.borderColor='var(--border)';};
+      card.onclick=(function(n){return function(){pick(n);};})(s);
+      qlEl.appendChild(card); shown++;
+    });
+  });
+  // Also filter the main ship dropdown
+  var sSel=document.getElementById('sSel'); if(!sSel) return;
+  while(sSel.options.length>1) sSel.remove(1);
+  Object.keys(SHIPS).sort().forEach(function(mfr){
+    if(!SHIPS[mfr])return;
+    var ships=SHIPS[mfr].filter(function(s){
+      if(!role)return true;
+      var def=SHIP_DATA[s];
+      return def&&def.role&&def.role.split('/')[0].trim()===role;
+    });
+    if(!ships.length)return;
+    var og=document.createElement('optgroup'); og.label=mfr;
+    ships.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;og.appendChild(o);});
+    sSel.appendChild(og);
+  });
+}
+
+
+function filterLocs(filter, btn) {
+  // Update button styles
+  document.querySelectorAll('.loc-filter-btn').forEach(function(b) {
+    b.style.background = 'var(--bg4)';
+    b.style.borderColor = 'var(--border)';
+    b.style.color = 'var(--t2)';
+    b.classList.remove('active');
+  });
+  if (btn) {
+    btn.style.background = 'var(--accent)';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = '#fff';
+    btn.classList.add('active');
+  }
+  var lg = document.getElementById('locGrid');
+  if (!lg) return;
+  var filtered = LOCATIONS.filter(function(l) {
+    if (!filter) return true;
+    if (filter === 'Stanton') return l.sys && l.sys.includes('Stanton');
+    if (filter === 'Pyro') return l.sys && (l.sys.includes('Pyro') || l.sys.includes('Nyx'));
+    return l.tags && l.tags.includes(filter);
+  });
+  lg.innerHTML = filtered.map(function(l) {
+    var tags = l.tags.map(function(t) {
+      return '<span class="ltag ' + (t==='weapons'?'ltag-w':t==='components'?'ltag-c':'ltag-o') + '">' + t + '</span>';
+    }).join('');
+    var isPyro = l.sys && (l.sys.includes('Pyro') || l.sys.includes('Nyx'));
+    return '<div class="lcard"><div class="lcard-top"><div><div class="lname">' + l.name + '</div>'
+      + '<div class="lsys">' + l.sys
+      + (isPyro ? ' <span style="font-size:9px;color:var(--red);border:1px solid var(--red);border-radius:10px;padding:1px 6px;margin-left:4px">PYRO</span>' : '')
+      + '</div></div><div>' + tags + '</div></div>'
+      + '<div class="lst">' + l.st + '</div>'
+      + (l.tip ? '<div class="ltip">' + l.tip + '</div>' : '') + '</div>';
+  }).join('');
+}
+
+
+function shareLoadout(id, e) {
+  e.stopPropagation();
+  var arr = getSavedLoadouts();
+  var lo = arr.find(function(x){ return x.id === id; });
+  if (!lo) return;
+  // Build URL with loadout params
+  var params = {};
+  params.ship = lo.ship;
+  if (lo.slots) Object.keys(lo.slots).forEach(function(k){ params[k] = lo.slots[k]; });
+  if (lo.missiles) Object.keys(lo.missiles).forEach(function(k){ params['m_'+k] = lo.missiles[k]; });
+  if (lo.comps) Object.keys(lo.comps).forEach(function(k){ if(k!=='counts')params['c_'+k] = lo.comps[k]; });
+  var hash = Object.keys(params).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }).join('&');
+  var url = window.location.origin + window.location.pathname + '#' + hash;
+  // Copy to clipboard
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function() {
+      showToast('Link copied! &#128279;');
+    }).catch(function() { prompt('Copy this link:', url); });
+  } else {
+    prompt('Copy this link:', url);
+  }
+}
+
+function showToast(msg, type) {
+  var colors = {success: 'var(--green)', warn: 'var(--warn)', error: 'var(--red)'};
+  var borders = {success: 'var(--green-border)', warn: 'var(--warn-border)', error: 'var(--red-border)'};
+  var color = colors[type] || 'var(--green)';
+  var border = borders[type] || 'var(--green-border)';
+  var t = document.getElementById('mobToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'mobToast';
+    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--bg3);border-radius:var(--r);padding:8px 18px;font-size:11px;font-family:var(--fmono);letter-spacing:.5px;z-index:9999;pointer-events:none;transition:opacity .4s;box-shadow:0 4px 20px rgba(0,0,0,.5);border-left:3px solid var(--accent)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.color = color;
+  t.style.borderLeftColor = border;
+  t.style.opacity = '1';
+  if (t._timer) clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.style.opacity = '0'; }, 3000);
+}
+
+
+function toggleCompExpand(id) {
+  var el = document.getElementById(id);
+  var arr = document.getElementById(id + '_arr');
+  if (!el) return;
+  var open = el.style.display === 'none' || el.style.display === '';
+  el.style.display = open ? 'block' : 'none';
+  if (arr) arr.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+
+function toggleCompSlot(e, slotKey, baseKey, cnt) {
+  e.stopPropagation();
+  curCompEnabled[slotKey] = (curCompEnabled[slotKey] === false) ? true : false;
+  var enabled = curCompEnabled[slotKey] !== false;
+  var btn = e.target;
+  btn.textContent = enabled ? 'ON' : 'OFF';
+  btn.style.background = enabled ? 'var(--green)' : 'var(--border)';
+  btn.style.color = enabled ? '#fff' : 'var(--t3)';
+  var row = btn.closest('div[style*="margin-bottom:6px"]') || btn.parentNode.parentNode;
+  if (row) row.style.opacity = enabled ? '1' : '0.4';
+  var sel = document.querySelector('[data-compkey="'+slotKey+'"]');
+  if (sel) sel.disabled = !enabled;
+  // Update effective count for power calc
+  var def = SHIP_DATA[selShip]; if(!def) return;
+  var totalCnt = (def.comps&&def.comps.counts&&def.comps.counts[baseKey])||1;
+  var activeCnt = 0;
+  for(var i=0;i<totalCnt;i++){ if(curCompEnabled[baseKey+'_'+i]!==false) activeCnt++; }
+  // Store effective count
+  if(!curComps._effectiveCounts) curComps._effectiveCounts={};
+  curComps._effectiveCounts[baseKey] = activeCnt;
+  updatePower();
+  updateTargetAnalysis();
+}
+
+
+function toggleSlot(e, idx) {
+  e.stopPropagation();
+  var key = 'sl'+idx;
+  curSlotEnabled[key] = (curSlotEnabled[key] === false) ? true : false;
+  var on = curSlotEnabled[key] !== false;
+  var btn = e.target;
+  btn.textContent = on ? 'ON' : 'OFF';
+  btn.style.background = on ? 'var(--green)' : 'var(--bg4)';
+  btn.style.borderColor = on ? 'var(--green)' : 'var(--border)';
+  btn.style.color = on ? '#fff' : 'var(--t3)';
+  var row = document.getElementById('slotrow'+idx);
+  if (row) row.style.opacity = on ? '1' : '0.5';
+  var sel = document.querySelector('select[data-slotidx="'+idx+'"]');
+  if (sel) sel.disabled = !on;
+  updatePower();
+  updateTargetAnalysis();
+}
+
+function toggleMis(e, idx) {
+  e.stopPropagation();
+  var key = 'ms'+idx;
+  curMisEnabled[key] = (curMisEnabled[key] === false) ? true : false;
+  var on = curMisEnabled[key] !== false;
+  var btn = e.target;
+  btn.textContent = on ? 'ON' : 'OFF';
+  btn.style.background = on ? 'var(--green)' : 'var(--bg4)';
+  btn.style.borderColor = on ? 'var(--green)' : 'var(--border)';
+  btn.style.color = on ? '#fff' : 'var(--t3)';
+  var row = document.getElementById('misrow'+idx);
+  if (row) row.style.opacity = on ? '1' : '0.5';
+  var sel = document.querySelector('select[data-missidx="'+idx+'"]');
+  if (sel) sel.disabled = !on;
+  updatePower();
+  updateTargetAnalysis();
+}
+
+
+function onTurretGunChange(sel) {
+  var slotIdx = parseInt(sel.dataset.slotidx);
+  var gunIdx = parseInt(sel.dataset.gunidx);
+  var gKey = 'sl'+slotIdx+'_gun'+gunIdx;
+  curSlots[gKey] = sel.value;
+  // Update main slot to first gun for DPS calc compat
+  curSlots['sl'+slotIdx] = curSlots['sl'+slotIdx+'_gun0'] || sel.value;
+  var def = SHIP_DATA[selShip];
+  sel.classList.toggle('mod', sel.value !== (def&&def.slots[slotIdx]?def.slots[slotIdx].default:''));
+  var info = document.getElementById('tgi_'+slotIdx+'_'+gunIdx);
+  if(info) { var w=WEAPONS.find(function(x){return x.id===sel.value;}); info.innerHTML=wepInfo(sel.value); }
+  // Update summary
+  var tExpandId = 'texp'+slotIdx;
+  var lbl = document.getElementById(tExpandId+'_arr');
+  if(lbl && lbl.previousSibling) {
+    var sl = def && def.slots[slotIdx];
+    var cnt = sl ? (sl.count||1) : 1;
+    var parts=[];
+    for(var gi=0;gi<cnt;gi++){var v=curSlots['sl'+slotIdx+'_gun'+gi]||sl.default;parts.push((v||'—').split(' ')[0]);}
+    if(lbl.previousSibling) lbl.previousSibling.textContent = parts.join(' / ');
+  }
+  updatePower();
+  updateTargetAnalysis();
+}
+
+function linkAllTurretGuns(e, slotIdx, count) {
+  e.stopPropagation();
+  var firstSel = document.querySelector('select[data-slotidx="'+slotIdx+'"][data-gunidx="0"]');
+  if(!firstSel) return;
+  var val = firstSel.value;
+  for(var gi=0;gi<count;gi++) {
+    var sel = document.querySelector('select[data-slotidx="'+slotIdx+'"][data-gunidx="'+gi+'"]');
+    if(sel){sel.value=val;curSlots['sl'+slotIdx+'_gun'+gi]=val;}
+    var info = document.getElementById('tgi_'+slotIdx+'_'+gi);
+    if(info) info.innerHTML = wepInfo(val);
+  }
+  curSlots['sl'+slotIdx] = val;
+  var btn = e.target;
+  btn.textContent='LINKED ✓';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
+  setTimeout(function(){btn.textContent='LINK ALL';btn.style.color='var(--t3)';btn.style.borderColor='var(--border)';},1500);
+  updatePower();
+  updateTargetAnalysis();
+}
+
+
+function toggleTurretTree(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var open = el.style.display === 'none' || el.style.display === '';
+  el.style.display = open ? 'block' : 'none';
+  // Update arrow
+  var arrow = el.previousSibling && el.previousSibling.querySelector('span:first-child');
+  if (arrow) arrow.textContent = open ? '▲' : '▼';
+}
+
+
+function onMisItemChange(sel) {
+  var rackIdx = parseInt(sel.dataset.missidx);
+  var itemIdx = parseInt(sel.dataset.misgidx);
+  var iKey = 'ms'+rackIdx+'_'+itemIdx;
+  curMissiles[iKey] = sel.value;
+  curMissiles['ms'+rackIdx] = curMissiles['ms'+rackIdx+'_0'] || sel.value;
+  // Update summary
+  var def = SHIP_DATA[selShip];
+  var ms = def && def.missiles && def.missiles[rackIdx];
+  var cnt = ms ? (ms.count||1) : 1;
+  var treeId = 'mtree'+rackIdx;
+  var tree = document.getElementById(treeId);
+  if(tree && tree.previousSibling) {
+    var summaryEl = tree.previousSibling.querySelector('span:nth-child(2)');
+    if(summaryEl) {
+      var parts=[];
+      for(var mi=0;mi<cnt;mi++){var v=curMissiles['ms'+rackIdx+'_'+mi]||ms.default;var w=WEAPONS.find(function(x){return x.id===v;});parts.push(w?w.name.split(' ').slice(0,2).join(' '):'—');}
+      var allSame=parts.every(function(x){return x===parts[0];});
+      summaryEl.textContent=allSame?parts[0]+' ×'+cnt:parts.join(', ');
+    }
+  }
+  // Update info row
+  var info=document.getElementById('mi'+rackIdx);
+  if(info)info.innerHTML=misInfo(sel.value);
+  updatePower();
+  updateTargetAnalysis();
+}
+
+function linkAllMissiles(e, rackIdx, count) {
+  e.stopPropagation();
+  var firstSel = document.querySelector('select[data-missidx="'+rackIdx+'"][data-misgidx="0"]');
+  if(!firstSel) return;
+  var val = firstSel.value;
+  for(var mi=0;mi<count;mi++) {
+    var sel = document.querySelector('select[data-missidx="'+rackIdx+'"][data-misgidx="'+mi+'"]');
+    if(sel){sel.value=val;curMissiles['ms'+rackIdx+'_'+mi]=val;}
+  }
+  curMissiles['ms'+rackIdx] = val;
+  // Update summary
+  var treeId='mtree'+rackIdx;
+  var tree=document.getElementById(treeId);
+  if(tree&&tree.previousSibling){
+    var summaryEl=tree.previousSibling.querySelector('span:nth-child(2)');
+    if(summaryEl){var w=WEAPONS.find(function(x){return x.id===val;});summaryEl.textContent=(w?w.name.split(' ').slice(0,2).join(' '):'—')+' ×'+count;}
+  }
+  var btn=e.target;
+  btn.textContent='SYNCED ✓';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
+  setTimeout(function(){btn.textContent='SYNC';btn.style.color='var(--t3)';btn.style.borderColor='var(--border)';},1500);
+  var info=document.getElementById('mi'+rackIdx);
+  if(info)info.innerHTML=misInfo(val);
+  updatePower();
+  updateTargetAnalysis();
+}
+
+
+function onRackChange(sel) {
+  var idx = parseInt(sel.dataset.rackidx);
+  curRacks['ms'+idx] = sel.value;
+  // Could update missile count based on rack capacity in future
+  sel.classList.toggle('mod', !!sel.value);
+}
+
+
+// ── Panel resize ──
+(function(){
+  function initResize(handle, getLeft, getRight, setLeft, setRight) {
+    var dragging = false, startX, startLeft, startRight;
+    handle.addEventListener('mousedown', function(e) {
+      dragging = true;
+      startX = e.clientX;
+      startLeft = getLeft();
+      startRight = getRight();
+      handle.classList.add('dragging');
+      document.body.classList.add('resizing');
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX;
+      var newLeft = Math.max(180, Math.min(500, startLeft + dx));
+      var newRight = Math.max(180, Math.min(500, startRight - dx));
+      setLeft(newLeft);
+      setRight(newRight);
+    });
+    document.addEventListener('mouseup', function() {
+      if (!dragging) return;
+      dragging = false;
+      handle.classList.remove('dragging');
+      document.body.classList.remove('resizing');
+    });
+  }
+
+  window.addEventListener('load', function() {
+    var lp = document.querySelector('aside.lp');
+    var rp = document.querySelector('aside.rp');
+    var center = document.querySelector('section.cp') || document.querySelector('.cp');
+    var rhLeft = document.getElementById('rh-left');
+    var rhRight = document.getElementById('rh-right');
+
+    if (rhLeft && lp && center) {
+      initResize(rhLeft,
+        function() { return lp.getBoundingClientRect().width; },
+        function() { return center.getBoundingClientRect().width; },
+        function(w) { lp.style.width = w + 'px'; lp.style.minWidth = w + 'px'; lp.style.maxWidth = w + 'px'; },
+        function(w) { /* center is flex:1, auto adjusts */ }
+      );
+    }
+    if (rhRight && rp && center) {
+      initResize(rhRight,
+        function() { return center.getBoundingClientRect().width; },
+        function() { return rp.getBoundingClientRect().width; },
+        function(w) { /* center auto adjusts */ },
+        function(w) { rp.style.width = w + 'px'; rp.style.minWidth = w + 'px'; rp.style.maxWidth = w + 'px'; }
+      );
+    }
+
+    // Double-click to reset
+    [rhLeft, rhRight].forEach(function(h) {
+      if (!h) return;
+      h.addEventListener('dblclick', function() {
+        if (lp) { lp.style.width = ''; lp.style.minWidth = ''; lp.style.maxWidth = ''; }
+        if (rp) { rp.style.width = ''; rp.style.minWidth = ''; rp.style.maxWidth = ''; }
+      });
+    });
+  });
+})();
+
+
+function filterShipsByMfr(mfr) {
+  hideDashboard();
+  // Focus ship search and show ships from that manufacturer
+  var si = document.getElementById('sSearch');
+  if (si) { si.value = mfr; var clr = document.getElementById('sSearchClear'); if(clr)clr.style.display='block'; }
+  buildSrbox(mfr.toLowerCase());
+  if (si) si.focus();
+}
+
+function filterShipsBySize(size) {
+  hideDashboard();
+  // Filter quick launch by size and show search
+  var si = document.getElementById('sSearch');
+  var sizeNames = {XS:'Extra Small',S:'Small',M:'Medium',L:'Large',XL:'Capital'};
+  if (si) { si.value = ''; var clr = document.getElementById('sSearchClear'); if(clr)clr.style.display='none'; }
+  // Filter the ship dropdown and show results
+  var sSel = document.getElementById('sSel');
+  if (sSel) {
+    while(sSel.options.length>1) sSel.remove(1);
+    Object.keys(SHIPS).sort().forEach(function(mfr){
+      if(!SHIPS[mfr])return;
+      var ships=SHIPS[mfr].filter(function(s){return SHIP_DATA[s]&&SHIP_DATA[s].size===size;});
+      if(!ships.length)return;
+      var og=document.createElement('optgroup');og.label=mfr;
+      ships.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;og.appendChild(o);});
+      sSel.appendChild(og);
+    });
+  }
+  // Show search box with filtered results
+  var sb = document.getElementById('srbox');
+  if(sb){
+    var byMfr={};
+    Object.keys(SHIPS).sort().forEach(function(mfr){
+      if(!SHIPS[mfr])return;
+      SHIPS[mfr].forEach(function(s){
+        if(SHIP_DATA[s]&&SHIP_DATA[s].size===size){if(!byMfr[mfr])byMfr[mfr]=[];byMfr[mfr].push(s);}
+      });
+    });
+    var html='';
+    Object.keys(byMfr).sort().forEach(function(mfr){
+      html+='<div style="padding:3px 10px 2px;font-size:9px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);background:var(--bg3);border-bottom:1px solid var(--border)">'+mfr+'</div>';
+      byMfr[mfr].forEach(function(s){html+='<div class="sri" data-n="'+encodeURIComponent(s)+'">'+s+'</div>';});
+    });
+    sb.innerHTML=html||'<div style="padding:8px;color:var(--t3)">No ships found</div>';
+    Array.prototype.forEach.call(sb.querySelectorAll('.sri'),function(el){
+      el.onmousedown=function(e){e.preventDefault();pick(decodeURIComponent(this.getAttribute('data-n')));sb.style.display='none';};
+    });
+    sb.style.display='block';
+  }
+  showDashboard(); // Actually just show search results over dashboard
+}
+
+
+// ── LIVE STATS from Fleetyards ──
+var _fyCache = {}; // per-ship cache
+
+function fetchLiveStats(shipName) {
+  ['liveStatsCard','vesselStatsCard','dimensionsCard','fuelCard'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.style.display='none';
+  });
+
+  // Cache hit
+  if (_fyCache[shipName]) { _applyLiveStats(_fyCache[shipName]); return; }
+
+  // Get slug from live sync ship list (most reliable)
+  var slug = '';
+  var def = SHIP_DATA[shipName] || {};
+  if (def._fySlug) { slug = def._fySlug; }
+  else if (window._liveSync && window._liveSync._lastShips && window._liveSync._lastShips.length) {
+    var found = window._liveSync._lastShips.find(function(s){ return s.name === shipName; });
+    if (found) { slug = found.slug; def._fySlug = slug; }
+  }
+
+  if (slug) { fetchLiveStatsBySlug(shipName, slug); return; }
+
+  // No sync data yet — fetch full list to find slug
+  // (Fleetyards has no search API, must use full list)
+  _liveSync.fetchAllShips().then(function(ships) {
+    window._liveSync._lastShips = ships;
+    // Apply sync data while we have it
+    _liveSync.applyShipData(ships, true);
+    var found = ships.find(function(s){ return s.name === shipName; });
+    if (found) {
+      def._fySlug = found.slug;
+      fetchLiveStatsBySlug(shipName, found.slug);
+    } else {
+      console.log('[FY] Ship not found in Fleetyards:', shipName);
+    }
+  }).catch(function(e){ console.log('[FY] list error:', e.message); });
+}
+
+function fetchLiveStatsBySlug(shipName, slug) {
+  fetch('https://api.fleetyards.net/v1/models/' + slug)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      _fyCache[shipName] = d;
+      // Also store slug for future calls
+      if (SHIP_DATA[shipName]) SHIP_DATA[shipName]._fySlug = slug;
+      _applyLiveStats(d);
+    })
+    .catch(function(e){ console.log('[FY] stats fetch failed:', e.message); });
+}
+
+function _applyLiveStats(d) {
+  function set(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val !== null && val !== undefined ? val : '—';
+  }
+  function show(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = '';
+  }
+
+  // FLIGHT card
+  if (d.speeds) {
+    set('statAB', d.speeds.scmSpeedBoosted ? Math.round(d.speeds.scmSpeedBoosted) + ' m/s' : '—');
+    set('statPitch', d.speeds.pitchBoosted ? d.speeds.pitchBoosted.toFixed(1) + '°/s' : '—');
+    set('statRoll', d.speeds.rollBoosted ? d.speeds.rollBoosted.toFixed(1) + '°/s' : '—');
+    set('statYaw', d.speeds.yawBoosted ? d.speeds.yawBoosted.toFixed(1) + '°/s' : '—');
+    show('liveStatsCard');
+  }
+
+  // VESSEL card
+  var hasFocus = d.focus;
+  var hasCrew = d.crew && d.crew.max;
+  var hasCargo = d.metrics && d.metrics.cargo !== null;
+  var hasMass = d.metrics && d.metrics.mass;
+  if (hasFocus || hasCrew || hasCargo || hasMass) {
+    set('statFocus', d.focus || '—');
+    var crewMin = d.crew ? d.crew.min : null;
+    var crewMax = d.crew ? d.crew.max : null;
+    set('statCrew', crewMin && crewMax && crewMin !== crewMax ? crewMin + '–' + crewMax : (crewMax || '—'));
+    set('statCargo', d.metrics && d.metrics.cargo ? d.metrics.cargo + ' SCU' : '—');
+    if (d.metrics && d.metrics.mass) {
+      var mass = d.metrics.mass;
+      set('statMass', mass >= 1000000 ? (mass/1000000).toFixed(2)+' Mt' : mass >= 1000 ? Math.round(mass/1000)+' t' : Math.round(mass)+' kg');
+    } else {
+      set('statMass', '—');
+    }
+    show('vesselStatsCard');
+  }
+
+  // DIMENSIONS card
+  if (d.metrics && d.metrics.length) {
+    set('statLen', d.metrics.length + ' m');
+    set('statBeam', d.metrics.beam ? d.metrics.beam + ' m' : '—');
+    set('statHeight', d.metrics.height ? d.metrics.height + ' m' : '—');
+    show('dimensionsCard');
+  }
+
+  // FUEL card
+  var h2Total = 0, qtTotal = 0;
+  if (d.hydrogenFuelTanks) d.hydrogenFuelTanks.forEach(function(t){ h2Total += t.capacity||0; });
+  if (d.quantumFuelTanks) d.quantumFuelTanks.forEach(function(t){ qtTotal += t.capacity||0; });
+  if (h2Total > 0 || qtTotal > 0) {
+    set('statH2', h2Total > 0 ? h2Total.toFixed(1) + ' units' : '—');
+    set('statQT', qtTotal > 0 ? qtTotal.toFixed(2) + ' units' : '—');
+    show('fuelCard');
+  }
+}
+
+
+// ── Collapsible LP cards ──
+(function(){
+  var STORAGE_KEY = 'sc-shipforge-live_collapsed_v2';
+  function getCollapsed(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch(e){return [];} }
+  function saveCollapsed(ids){ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(ids));}catch(e){} }
+
+  function initCard(card){
+    var hd = card.querySelector('.tgt-title');
+    if (!hd || hd.dataset.collapseInit) return;
+    hd.dataset.collapseInit = '1';
+    hd.addEventListener('click', function(e){
+      e.stopPropagation();
+      card.classList.toggle('collapsed');
+      var id = card.id; if(!id) return;
+      var arr = getCollapsed();
+      if(card.classList.contains('collapsed')){ if(!arr.includes(id)) arr.push(id); }
+      else { arr = arr.filter(function(x){return x!==id;}); }
+      saveCollapsed(arr);
+    });
   }
 
   function restoreCollapsed(){
