@@ -537,7 +537,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.85</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.86</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
@@ -3390,7 +3390,7 @@ function updatePower() {
       var segDisp = (!isOff && filled > 0) ? filled : '';
       var valHtml = segDisp ? '<div class="spv-col-val">' + segDisp + '</div>'
                     : (isOff ? '<div class="spv-col-val spv-off-lbl">OFF</div>' : '');
-      var cntHtml = compCount > 1 ? '<div class="spv-col-count">×' + compCount + '</div>' : '';
+      var cntHtml = compCount > 1 ? '<div class="spv-col-count" style="' + (c.sys.key==='Cooler'?'color:'+c.sys.color+';font-weight:700;font-size:10px;opacity:1':'') + '">×' + compCount + '</div>' : '';
 
       var isOffOpacity = isOff ? '0.2' : '1';
       var iconHtml = '<div class="spv-col-icon" data-togglekey="' + c.sys.key + '" style="color:' + (isOff ? 'rgba(255,255,255,0.2)' : c.sys.color) + ';opacity:' + isOffOpacity + '">' + c.sys.icon + '</div>';
@@ -3560,7 +3560,7 @@ function updatePower() {
             + attrs_f + '></div>';
         }
         var valHtml_f = filled_f > 0 ? '<div class="spv-col-val">' + filled_f + '</div>' : '';
-        var cntHtml_f = compCount_f > 1 ? '<div class="spv-col-count">×' + compCount_f + '</div>' : '';
+        var cntHtml_f = compCount_f > 1 ? '<div class="spv-col-count" style="' + (col.key==='Cooler'?'color:'+col.sys.color+';font-weight:700;font-size:10px;opacity:1':'') + '">×' + compCount_f + '</div>' : '';
         var fbOff = (filled_f === 0 && userPwrAdj[selShip] && userPwrAdj[selShip][col.key] === 0);
         var iconHtml_f = '<div class="spv-col-icon" data-togglekey="' + col.key + '" style="color:' + (filled_f===0?'rgba(255,255,255,0.2)':col.sys.color) + ';opacity:' + (filled_f===0?'0.2':'1') + '">' + col.sys.icon + '</div>';
         return '<div class="spv-col' + (filled_f===0?' col-off':'') + '"'
