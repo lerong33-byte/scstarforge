@@ -2,32 +2,38 @@ name: Deploy SC-ShipForge LIVE
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version being deployed'
-        required: false
-        default: 'latest'
 
 jobs:
-  build-and-deploy:
+  deploy-main:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
-      id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.DEPLOY_PAT || secrets.GITHUB_TOKEN }}
-
-      - name: Deploy to GitHub Pages
+      - uses: actions/checkout@v4
+      - name: Deploy main to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
           publish_branch: gh-pages
+          force_orphan: true
+          exclude_assets: '.github'
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy dev to preview branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages-dev
           force_orphan: true
           exclude_assets: '.github'
