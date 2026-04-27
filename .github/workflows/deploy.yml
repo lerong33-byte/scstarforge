@@ -4,18 +4,38 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      file_url:
+        description: 'URL of index.html to deploy'
+        required: false
+        default: ''
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DEPLOY_PAT }}
+
+      - name: Download new index.html if URL provided
+        if: github.event.inputs.file_url != ''
+        run: |
+          curl -L "${{ github.event.inputs.file_url }}" -o index.html
+          git config user.email "claude@anthropic.com"
+          git config user.name "Claude Deploy Bot"
+          git add index.html
+          git commit -m "Auto-deploy: update index.html" || echo "No changes"
+          git push
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.DEPLOY_PAT }}
           publish_dir: ./
           publish_branch: gh-pages
           force_orphan: true
