@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2ESKV4ZVD">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C2ESKV4ZVD"></script>
+    <script>
 
 // ══════════════════════════════════════════
 // SPViewer-exact power chart renderer
@@ -58,7 +59,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v2.90-DEV.7</title>
+<title>SC-ShipForge v2.90-DEV.8</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -642,7 +643,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.90-DEV.7</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.90-DEV.8</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="ss_inp_ship" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -3606,7 +3607,7 @@ function updatePower() {
     var totalGaps = genTotal > 1 ? (genTotal-1)*BLK_GAP + Math.floor((genTotal-1)/GRP_SZ)*GRP_GAP : 0;
     BLK_H = genTotal > 0 ? Math.max(2, Math.floor((TARGET_H - totalGaps) / genTotal)) : 5;
 
-    chartEl.innerHTML = cols.map(function(c) {
+    chartEl.innerHTML = expandedCols.map(function(c) {
       var poolMax = genTotal;
       var poolMin = 0;
       var compCount = 1;
