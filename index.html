@@ -33,6 +33,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="SC-ShipForge LIVE — Star Citizen Loadout Builder"/>
 <meta name="twitter:description" content="Build and compare Star Citizen ship loadouts with live game data."/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230c0e12'/><text x='16' y='22' text-anchor='middle' font-size='20' fill='%237ab0e8'>⚡</text></svg>"/>
 <link rel="sitemap" type="application/xml" href="/sitemap.xml"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -536,7 +537,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.84</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.85</span></div>
     <div class="nav-search-wrap search-box">
       <span class="search-icon">&#9906;</span>
       <input type="text" id="sSearch" placeholder="Search ships…" oninput="onSearch()" onfocus="buildSrbox(this.value.trim().toLowerCase())" onblur="setTimeout(function(){var sb=document.getElementById('srbox');if(sb)sb.style.display='none';},150)" autocomplete="off"/>
@@ -4454,6 +4455,7 @@ function updateTargetAnalysis(forceName) {
     });
   }
 
+  var _totalTTK = '—', _inTotalTTK = '—';
   var pc = armor.phys === 0 ? 'var(--t3)' : armor.phys < 30 ? 'var(--green)' : armor.phys < 70 ? 'var(--amber)' : 'var(--red)';
   var ec = armor.energy === 0 ? 'var(--t3)' : armor.energy < 30 ? 'var(--green)' : armor.energy < 70 ? 'var(--amber)' : 'var(--red)';
 
@@ -4500,6 +4502,7 @@ function updateTargetAnalysis(forceName) {
       var hlTime = tgtHull > 0 ? tgtHull / effDPS : 0;
       if (shTime !== null) totalTTK = (shTime + hlTime).toFixed(1) + 's';
     }
+    _totalTTK = totalTTK;
     var ttkColor = totalTTK === '\u2014' ? 'var(--t3)'
                  : parseFloat(totalTTK) < 10 ? 'var(--red)'
                  : parseFloat(totalTTK) < 30 ? 'var(--warn)' : 'var(--green)';
@@ -4590,8 +4593,8 @@ function updateTargetAnalysis(forceName) {
   // Update verdict wrap (above target panel)
   var vw = document.getElementById('verdictWrap');
   if (vw) {
-    var myTTK = parseFloat((totalTTK||'').toString().replace('s',''));
-    var theirTTK = parseFloat((inTotalTTK||'').toString().replace('s',''));
+    var myTTK = parseFloat((_totalTTK||'').toString().replace('s',''));
+    var theirTTK = parseFloat((_inTotalTTK||'').toString().replace('s',''));
     if (!isNaN(myTTK) && myTTK > 0 && !isNaN(theirTTK) && theirTTK > 0) {
       var iWin = myTTK < theirTTK, tie = Math.abs(myTTK-theirTTK) < 0.1;
       var adv = tie ? 0 : Math.round(Math.abs(theirTTK-myTTK)*10)/10;
@@ -4603,7 +4606,7 @@ function updateTargetAnalysis(forceName) {
       vw.innerHTML = '<div style="background:'+(iWin?'rgba(34,197,94,.1)':tie?'rgba(234,179,8,.1)':'rgba(239,68,68,.1)')+';border:2px solid '+vc+';border-radius:var(--r);padding:10px 14px;text-align:center">'
         +'<div style="font-size:20px;font-weight:700;font-family:var(--fmono);color:'+vc+';letter-spacing:1px">'+vi+' '+vt+'</div>'
         +'<div style="font-size:11px;color:var(--text);font-family:var(--fmono);margin-top:4px;letter-spacing:.5px">'+vs+'</div>'
-        +(inTotalTTK ? '<div style="border-top:1px solid '+vc+'33;margin-top:8px;padding-top:8px">'
+        +(_inTotalTTK && _inTotalTTK !== '—' ? '<div style="border-top:1px solid '+vc+'33;margin-top:8px;padding-top:8px">'
           +'<div style="font-size:9px;letter-spacing:1.5px;color:var(--text);font-family:var(--fmono);margin-bottom:3px">THEY KILL YOU IN</div>'
           +'<div style="font-size:22px;font-weight:700;font-family:var(--fmono);color:'+inColor+';text-shadow:0 0 12px '+inColor+'66">'+inTotalTTK+'</div>'
         +'</div>' : '')
