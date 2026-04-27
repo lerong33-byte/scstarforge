@@ -3497,10 +3497,13 @@ function updatePower() {
     cols.forEach(function(col) {
       var count = col.key === 'Cooler' ? (compCounts.cooler||1) :
                   col.key === 'Shield' ? (compCounts.sg||1) : 1;
-      var perSegs = count > 1 ? col.segs / count : col.segs;
+      var instKey2 = count > 1 ? col.key + '_' + ci : col.key;
+        var storedSegs = (userPwrAdj[selShip] && userPwrAdj[selShip][instKey2] !== undefined) ? userPwrAdj[selShip][instKey2] : (count > 1 ? col.segs / count : col.segs);
+        var perSegs = storedSegs;
       var perBase = count > 1 ? col.base / count : col.base;
       for(var ci=0; ci<count; ci++) {
-        expandedCols.push({sys:col.sys, segs:perSegs, base:perBase, key:col.key, instIdx:ci, instTotal:count});
+        var instKey = count > 1 ? col.key + '_' + ci : col.key;
+        expandedCols.push({sys:col.sys, segs:perSegs, base:perBase, key:instKey, baseKey:col.key, instIdx:ci, instTotal:count});
       }
     });
     cols = expandedCols;
@@ -3740,7 +3743,8 @@ function updatePower() {
       var perSegs = count > 1 ? col.segs / count : col.segs;
       var perBase = count > 1 ? col.base / count : col.base;
       for(var ci=0; ci<count; ci++) {
-        expandedColsF.push({sys:col.sys, segs:perSegs, base:perBase, key:col.key, instIdx:ci, instTotal:count});
+        var instKeyF = count > 1 ? col.key + '_' + ci : col.key;
+        expandedColsF.push({sys:col.sys, segs:perSegs, base:perBase, key:instKeyF, baseKey:col.key, instIdx:ci, instTotal:count});
       }
     });
     cols_f = expandedColsF;
