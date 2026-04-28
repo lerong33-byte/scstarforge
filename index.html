@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v2.0 LIVE</title>
+<title>SC-ShipForge v4.10 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -825,7 +825,8 @@ option,optgroup{background:var(--bg2)}
       padding:0 2px;line-height:1;flex-shrink:0" title="Dismiss">×</button>
   </div>
       <div class="tabs">
-        <button class="tab on" data-t="lo" onclick="showTab('lo',this)">LOADOUT BUILDER</button>
+        <button class="tab" id="tabShipSelector" data-tab="shipSelector">SHIP SELECTOR</button>
+<button class="tab on" data-t="lo" onclick="showTab('lo',this)">LOADOUT BUILDER</button>
         <button class="tab" data-t="ai" onclick="showTab('ai',this)">AI ADVISOR</button>
         <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS DB</button>
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
@@ -6432,4 +6433,4 @@ window.addEventListener('load', function() {
 <!-- v4.6-DEV -->
 <!-- v4.7-DEV -->
 <!-- v4.8-DEV -->
-<!-- v2.0 LIVE -->
+<!-- v4.10 DEV -->
