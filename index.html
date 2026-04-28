@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v4.11 DEV</title>
+<title>SC-ShipForge v4.12 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -249,12 +249,23 @@ window.renderSpvChart = renderSpvChart;
 }
 /* ── End Erkul Reskin ── */
 
+
+/* ── Erkul Reskin v4.12 - Minimal Safe ── */
+#spvChart .spv-block.filled  { background:#22c55e !important; box-shadow:0 0 3px rgba(34,197,94,0.35) !important; }
+#spvChart .spv-block.empty   { background:#1e2530 !important; display:block !important; }
+#spvChart .spv-block.minimum { background:rgba(34,197,94,0.45) !important; cursor:default !important; }
+#spvChart .spv-block:hover:not(.minimum) { filter:brightness(1.3) !important; }
+#spvChart .spv-col-icon      { color:#22c55e !important; }
+#pwrCard .spv-mode-btn.on    { background:#f59e0b !important; color:#0d1117 !important; }
+#pwrCard .pwr-eu             { color:#f59e0b !important; }
+/* ── End ── */
+
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v4.11-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v4.12-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -6028,3 +6039,4 @@ window.addEventListener('load', function() {
 <!-- v2.0 LIVE -->
 <!-- v4.9-DEV erkul redesign -->
 <!-- v4.11-DEV scoped erkul reskin -->
+<!-- v4.12-DEV minimal safe reskin -->
