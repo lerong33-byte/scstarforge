@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v5.8 DEV</title>
+<title>SC-ShipForge v5.9 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -736,7 +736,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.8-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.9-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -902,7 +902,6 @@ option,optgroup{background:var(--bg2)}
       <div class="tabs">
         <button class="tab on" data-t="lo" onclick="showTab('lo',this)">LOADOUT BUILDER</button>
         <button class="tab" data-t="ships" onclick="showTab('ships',this)">SHIPS</button>
-        <button class="tab" data-t="ai" onclick="showTab('ai',this)">AI ADVISOR</button>
         <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS DB</button>
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
         <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
@@ -933,22 +932,7 @@ option,optgroup{background:var(--bg2)}
 <div id="loContent" style="flex:1;overflow-y:auto;padding:16px"></div>
       </div>
 
-      <div class="pane" id="pane-ai">
-        <div class="ai-banner" id="aiBanner">
-          <span>&#9888; API KEY:</span>
-          <input type="password" id="apiKeyInput" placeholder="sk-ant-..."/>
-          <button onclick="saveKey()">SAVE</button>
-        </div>
-        <div class="ai-active" id="aiActive">&#10003; AI ONLINE &mdash; Ask anything about ships, builds, meta</div>
-        <div class="msgs" id="aiMsgs">
-          <div class="msg"><div class="av a">AI</div><div class="bub">Enter your Anthropic API key above to enable AI build advice.</div></div>
-        </div>
-        <div class="typing-row" id="aiTyping"><div class="td"></div><div class="td"></div><div class="td"></div><span style="font-size:11px;color:var(--t3);margin-left:4px">Thinking&hellip;</span></div>
-        <div class="inp-row">
-          <input class="chat-inp" id="aiInput" placeholder="Ask about builds, meta, ship comparisons&hellip;" onkeydown="if(event.key==='Enter')sendAI()"/>
-          <button class="sbtn" id="aiSend" onclick="sendAI()">SEND</button>
-        </div>
-      </div>
+      
 
       <div class="pane" id="pane-sv" style="flex-direction:column">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
