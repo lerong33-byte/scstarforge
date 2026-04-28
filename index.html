@@ -693,30 +693,35 @@ option,optgroup{background:var(--bg2)}
 
 
 /* ── Ships Database Tab ── */
-#shipsPage{padding:20px;max-width:1200px;margin:0 auto}
-.ships-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.ships-title{font-family:'Rajdhani','JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:0.1em;color:#38bdf8;text-transform:uppercase;margin:0}
-.ships-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a94a3}
-.ships-search-row{margin-bottom:12px}
-.ships-search{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--text);font-family:var(--fhud);outline:none;transition:border-color .15s}
-.ships-search:focus{border-color:#38bdf8}
-.ships-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.ships-filter-btn{padding:5px 12px;font-family:'Rajdhani',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;border-radius:20px;border:1px solid var(--border);color:#8a94a3;background:transparent;cursor:pointer;transition:all .2s;text-transform:uppercase}
-.ships-filter-btn.on{background:#38bdf8;color:#0d1117;border-color:#38bdf8}
-.ships-filter-btn:hover:not(.on){border-color:#38bdf8;color:#38bdf8}
-.ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.ship-card{background:linear-gradient(160deg,#151b24,#0f1318);border:1px solid rgba(255,255,255,0.06);border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
-.ship-card:hover{transform:translateY(-2px);border-color:rgba(56,189,248,0.3);box-shadow:0 4px 20px rgba(0,0,0,0.4)}
-.ship-card-img{width:100%;height:140px;object-fit:cover;background:#0c0e12;display:block}
-.ship-card-img-placeholder{width:100%;height:140px;background:linear-gradient(135deg,#1a2030,#0e1218);display:flex;align-items:center;justify-content:center;color:#2a3545;font-size:28px}
-.ship-card-body{padding:10px 12px}
-.ship-card-role{display:inline-block;font-family:'Rajdhani',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);border-radius:3px;padding:2px 6px;margin-bottom:6px}
-.ship-card-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#e6ebf2;margin:0 0 2px;line-height:1.2}
-.ship-card-mfr{font-family:var(--fmono);font-size:10px;color:#8a94a3;letter-spacing:0.05em;margin-bottom:8px}
-.ship-card-footer{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.ship-card-size{font-family:var(--fmono);font-size:10px;color:#8a94a3}
-.ship-card-builder{font-family:'Rajdhani',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;color:#22c55e;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:4px;padding:4px 10px;cursor:pointer;transition:all .2s;text-transform:uppercase;text-decoration:none}
-.ship-card-builder:hover{background:rgba(34,197,94,0.2);color:#4ade80}
+#pane-ships #shipsPage{padding:20px;max-width:1400px;margin:0 auto}
+#pane-ships .ships-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+#pane-ships .ships-title{font-family:'Rajdhani','JetBrains Mono',monospace;font-size:24px;font-weight:700;letter-spacing:0.1em;color:#38bdf8;text-transform:uppercase;margin:0}
+#pane-ships .ships-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a94a3;background:rgba(56,189,248,0.08);padding:4px 10px;border-radius:12px;border:1px solid rgba(56,189,248,0.15)}
+#pane-ships .ships-search-row{margin-bottom:14px}
+#pane-ships .ships-search{width:100%;background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px 10px 38px;font-size:14px;color:#e6ebf2;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238a94a3' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;box-sizing:border-box}
+#pane-ships .ships-search:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,0.1)}
+#pane-ships .ships-search::placeholder{color:#4a5568}
+#pane-ships .ships-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+#pane-ships .ships-filter-btn{padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;border-radius:20px;border:1px solid rgba(255,255,255,0.08);color:#8a94a3;background:transparent;cursor:pointer;transition:all .2s;text-transform:uppercase}
+#pane-ships .ships-filter-btn:hover{border-color:rgba(56,189,248,0.3);color:#c0cee0}
+#pane-ships .ships-filter-btn.on{background:rgba(56,189,248,0.12);border-color:rgba(56,189,248,0.4);color:#38bdf8}
+#pane-ships .ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+#pane-ships .ship-card{position:relative;background:#0d1117;border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+#pane-ships .ship-card:hover{transform:translateY(-3px);border-color:rgba(56,189,248,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+#pane-ships .ship-card-img-wrap{position:relative;width:100%;height:170px;overflow:hidden;background:#080c12}
+#pane-ships .ship-card-img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+#pane-ships .ship-card:hover .ship-card-img{transform:scale(1.05)}
+#pane-ships .ship-card-role-badge{position:absolute;top:10px;left:10px;padding:3px 10px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:4px;color:#fff;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1)}
+#pane-ships .ship-card-size-badge{position:absolute;top:10px;right:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;border-radius:6px;color:#e6ebf2;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1)}
+#pane-ships .ship-card-body{padding:14px 14px 12px}
+#pane-ships .ship-card-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#e6ebf2;margin:0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pane-ships .ship-card-mfr{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6577;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pane-ships .ship-card-footer{display:flex;align-items:center;justify-content:space-between}
+#pane-ships .ship-card-role-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a94a3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+#pane-ships .ship-card-builder{padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(56,189,248,0.3);color:#38bdf8;background:rgba(56,189,248,0.06);cursor:pointer;transition:all .2s;white-space:nowrap}
+#pane-ships .ship-card-builder:hover{background:rgba(56,189,248,0.15);border-color:#38bdf8}
+#pane-ships .ship-card-no-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#2a3240;font-family:'Rajdhani',sans-serif;font-size:40px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em}
+@media(max-width:600px){#pane-ships .ships-grid{grid-template-columns:1fr 1fr;gap:10px}#pane-ships .ship-card-img-wrap{height:120px}}
 
 </style>
 
@@ -979,6 +984,34 @@ option,optgroup{background:var(--bg2)}
           </div>
           <div id="cmpTable" style="color:var(--t3);font-size:13px;text-align:center;padding:20px 0;font-family:var(--fmono)">Select two ships to compare</div>
         </div>
+      <div class="pane" id="pane-ships">
+        <div id="shipsPage">
+          <div class="ships-header">
+            <h2 class="ships-title">Ship Database</h2>
+            <span class="ships-count" id="shipsCount"></span>
+          </div>
+          <div class="ships-search-row">
+            <input type="text" id="shipsSearchInput" placeholder="Search ships by name, manufacturer, or role..." class="ships-search" oninput="filterShips()"/>
+          </div>
+          <div class="ships-filters" id="shipsFilters">
+            <button class="ships-filter-btn on" data-role="All" onclick="setShipFilter('All',this)">All</button>
+            <button class="ships-filter-btn" data-role="Fighter" onclick="setShipFilter('Fighter',this)">Fighter</button>
+            <button class="ships-filter-btn" data-role="Bomber" onclick="setShipFilter('Bomber',this)">Bomber</button>
+            <button class="ships-filter-btn" data-role="Interdiction" onclick="setShipFilter('Interdiction',this)">Interdiction</button>
+            <button class="ships-filter-btn" data-role="Gunship" onclick="setShipFilter('Gunship',this)">Gunship</button>
+            <button class="ships-filter-btn" data-role="Transport" onclick="setShipFilter('Transport',this)">Transport</button>
+            <button class="ships-filter-btn" data-role="Support" onclick="setShipFilter('Support',this)">Support</button>
+            <button class="ships-filter-btn" data-role="Exploration" onclick="setShipFilter('Exploration',this)">Exploration</button>
+            <button class="ships-filter-btn" data-role="Mining" onclick="setShipFilter('Mining',this)">Mining</button>
+            <button class="ships-filter-btn" data-role="Cargo" onclick="setShipFilter('Cargo',this)">Cargo</button>
+            <button class="ships-filter-btn" data-role="Starter" onclick="setShipFilter('Starter',this)">Starter</button>
+            <button class="ships-filter-btn" data-role="Racing" onclick="setShipFilter('Racing',this)">Racing</button>
+            <button class="ships-filter-btn" data-role="Capital" onclick="setShipFilter('Capital',this)">Capital</button>
+          </div>
+          <div class="ships-grid" id="shipsGrid"></div>
+        </div>
+      </div>
+
       </div>
     </div>
 
@@ -5587,42 +5620,22 @@ function hideDashboard() {
 window.addEventListener('load',function(){renderDashboard();});
 
 
-function filterShipsByRole(role) {
-  var qlEl = document.getElementById('dQuickLaunch');
-  if (!qlEl) return;
-  qlEl.innerHTML = '';
+function filterShips() {
+  var q = (document.getElementById('shipsSearchInput').value || '').toLowerCase();
+  var role = window._shipsActiveRole || 'All';
+  var cards = document.querySelectorAll('#pane-ships .ship-card');
   var shown = 0;
-  Object.keys(SHIPS).sort().forEach(function(mfr) {
-    if (!SHIPS[mfr] || shown >= 8) return;
-    SHIPS[mfr].forEach(function(s) {
-      if (shown >= 8) return;
-      var def = SHIP_DATA[s]; if (!def) return;
-      if (role && (!def.role || def.role.split('/')[0].trim() !== role)) return;
-      var sc={XS:'var(--cyan)',S:'var(--green)',M:'var(--accent)',L:'var(--warn)',XL:'var(--red)'}[def.size]||'var(--t3)';
-      var card=document.createElement('div');
-      card.style.cssText='background:var(--bg4);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 6px;cursor:pointer;transition:border-color .15s';
-      card.innerHTML='<div style="font-size:10px;font-weight:600;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s+'</div><span style="font-size:8px;font-family:var(--fmono);color:'+sc+';border:1px solid '+sc+';padding:1px 4px;border-radius:8px">'+def.size+'</span>';
-      card.onmouseover=function(){this.style.borderColor='var(--accent)';};
-      card.onmouseout=function(){this.style.borderColor='var(--border)';};
-      card.onclick=(function(n){return function(){pick(n);};})(s);
-      qlEl.appendChild(card); shown++;
-    });
+  cards.forEach(function(c) {
+    var sName = (c.getAttribute('data-ship') || '').toLowerCase();
+    var sRole = (c.getAttribute('data-role') || '').toLowerCase();
+    var sMfr = (c.getAttribute('data-mfr') || '').toLowerCase();
+    var matchRole = (role === 'All') || sRole === role.toLowerCase();
+    var matchQ = !q || sName.indexOf(q) > -1 || sRole.indexOf(q) > -1 || sMfr.indexOf(q) > -1;
+    if (matchRole && matchQ) { c.style.display = ''; shown++; }
+    else { c.style.display = 'none'; }
   });
-  // Also filter the main ship dropdown
-  var sSel=document.getElementById('sSel'); if(!sSel) return;
-  while(sSel.options.length>1) sSel.remove(1);
-  Object.keys(SHIPS).sort().forEach(function(mfr){
-    if(!SHIPS[mfr])return;
-    var ships=SHIPS[mfr].filter(function(s){
-      if(!role)return true;
-      var def=SHIP_DATA[s];
-      return def&&def.role&&def.role.split('/')[0].trim()===role;
-    });
-    if(!ships.length)return;
-    var og=document.createElement('optgroup'); og.label=mfr;
-    ships.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;og.appendChild(o);});
-    sSel.appendChild(og);
-  });
+  var el = document.getElementById('shipsCount');
+  if (el) el.textContent = shown + ' of ' + cards.length + ' ships';
 }
 
 
@@ -6455,45 +6468,112 @@ var _shipsFilter = 'All';
 var _shipsImgCache = {};
 
 function renderShips() {
+  var SHIP_MFR_MAP = {
+    'Gladius':'Aegis Dynamics','Gladius Valiant':'Aegis Dynamics','Avenger Titan':'Aegis Dynamics','Avenger Stalker':'Aegis Dynamics','Avenger Warlock':'Aegis Dynamics',
+    'Sabre':'Aegis Dynamics','Sabre Comet':'Aegis Dynamics','Sabre Raven':'Aegis Dynamics','Sabre Firebird':'Aegis Dynamics',
+    'Eclipse':'Aegis Dynamics','Vanguard Warden':'Aegis Dynamics','Vanguard Harbinger':'Aegis Dynamics','Vanguard Sentinel':'Aegis Dynamics','Vanguard Hoplite':'Aegis Dynamics',
+    'Hammerhead':'Aegis Dynamics','Redeemer':'Aegis Dynamics','Reclaimer':'Aegis Dynamics','Nautilus':'Aegis Dynamics','Retaliator':'Aegis Dynamics',
+    'Arrow':'Anvil Aerospace','Hornet F7C':'Anvil Aerospace','F7C Hornet Mk I':'Anvil Aerospace','F7C Hornet Mk II':'Anvil Aerospace',
+    'F7C-M Super Hornet Mk I':'Anvil Aerospace','F7C-M Super Hornet Mk II':'Anvil Aerospace','F7C-S Hornet Ghost':'Anvil Aerospace','F7C-R Hornet Tracker':'Anvil Aerospace',
+    'Hurricane':'Anvil Aerospace','Hawk':'Anvil Aerospace','Gladiator':'Anvil Aerospace','Terrapin':'Anvil Aerospace','Carrack':'Anvil Aerospace','Valkyrie':'Anvil Aerospace',
+    'F8C Lightning':'Anvil Aerospace','Pisces C8X':'Anvil Aerospace','Pisces C8':'Anvil Aerospace','Centurion':'Anvil Aerospace',
+    'Aurora MR':'RSI','Aurora LN':'RSI','Aurora CL':'RSI','Aurora ES':'RSI','Constellation Andromeda':'RSI','Constellation Aquila':'RSI','Constellation Taurus':'RSI','Constellation Phoenix':'RSI',
+    'Mantis':'RSI','Scorpius':'RSI','Scorpius Antares':'RSI','Polaris':'RSI','Bengal':'RSI','Lynx':'RSI','Zeus Mk II CL':'RSI','Zeus Mk II MR':'RSI','Zeus Mk II ES':'RSI',
+    'Cutlass Black':'Drake Interplanetary','Cutlass Blue':'Drake Interplanetary','Cutlass Red':'Drake Interplanetary','Cutlass Steel':'Drake Interplanetary',
+    'Buccaneer':'Drake Interplanetary','Herald':'Drake Interplanetary','Caterpillar':'Drake Interplanetary','Dragonfly Black':'Drake Interplanetary','Dragonfly Yellowjacket':'Drake Interplanetary',
+    'Vulture':'Drake Interplanetary','Corsair':'Drake Interplanetary','Kraken':'Drake Interplanetary','Mule':'Drake Interplanetary','Cutter':'Drake Interplanetary','Cutter Rambler':'Drake Interplanetary','Cutter Scout':'Drake Interplanetary',
+    'Freelancer':'MISC','Freelancer MAX':'MISC','Freelancer MIS':'MISC','Freelancer DUR':'MISC','Starfarer':'MISC','Starfarer Gemini':'MISC','Prospector':'MISC',
+    'Reliant Kore':'MISC','Reliant Tana':'MISC','Reliant Sen':'MISC','Reliant Mako':'MISC','Hull A':'MISC','Hull B':'MISC','Hull C':'MISC','Hull D':'MISC','Hull E':'MISC','Fury':'MISC','Fury MX':'MISC','Fury LX':'MISC','Odyssey':'MISC','Expanse':'MISC','Starlancer TAC':'MISC','Starlancer MAX':'MISC',
+    '100i':'Origin Jumpworks','125a':'Origin Jumpworks','135c':'Origin Jumpworks','300i':'Origin Jumpworks','315p':'Origin Jumpworks','325a':'Origin Jumpworks','350r':'Origin Jumpworks',
+    '400i':'Origin Jumpworks','600i Touring':'Origin Jumpworks','600i Explorer':'Origin Jumpworks','890 Jump':'Origin Jumpworks','X1 Base':'Origin Jumpworks',
+    'Defender':'Banu','Merchantman':'Banu',
+    'Prowler':'Esperia','Blade':'Esperia','Glaive':'Esperia','Talon':'Esperia','Talon Shrike':'Esperia',
+    'Nomad':'Consolidated Outland','Mustang Alpha':'Consolidated Outland','Mustang Beta':'Consolidated Outland','Mustang Gamma':'Consolidated Outland','Mustang Delta':'Consolidated Outland','Pioneer':'Consolidated Outland',
+    'Razor':'MISC','Razor LX':'MISC','Razor EX':'MISC',
+    'Nox':'Aopoa','Nox Kue':'Aopoa','Khartu-Al':'Aopoa',
+    'Driller':'ARGO','RAFT':'ARGO','ATLS':'ARGO','MPUV Cargo':'ARGO','MPUV Personnel':'ARGO','SRV':'ARGO',
+    'Vulcan':'Aegis Dynamics','Mercury Star Runner':'Crusader Industries','Hercules Starlifter C2':'Crusader Industries','Hercules Starlifter M2':'Crusader Industries','Hercules Starlifter A2':'Crusader Industries',
+    'Ares Inferno':'Crusader Industries','Ares Ion':'Crusader Industries','Spirit A1':'Crusader Industries','Spirit C1':'Crusader Industries','Spirit E1':'Crusader Industries',
+    'Genesis Starliner':'Crusader Industries','Intrepid':'Crusader Industries',
+    'Ballista':'Anvil Aerospace','Spartan':'Anvil Aerospace','Nova':'Tumbril','Cyclone':'Tumbril','Cyclone MT':'Tumbril','Cyclone RN':'Tumbril','Cyclone RC':'Tumbril','Cyclone TR':'Tumbril','Cyclone AA':'Tumbril','Storm':'Tumbril','Storm AA':'Tumbril',
+    'Ursa':'RSI','G12':'Gatac','Railen':'Gatac',
+    'San\'tok.yai':'Aopoa','Endeavor':'MISC',
+    'Idris-M':'Aegis Dynamics','Idris-P':'Aegis Dynamics','Javelin':'Aegis Dynamics',
+    'Legionnaire':'Anvil Aerospace','Liberator':'MISC','Arrastra':'RSI',
+    'MOLE':'ARGO',
+    'P-52 Merlin':'Kruger','P-72 Archimedes':'Kruger','L-21 Wolf':'Kruger',
+    'Guardian':'Mirai','Guardian QI':'Mirai','Guardian MX':'Mirai',
+    'C1 Spirit':'Crusader Industries'
+  };
   var grid = document.getElementById('shipsGrid');
-  var search = (document.getElementById('shipsSearchInput')||{}).value||'';
-  search = search.toLowerCase().trim();
   if (!grid || typeof SHIP_DATA === 'undefined') return;
-
-  var ships = Object.keys(SHIP_DATA).sort();
-  var filtered = ships.filter(function(name){
+  grid.innerHTML = '';
+  var names = Object.keys(SHIP_DATA).sort();
+  names.forEach(function(name) {
     var s = SHIP_DATA[name];
-    if (_shipsFilter !== 'All' && s.role !== _shipsFilter) return false;
-    if (search && name.toLowerCase().indexOf(search) < 0 && 
-        (s.mfr||'').toLowerCase().indexOf(search) < 0 &&
-        (s.role||'').toLowerCase().indexOf(search) < 0) return false;
-    return true;
+    var mfr = SHIP_MFR_MAP[name] || '';
+    var role = s.role || 'Unknown';
+    var size = s.size || '?';
+    var wikiTitle = (window._WIKIMAP && window._WIKIMAP[name]) ? window._WIKIMAP[name] : name.replace(/ /g, '_');
+    var imgUrl = 'https://starcitizen.tools/api.php?action=query&titles=' + encodeURIComponent(wikiTitle) + '&prop=pageimages&format=json&pithumbsize=400&pilimit=1&origin=*';
+    var card = document.createElement('div');
+    card.className = 'ship-card';
+    card.setAttribute('data-ship', name);
+    card.setAttribute('data-role', role);
+    card.setAttribute('data-mfr', mfr);
+    card.onclick = function(e) { if (!e.target.classList.contains('ship-card-builder')) openShipInBuilder(name); };
+    var imgWrap = document.createElement('div');
+    imgWrap.className = 'ship-card-img-wrap';
+    var img = document.createElement('img');
+    img.className = 'ship-card-img';
+    img.alt = name;
+    img.loading = 'lazy';
+    var placeholder = document.createElement('div');
+    placeholder.className = 'ship-card-no-img';
+    placeholder.textContent = size;
+    imgWrap.appendChild(placeholder);
+    imgWrap.appendChild(img);
+    fetch(imgUrl).then(function(r){return r.json()}).then(function(d){
+      var pages = d && d.query && d.query.pages;
+      if(pages){var pg=Object.values(pages)[0];if(pg&&pg.thumbnail&&pg.thumbnail.source){img.src=pg.thumbnail.source;img.onload=function(){placeholder.style.display='none'};img.onerror=function(){img.style.display='none'}}}
+    }).catch(function(){});
+    var roleBadge = document.createElement('span');
+    roleBadge.className = 'ship-card-role-badge';
+    roleBadge.textContent = role;
+    var sizeBadge = document.createElement('span');
+    sizeBadge.className = 'ship-card-size-badge';
+    sizeBadge.textContent = size;
+    imgWrap.appendChild(roleBadge);
+    imgWrap.appendChild(sizeBadge);
+    var body = document.createElement('div');
+    body.className = 'ship-card-body';
+    var h3 = document.createElement('h3');
+    h3.className = 'ship-card-name';
+    h3.textContent = name;
+    var mfrDiv = document.createElement('div');
+    mfrDiv.className = 'ship-card-mfr';
+    mfrDiv.textContent = mfr || 'Unknown Manufacturer';
+    var footer = document.createElement('div');
+    footer.className = 'ship-card-footer';
+    var roleTag = document.createElement('span');
+    roleTag.className = 'ship-card-role-tag';
+    roleTag.textContent = role + ' \u00B7 ' + size;
+    var btn = document.createElement('button');
+    btn.className = 'ship-card-builder';
+    btn.textContent = 'Builder';
+    btn.onclick = function(e) { e.stopPropagation(); openShipInBuilder(name); };
+    footer.appendChild(roleTag);
+    footer.appendChild(btn);
+    body.appendChild(h3);
+    body.appendChild(mfrDiv);
+    body.appendChild(footer);
+    card.appendChild(imgWrap);
+    card.appendChild(body);
+    grid.appendChild(card);
   });
-
-  document.getElementById('shipsCount').textContent = filtered.length + ' of ' + ships.length + ' ships';
-
-  grid.innerHTML = filtered.map(function(name){
-    var s = SHIP_DATA[name];
-    var mfr = s.mfr || '—';
-    var role = s.role || '—';
-    var sz = s.size || '—';
-    var imgHtml = '<div class="ship-card-img-placeholder">\u2708</div>';
-    return '<div class="ship-card" data-ship="' + name + '" onclick="openShipInBuilder(\'' + name.replace(/'/g,"\\'") + '\')">'
-      + imgHtml
-      + '<div class="ship-card-body">'
-      + '<span class="ship-card-role">' + role + '</span>'
-      + '<h3 class="ship-card-name">' + name + '</h3>'
-      + '<div class="ship-card-mfr">' + mfr + '</div>'
-      + '<div class="ship-card-footer">'
-      + '<span class="ship-card-size">Size: ' + sz + '</span>'
-      + '<span class="ship-card-builder" onclick="event.stopPropagation();openShipInBuilder(\'' + name.replace(/'/g,"\\'") + '\')">\u2692 Builder</span>'
-      + '</div></div></div>';
-  }).join('');
-
-  // Lazy-load wiki images
-  filtered.forEach(function(name){
-    loadShipCardImage(name);
-  });
+  var ct = document.getElementById('shipsCount');
+  if(ct) ct.textContent = names.length + ' of ' + names.length + ' ships';
+  window._shipsActiveRole = 'All';
 }
 
 function loadShipCardImage(shipName) {
@@ -6531,10 +6611,10 @@ function setShipCardImg(shipName, src) {
 }
 
 function setShipFilter(role, btn) {
-  _shipsFilter = role;
-  document.querySelectorAll('.ships-filter-btn').forEach(function(b){b.classList.remove('on');});
-  btn.classList.add('on');
-  renderShips();
+  window._shipsActiveRole = role;
+  document.querySelectorAll('#pane-ships .ships-filter-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  filterShips();
 }
 
 function filterShips() {
@@ -6542,10 +6622,9 @@ function filterShips() {
 }
 
 function openShipInBuilder(name) {
-  // Switch to loadout builder tab and pick the ship
+  if (typeof pick === 'function') pick(name);
   var loBtn = document.querySelector('[data-t="lo"]');
   if (loBtn) showTab('lo', loBtn);
-  setTimeout(function(){ pick(name); }, 200);
 }
 
 // Auto-render when ships tab is shown
@@ -6586,33 +6665,7 @@ showTab = function(id, btn) {
       <div id="fbStatus" style="display:none;text-align:center;padding:8px;border-radius:var(--r-sm);font-size:12px;font-family:var(--fmono)"></div>
     </div>
   </div>
-      <div class="pane" id="pane-ships">
-        <div id="shipsPage">
-          <div class="ships-header">
-            <h2 class="ships-title">Ship Database</h2>
-            <span class="ships-count" id="shipsCount">187 ships</span>
-          </div>
-          <div class="ships-search-row">
-            <input type="text" id="shipsSearchInput" placeholder="Search ships..." class="ships-search" oninput="filterShips()"/>
-          </div>
-          <div class="ships-filters" id="shipsFilters">
-            <button class="ships-filter-btn on" data-role="All" onclick="setShipFilter('All',this)">All</button>
-            <button class="ships-filter-btn" data-role="Fighter" onclick="setShipFilter('Fighter',this)">Fighter</button>
-            <button class="ships-filter-btn" data-role="Bomber" onclick="setShipFilter('Bomber',this)">Bomber</button>
-            <button class="ships-filter-btn" data-role="Interdiction" onclick="setShipFilter('Interdiction',this)">Interdiction</button>
-            <button class="ships-filter-btn" data-role="Transport" onclick="setShipFilter('Transport',this)">Transport</button>
-            <button class="ships-filter-btn" data-role="Gunship" onclick="setShipFilter('Gunship',this)">Gunship</button>
-            <button class="ships-filter-btn" data-role="Support" onclick="setShipFilter('Support',this)">Support</button>
-            <button class="ships-filter-btn" data-role="Exploration" onclick="setShipFilter('Exploration',this)">Exploration</button>
-            <button class="ships-filter-btn" data-role="Mining" onclick="setShipFilter('Mining',this)">Mining</button>
-            <button class="ships-filter-btn" data-role="Cargo" onclick="setShipFilter('Cargo',this)">Cargo</button>
-            <button class="ships-filter-btn" data-role="Starter" onclick="setShipFilter('Starter',this)">Starter</button>
-            <button class="ships-filter-btn" data-role="Racing" onclick="setShipFilter('Racing',this)">Racing</button>
-            <button class="ships-filter-btn" data-role="Capital" onclick="setShipFilter('Capital',this)">Capital</button>
-          </div>
-          <div class="ships-grid" id="shipsGrid"></div>
-        </div>
-      </div>
+      
 </div>
 </body>
 </html>
