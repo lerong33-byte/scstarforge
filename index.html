@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v2.0 LIVE</title>
+<title>SC-ShipForge v4.9 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -83,7 +83,7 @@ window.renderSpvChart = renderSpvChart;
 <meta name="twitter:description" content="Build and compare Star Citizen ship loadouts with live game data."/>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230c0e12'/><text x='16' y='22' text-anchor='middle' font-size='20' fill='%237ab0e8'>⚡</text></svg>"/>
 <link rel="sitemap" type="application/xml" href="/sitemap.xml"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 /* ── TOKENS ── */
 button{background:transparent;border:none;cursor:pointer;font-family:inherit;outline:none}
@@ -610,58 +610,49 @@ option,optgroup{background:var(--bg2)}
 
 
 
-/* ── SPViewer-exact power chart ── */
-#spvChart { display:flex; align-items:flex-end; gap:0; padding:4px 0 2px; min-height:90px; }
-.spv-col { display:flex; flex-direction:column-reverse; width:36px; flex-shrink:0; position:relative; }
-.spv-block {
-  width:34px; height:20px; margin:0 auto 2px;
-  border-radius:4px; border:1.5px solid rgba(0,0,0,0.5);
-  cursor:pointer; box-sizing:border-box; flex-shrink:0;
-}
-.spv-block.filled  { background:rgb(252,165,48); }
-.spv-block.empty   { background:rgba(255,255,255,0.08); }
-.spv-block.minimum { background:rgb(200,120,20); cursor:default; }
-.spv-block:hover:not(.minimum) { filter:brightness(1.2); }
-.spv-col-foot { text-align:center; font-size:9px; font-family:var(--fmono); color:var(--t2); margin-top:4px; line-height:1.3; }
-.spv-col-icon { font-size:14px; line-height:1; display:block; margin-bottom:1px; }
-.spv-col-pct  { font-size:9px; display:block; }
-/* hide old chart elements */
-.spv-col-val, .spv-col-count, .spv-col-icon-old { display:none !important; }
+/* ── Erkul-inspired Power Chart v4.9 ── */
+#pwrCard{background:linear-gradient(160deg,#131820,#0e1218)!important;border:1px solid rgba(56,189,248,0.15)!important;border-radius:6px!important;padding:12px!important;position:relative!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04)!important}
+#pwrCard::before,#pwrCard::after{content:'';position:absolute;width:10px;height:10px;border-color:#38bdf8;border-style:solid}
+#pwrCard::before{top:4px;left:4px;border-width:1.5px 0 0 1.5px}
+#pwrCard::after{top:4px;right:4px;border-width:1.5px 1.5px 0 0}
+.lp-card-hd{display:flex!important;align-items:center!important;margin-bottom:8px!important;padding-bottom:6px!important;border-bottom:1px solid rgba(255,255,255,0.06)!important}
+.lp-card-title{font-family:'Rajdhani','JetBrains Mono',monospace!important;font-size:11px!important;font-weight:600!important;letter-spacing:0.18em!important;color:#38bdf8!important;text-transform:uppercase!important;flex:1!important}
+.pwr-eu{font-family:'JetBrains Mono',monospace!important;font-size:13px!important;font-weight:600!important;color:#f59e0b!important;letter-spacing:0.05em!important}
+.con-row{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-bottom:4px!important}
+.con-lbl{font-family:'Rajdhani',monospace!important;font-size:10px!important;font-weight:500!important;letter-spacing:0.18em!important;color:#8a94a3!important;text-transform:uppercase!important;display:flex!important;align-items:center!important;gap:5px!important}
+.con-lbl::before{content:'❄';font-size:11px;display:inline-block;animation:pwr-spin 6s linear infinite;color:#38bdf8}
+#pwrPct{font-family:'JetBrains Mono',monospace!important;font-size:11px!important;font-weight:600!important;letter-spacing:0.05em!important}
+.con-bar-wrap{height:6px!important;background:rgba(255,255,255,0.06)!important;border-radius:3px!important;overflow:hidden!important;margin-bottom:10px!important}
+#conBar{height:100%!important;border-radius:3px!important;transition:width .4s ease,background .4s ease!important;box-shadow:0 0 6px rgba(34,197,94,0.4)!important}
+#spvChart{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(20px,1fr))!important;gap:3px!important;align-items:flex-end!important;padding:4px 0 2px!important;min-height:80px!important;flex-wrap:unset!important}
+#spvChart .spv-col{display:flex!important;flex-direction:column-reverse!important;align-items:stretch!important;gap:2px!important;position:relative!important;width:auto!important;flex-shrink:unset!important}
+#spvChart .spv-segs{display:flex!important;flex-direction:column-reverse!important;gap:2px!important}
+#spvChart .spv-block{width:100%!important;height:10px!important;min-height:10px!important;max-height:10px!important;margin:0!important;border-radius:2px!important;border:none!important;box-sizing:border-box!important;cursor:pointer!important;flex-shrink:0!important;display:block!important;transition:transform 0.1s ease!important}
+#spvChart .spv-block.filled{background:#22c55e!important;box-shadow:0 0 4px rgba(34,197,94,0.3)!important}
+#spvChart .spv-block.empty{background:#2a313d!important;display:block!important}
+#spvChart .spv-block.minimum{background:rgba(34,197,94,0.5)!important;cursor:default!important;opacity:0.85!important}
+#spvChart .spv-block:hover:not(.minimum){transform:scaleX(1.15)!important;filter:brightness(1.3)!important}
+#spvChart .spv-col-foot{display:flex!important;flex-direction:column!important;align-items:center!important;margin-top:4px!important;width:100%!important;gap:1px!important}
+#spvChart .spv-col-icon{font-size:12px!important;line-height:1.2!important;display:block!important;color:#22c55e!important;transition:color 0.2s,opacity 0.2s!important;cursor:pointer!important}
+#spvChart .spv-col.col-off .spv-col-icon{color:rgba(255,255,255,0.2)!important;opacity:0.4!important}
+#spvChart .spv-col-pct{font-size:8px!important;display:block!important;font-family:'JetBrains Mono',monospace!important;color:#8a94a3!important}
+.spv-modes{display:flex!important;gap:2px!important;margin:8px 0 4px!important;background:rgba(0,0,0,0.3)!important;border-radius:4px!important;padding:2px!important}
+.spv-mode-btn{flex:1!important;padding:5px 4px!important;font-family:'Rajdhani',monospace!important;font-size:10px!important;font-weight:600!important;letter-spacing:0.1em!important;border-radius:3px!important;border:none!important;cursor:pointer!important;transition:all 0.2s!important;color:#8a94a3!important;background:transparent!important}
+.spv-mode-btn.on{background:#f59e0b!important;color:#0e1218!important;box-shadow:0 0 8px rgba(245,158,11,0.4)!important}
+#navModeBanner{font-size:10px!important;color:#f59e0b!important;font-family:'JetBrains Mono',monospace!important;text-align:center!important;padding:4px!important;background:rgba(245,158,11,0.08)!important;border-radius:3px!important;margin:4px 0!important;border:1px solid rgba(245,158,11,0.2)!important}
+.reset-pwr{width:100%!important;font-family:'Rajdhani',monospace!important;font-size:10px!important;font-weight:600!important;letter-spacing:0.12em!important;color:#8a94a3!important;background:rgba(255,255,255,0.04)!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:3px!important;padding:4px!important;cursor:pointer!important;margin-top:6px!important;transition:all 0.2s!important}
+.reset-pwr:hover{color:#e6ebf2!important;background:rgba(255,255,255,0.08)!important}
+.speed-row{display:flex!important;justify-content:space-between!important;align-items:center!important;padding:3px 0!important;margin:2px 0!important}
+.sig-lbl{font-family:'Rajdhani',monospace!important;font-size:10px!important;font-weight:500!important;letter-spacing:0.12em!important;color:#8a94a3!important;text-transform:uppercase!important}
+.sig-val{font-family:'JetBrains Mono',monospace!important;font-size:12px!important;font-weight:600!important;color:#e6ebf2!important}
+@keyframes pwr-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
-
-/* ── SPViewer-exact power chart ── */
-#spvChart{display:flex!important;align-items:flex-end!important;gap:0!important;padding:2px 0!important}
-#spvChart .spv-col{display:flex!important;flex-direction:column!important;align-items:center!important;width:38px!important;flex-shrink:0!important;gap:1px!important}
-#spvChart .spv-segs{display:flex!important;flex-direction:column-reverse!important;align-items:center!important;gap:0!important}
-#spvChart .spv-block{width:34px!important;height:20px!important;min-height:20px!important;max-height:20px!important;margin-bottom:2px!important;border-radius:3px!important;border:1px solid rgba(0,0,0,0.3)!important;box-sizing:border-box!important;flex-shrink:0!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;font-size:8px!important;font-weight:700!important;color:rgba(0,0,0,0.5)!important;letter-spacing:0.5px!important}
-#spvChart .spv-block.filled{background:linear-gradient(180deg,rgba(252,185,60,0.95),rgba(230,145,30,0.9))!important;box-shadow:0 0 4px rgba(252,165,48,0.3)!important}
-#spvChart .spv-block.empty{background:rgba(255,255,255,0.10)!important;display:flex!important;align-items:center;justify-content:center}
-#spvChart .spv-block.minimum{background:rgb(200,120,20)!important;cursor:default!important}
-#spvChart .spv-block.filled:hover{filter:brightness(1.3)!important} #spvChart .spv-block.empty:hover{filter:brightness(2.0)!important;background:rgba(255,165,48,0.4)!important}
-.spv-block-wrap{display:block;margin:0;padding:0;cursor:pointer}.spv-block-wrap .spv-cb{display:none}.spv-block-wrap:hover .spv-block.filled{filter:brightness(1.3)}.spv-block-wrap:hover .spv-block.empty{background:rgba(255,255,255,0.22)!important}.spv-block{display:flex!important;align-items:center;justify-content:center;font-size:8px;font-family:var(--fmono);font-weight:700;color:rgba(255,255,255,0.8)}.spv-block.minimum{cursor:default}
-#spvChart .spv-col-foot{display:flex!important;flex-direction:column!important;align-items:center!important;margin-top:4px!important;width:36px!important}
-#spvChart .spv-col-icon{font-size:13px!important;line-height:1!important;display:block!important;margin-top:3px!important;cursor:pointer!important;transition:opacity 0.2s,filter 0.2s!important}#spvChart .spv-col-icon:hover{filter:brightness(1.4)!important}
-#spvChart .spv-col-pct{font-size:8px!important;color:rgba(255,255,255,0.4)!important;font-family:var(--fmono)!important;display:block!important;letter-spacing:0!important}
-
-
-/* ── FINAL SIZE OVERRIDE: fit chart in left panel ── */
-#spvChart { flex-wrap:nowrap !important; gap:0 !important; }
-#spvChart .spv-col { width:18px !important; min-width:18px !important; max-width:18px !important; }
-#spvChart .spv-block { width:16px !important; height:10px !important; min-height:10px !important; max-height:10px !important; margin:0 0 1px 0 !important; border-radius:2px !important; }
-#spvChart .spv-col-foot { font-size:7px !important; margin-top:2px !important; }
-#spvChart .spv-col-icon { font-size:10px !important; }
-
-    /* Fix: Make ship search dropdown show all ships */
-    datalist, [role="listbox"], .dropdown-list {
-      max-height: 500px !important;
-      overflow-y: auto !important;
-    }
-    </style>
+</style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.0</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v4.9-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -6433,3 +6424,4 @@ window.addEventListener('load', function() {
 <!-- v4.7-DEV -->
 <!-- v4.8-DEV -->
 <!-- v2.0 LIVE -->
+<!-- v4.9-DEV erkul redesign -->
