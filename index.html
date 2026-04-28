@@ -773,6 +773,40 @@ option,optgroup{background:var(--bg2)}
 .wpm-ship{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c0cee0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:4px 10px;cursor:pointer;transition:all .15s}
 .wpm-ship:hover{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3);color:#38bdf8}
 .wpm-ship-sz{font-size:9px;color:#5a6577;margin-left:4px}
+
+#shipModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+#shipModal.open{display:flex}
+#shipModalCard{background:#0d1117;border:1px solid rgba(56,189,248,0.2);border-radius:12px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+#shipModalCard::-webkit-scrollbar{width:4px}
+#shipModalCard::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.2);border-radius:2px}
+.sm-close{position:absolute;top:12px;right:12px;background:none;border:none;color:#8a94a3;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:4px;z-index:2}
+.sm-close:hover{color:#e6ebf2;background:rgba(255,255,255,0.06)}
+.sm-img{width:100%;height:200px;object-fit:cover;border-radius:12px 12px 0 0;display:block;background:#080c12}
+.sm-body{padding:20px}
+.sm-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#e6ebf2;margin:0 0 2px}
+.sm-mfr{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6577;margin-bottom:12px}
+.sm-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.sm-ov{background:rgba(255,255,255,0.03);border-radius:6px;padding:8px;text-align:center}
+.sm-ov-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6577;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+.sm-ov-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#38bdf8}
+.sm-price{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:8px 12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px}
+.sm-price-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#22c55e}
+.sm-price-loc{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a94a3}
+.sm-section{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:4px}
+.sm-slots{display:flex;flex-direction:column;gap:4px}
+.sm-slot{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:rgba(255,255,255,0.02);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.sm-slot-name{color:#c0cee0}
+.sm-slot-sz{color:#38bdf8;font-weight:700;font-size:10px;background:rgba(56,189,248,0.1);padding:2px 6px;border-radius:4px}
+.sm-comps{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sm-comp{padding:6px 8px;background:rgba(255,255,255,0.02);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.sm-comp-lbl{color:#5a6577;font-size:9px;text-transform:uppercase;display:block;margin-bottom:2px}
+.sm-comp-val{color:#c0cee0}
+.sm-comp-ct{color:#5a6577;font-size:9px}
+.sm-tips{margin-top:12px}
+.sm-tip{font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a94a3;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.sm-tip::before{content:'\25B8 ';color:#38bdf8}
+.sm-builder-btn{display:block;width:100%;margin-top:16px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;border-radius:8px;border:1px solid rgba(56,189,248,0.4);color:#38bdf8;background:rgba(56,189,248,0.08);cursor:pointer;transition:all .2s}
+.sm-builder-btn:hover{background:rgba(56,189,248,0.2);border-color:#38bdf8}
 </style>
 
 <div id="app">
@@ -6681,7 +6715,7 @@ function renderShips() {
     body.appendChild(footer);
     card.appendChild(imgWrap);
     card.appendChild(body);
-    card.onclick = function(e) { if (!e.target.classList.contains('ship-card-builder')) openShipInBuilder(name); };
+    card.onclick = function(e) { if (!e.target.classList.contains('ship-card-builder')) openShipModal(name); };
     grid.appendChild(card);
   });
   var ct = document.getElementById('shipsCount');
@@ -6959,6 +6993,89 @@ switchWpCat = function(cat, btn) {
   setTimeout(attachWcardClicks, 100);
 };
 setTimeout(attachWcardClicks, 1000);
+
+function closeShipModal(){document.getElementById('shipModal').classList.remove('open')}
+function openShipModal(name) {
+  var s = SHIP_DATA[name];
+  if (!s) return;
+  var mc = document.getElementById('shipModalContent');
+  var mfr = (typeof renderShips !== 'undefined' && renderShips.toString().indexOf('SHIP_MFR_MAP') > -1) ? '' : '';
+  // Get manufacturer from the card data attribute
+  var card = document.querySelector('#pane-ships .ship-card[data-ship="' + name.replace(/"/g,'\\"') + '"]');
+  var mfrText = card ? (card.getAttribute('data-mfr') || '') : '';
+  // Get buy info
+  var buyHTML = '';
+  try {
+    var fn = renderShips.toString();
+    var buyMatch = fn.match(/SHIP_BUY\s*=\s*\{([^;]+?)\};/);
+  } catch(e) {}
+  // Try to get price from card
+  var priceEl = card ? card.querySelector('.ship-card-price') : null;
+  var dealerEl = card ? card.querySelector('.ship-card-dealer') : null;
+  if (priceEl && !priceEl.classList.contains('ship-card-price-na')) {
+    buyHTML = '<div class="sm-price"><span class="sm-price-val">' + priceEl.textContent + '</span><span class="sm-price-loc">' + (dealerEl ? dealerEl.textContent : '') + '</span></div>';
+  }
+  // Get image from card
+  var imgEl = card ? card.querySelector('.ship-card-img') : null;
+  var imgSrc = imgEl && imgEl.src ? imgEl.src : '';
+  var imgHTML = imgSrc ? '<img class="sm-img" src="' + imgSrc + '" alt="' + name + '">' : '<div class="sm-img" style="display:flex;align-items:center;justify-content:center;color:#2a3240;font-family:Rajdhani,sans-serif;font-size:36px;font-weight:700">' + s.size + '</div>';
+  var html = imgHTML;
+  html += '<div class="sm-body">';
+  html += '<h2 class="sm-name">' + name + '</h2>';
+  html += '<div class="sm-mfr">' + (mfrText || '—') + '</div>';
+  // Overview stats
+  html += '<div class="sm-overview">';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">Role</span><span class="sm-ov-val" style="font-size:12px">' + (s.role || '—') + '</span></div>';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">Size</span><span class="sm-ov-val">' + (s.size || '?') + '</span></div>';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">Crew</span><span class="sm-ov-val">' + (s.crew || '?') + '</span></div>';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">SCM Speed</span><span class="sm-ov-val">' + (s.scm || '?') + '</span></div>';
+  html += '</div>';
+  // Price
+  html += buyHTML;
+  // Weapons
+  if (s.slots && s.slots.length) {
+    html += '<div class="sm-section">Weapons (' + s.slots.length + ')</div>';
+    html += '<div class="sm-slots">';
+    s.slots.forEach(function(sl) {
+      html += '<div class="sm-slot"><span class="sm-slot-name">' + sl.lbl + (sl.note ? ' — ' + sl.note : '') + '</span><span class="sm-slot-sz">S' + sl.sz + '</span></div>';
+    });
+    html += '</div>';
+  }
+  // Missiles
+  if (s.missiles && s.missiles.length) {
+    html += '<div class="sm-section">Missiles (' + s.missiles.length + ' racks)</div>';
+    html += '<div class="sm-slots">';
+    s.missiles.forEach(function(m) {
+      html += '<div class="sm-slot"><span class="sm-slot-name">' + m.lbl + (m.count > 1 ? ' (x' + m.count + ')' : '') + '</span><span class="sm-slot-sz">S' + m.sz + '</span></div>';
+    });
+    html += '</div>';
+  }
+  // Components
+  if (s.comps) {
+    html += '<div class="sm-section">Components (Size ' + (s.compSz || '?') + ')</div>';
+    html += '<div class="sm-comps">';
+    var compLabels = {pp:'Power Plant',sg:'Shields',cooler:'Cooler',qd:'Quantum Drive',radar:'Radar'};
+    ['pp','sg','cooler','qd','radar'].forEach(function(k) {
+      if (s.comps[k]) {
+        var ct = s.comps.counts && s.comps.counts[k] ? s.comps.counts[k] : 1;
+        html += '<div class="sm-comp"><span class="sm-comp-lbl">' + (compLabels[k]||k) + '</span><span class="sm-comp-val">' + s.comps[k] + '</span> <span class="sm-comp-ct">x' + ct + '</span></div>';
+      }
+    });
+    html += '</div>';
+  }
+  // Tips
+  if (s.tips && Array.isArray(s.tips) && s.tips.length) {
+    html += '<div class="sm-section">Tips</div>';
+    html += '<div class="sm-tips">';
+    s.tips.forEach(function(t) { html += '<div class="sm-tip">' + t + '</div>'; });
+    html += '</div>';
+  }
+  // Builder button
+  html += '<button class="sm-builder-btn" onclick="closeShipModal();openShipInBuilder(\'' + name.replace(/'/g, "\\'") + '\')">Open in Loadout Builder</button>';
+  html += '</div>';
+  mc.innerHTML = html;
+  document.getElementById('shipModal').classList.add('open');
+}
 </script>
 
 
@@ -6995,6 +7112,13 @@ setTimeout(attachWcardClicks, 1000);
     <div id="wpModalCard">
       <button id="wpModalClose" onclick="closeWpModal()">&times;</button>
       <div id="wpModalContent"></div>
+    </div>
+  </div>
+
+  <div id="shipModal" onclick="if(event.target===this)closeShipModal()">
+    <div id="shipModalCard">
+      <button class="sm-close" onclick="closeShipModal()">&times;</button>
+      <div id="shipModalContent"></div>
     </div>
   </div>
 </body>
