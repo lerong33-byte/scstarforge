@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v5.5 DEV</title>
+<title>SC-ShipForge v5.6 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -691,12 +691,39 @@ option,optgroup{background:var(--bg2)}
 #pwrCard .sig-val{font-family:'JetBrains Mono',monospace!important;font-size:12px!important;font-weight:600!important;color:#e6ebf2!important}
 /* ── End Erkul Reskin ── */
 
+
+/* ── Ships Database Tab ── */
+#shipsPage{padding:20px;max-width:1200px;margin:0 auto}
+.ships-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ships-title{font-family:'Rajdhani','JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:0.1em;color:#38bdf8;text-transform:uppercase;margin:0}
+.ships-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a94a3}
+.ships-search-row{margin-bottom:12px}
+.ships-search{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--text);font-family:var(--fhud);outline:none;transition:border-color .15s}
+.ships-search:focus{border-color:#38bdf8}
+.ships-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.ships-filter-btn{padding:5px 12px;font-family:'Rajdhani',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;border-radius:20px;border:1px solid var(--border);color:#8a94a3;background:transparent;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.ships-filter-btn.on{background:#38bdf8;color:#0d1117;border-color:#38bdf8}
+.ships-filter-btn:hover:not(.on){border-color:#38bdf8;color:#38bdf8}
+.ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.ship-card{background:linear-gradient(160deg,#151b24,#0f1318);border:1px solid rgba(255,255,255,0.06);border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.ship-card:hover{transform:translateY(-2px);border-color:rgba(56,189,248,0.3);box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.ship-card-img{width:100%;height:140px;object-fit:cover;background:#0c0e12;display:block}
+.ship-card-img-placeholder{width:100%;height:140px;background:linear-gradient(135deg,#1a2030,#0e1218);display:flex;align-items:center;justify-content:center;color:#2a3545;font-size:28px}
+.ship-card-body{padding:10px 12px}
+.ship-card-role{display:inline-block;font-family:'Rajdhani',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#38bdf8;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);border-radius:3px;padding:2px 6px;margin-bottom:6px}
+.ship-card-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#e6ebf2;margin:0 0 2px;line-height:1.2}
+.ship-card-mfr{font-family:var(--fmono);font-size:10px;color:#8a94a3;letter-spacing:0.05em;margin-bottom:8px}
+.ship-card-footer{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ship-card-size{font-family:var(--fmono);font-size:10px;color:#8a94a3}
+.ship-card-builder{font-family:'Rajdhani',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;color:#22c55e;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:4px;padding:4px 10px;cursor:pointer;transition:all .2s;text-transform:uppercase;text-decoration:none}
+.ship-card-builder:hover{background:rgba(34,197,94,0.2);color:#4ade80}
+
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.5-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.6-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -861,6 +888,7 @@ option,optgroup{background:var(--bg2)}
   </div>
       <div class="tabs">
         <button class="tab on" data-t="lo" onclick="showTab('lo',this)">LOADOUT BUILDER</button>
+        <button class="tab" data-t="ships" onclick="showTab('ships',this)">SHIPS</button>
         <button class="tab" data-t="ai" onclick="showTab('ai',this)">AI ADVISOR</button>
         <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS DB</button>
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
@@ -947,6 +975,33 @@ option,optgroup{background:var(--bg2)}
                 <option value="">— Select ship —</option>
               </select>
             </div>
+      <div class="pane" id="pane-ships">
+        <div id="shipsPage">
+          <div class="ships-header">
+            <h2 class="ships-title">Ship Database</h2>
+            <span class="ships-count" id="shipsCount">187 ships</span>
+          </div>
+          <div class="ships-search-row">
+            <input type="text" id="shipsSearchInput" placeholder="Search ships..." class="ships-search" oninput="filterShips()"/>
+          </div>
+          <div class="ships-filters" id="shipsFilters">
+            <button class="ships-filter-btn on" data-role="All" onclick="setShipFilter('All',this)">All</button>
+            <button class="ships-filter-btn" data-role="Fighter" onclick="setShipFilter('Fighter',this)">Fighter</button>
+            <button class="ships-filter-btn" data-role="Bomber" onclick="setShipFilter('Bomber',this)">Bomber</button>
+            <button class="ships-filter-btn" data-role="Interdiction" onclick="setShipFilter('Interdiction',this)">Interdiction</button>
+            <button class="ships-filter-btn" data-role="Transport" onclick="setShipFilter('Transport',this)">Transport</button>
+            <button class="ships-filter-btn" data-role="Gunship" onclick="setShipFilter('Gunship',this)">Gunship</button>
+            <button class="ships-filter-btn" data-role="Support" onclick="setShipFilter('Support',this)">Support</button>
+            <button class="ships-filter-btn" data-role="Exploration" onclick="setShipFilter('Exploration',this)">Exploration</button>
+            <button class="ships-filter-btn" data-role="Mining" onclick="setShipFilter('Mining',this)">Mining</button>
+            <button class="ships-filter-btn" data-role="Cargo" onclick="setShipFilter('Cargo',this)">Cargo</button>
+            <button class="ships-filter-btn" data-role="Starter" onclick="setShipFilter('Starter',this)">Starter</button>
+            <button class="ships-filter-btn" data-role="Racing" onclick="setShipFilter('Racing',this)">Racing</button>
+            <button class="ships-filter-btn" data-role="Capital" onclick="setShipFilter('Capital',this)">Capital</button>
+          </div>
+          <div class="ships-grid" id="shipsGrid"></div>
+        </div>
+      </div>
           </div>
           <div id="cmpTable" style="color:var(--t3);font-size:13px;text-align:center;padding:20px 0;font-family:var(--fmono)">Select two ships to compare</div>
         </div>
@@ -6419,6 +6474,115 @@ window.addEventListener('load', function() {
 
 
 
+
+
+// ── Ships Database Tab ──
+var _shipsFilter = 'All';
+var _shipsImgCache = {};
+
+function renderShips() {
+  var grid = document.getElementById('shipsGrid');
+  var search = (document.getElementById('shipsSearchInput')||{}).value||'';
+  search = search.toLowerCase().trim();
+  if (!grid || typeof SHIP_DATA === 'undefined') return;
+
+  var ships = Object.keys(SHIP_DATA).sort();
+  var filtered = ships.filter(function(name){
+    var s = SHIP_DATA[name];
+    if (_shipsFilter !== 'All' && s.role !== _shipsFilter) return false;
+    if (search && name.toLowerCase().indexOf(search) < 0 && 
+        (s.mfr||'').toLowerCase().indexOf(search) < 0 &&
+        (s.role||'').toLowerCase().indexOf(search) < 0) return false;
+    return true;
+  });
+
+  document.getElementById('shipsCount').textContent = filtered.length + ' of ' + ships.length + ' ships';
+
+  grid.innerHTML = filtered.map(function(name){
+    var s = SHIP_DATA[name];
+    var mfr = s.mfr || '—';
+    var role = s.role || '—';
+    var sz = s.size || '—';
+    var imgHtml = '<div class="ship-card-img-placeholder">\u2708</div>';
+    return '<div class="ship-card" data-ship="' + name + '" onclick="openShipInBuilder(\'' + name.replace(/'/g,"\\'") + '\')">'
+      + imgHtml
+      + '<div class="ship-card-body">'
+      + '<span class="ship-card-role">' + role + '</span>'
+      + '<h3 class="ship-card-name">' + name + '</h3>'
+      + '<div class="ship-card-mfr">' + mfr + '</div>'
+      + '<div class="ship-card-footer">'
+      + '<span class="ship-card-size">Size: ' + sz + '</span>'
+      + '<span class="ship-card-builder" onclick="event.stopPropagation();openShipInBuilder(\'' + name.replace(/'/g,"\\'") + '\')">\u2692 Builder</span>'
+      + '</div></div></div>';
+  }).join('');
+
+  // Lazy-load wiki images
+  filtered.forEach(function(name){
+    loadShipCardImage(name);
+  });
+}
+
+function loadShipCardImage(shipName) {
+  if (_shipsImgCache[shipName]) {
+    setShipCardImg(shipName, _shipsImgCache[shipName]);
+    return;
+  }
+  var wmap = window._WIKIMAP || {};
+  var title = wmap[shipName] || shipName.replace(/ /g,'_');
+  var url = 'https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(title)+'&prop=pageimages&format=json&pithumbsize=400&pilimit=1&origin=*';
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    var pages = d.query && d.query.pages;
+    if (!pages) return;
+    var pid = Object.keys(pages)[0];
+    if (pages[pid] && pages[pid].thumbnail) {
+      var src = pages[pid].thumbnail.source;
+      _shipsImgCache[shipName] = src;
+      setShipCardImg(shipName, src);
+    }
+  }).catch(function(){});
+}
+
+function setShipCardImg(shipName, src) {
+  var card = document.querySelector('.ship-card[data-ship="'+shipName+'"]');
+  if (!card) return;
+  var placeholder = card.querySelector('.ship-card-img-placeholder');
+  if (placeholder) {
+    var img = document.createElement('img');
+    img.className = 'ship-card-img';
+    img.src = src;
+    img.alt = shipName;
+    img.loading = 'lazy';
+    placeholder.replaceWith(img);
+  }
+}
+
+function setShipFilter(role, btn) {
+  _shipsFilter = role;
+  document.querySelectorAll('.ships-filter-btn').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderShips();
+}
+
+function filterShips() {
+  renderShips();
+}
+
+function openShipInBuilder(name) {
+  // Switch to loadout builder tab and pick the ship
+  var loBtn = document.querySelector('[data-t="lo"]');
+  if (loBtn) showTab('lo', loBtn);
+  setTimeout(function(){ pick(name); }, 200);
+}
+
+// Auto-render when ships tab is shown
+var _origShowTab = showTab;
+showTab = function(id, btn) {
+  _origShowTab(id, btn);
+  if (id === 'ships') {
+    setTimeout(renderShips, 100);
+  }
+};
+
 </script>
 
 
@@ -6473,3 +6637,4 @@ window.addEventListener('load', function() {
 <!-- v5.2-DEV cap column height -->
 <!-- v5.4-DEV -->
 <!-- v5.5-DEV filled blocks at top -->
+<!-- v5.6-DEV ships tab -->
