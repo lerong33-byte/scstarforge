@@ -6193,15 +6193,12 @@ window.addEventListener('load', function() {
       var html = '';
       if(recent.length){
         html += '<div class="ss-group-lbl">Recent</div>';
-        recent.slice(999,5).forEach(function(n){ html += itemHTML(n,n,isTarget); });
+        recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget); });
       }
-      var quick = ['Gladius','Arrow','Sabre','Hammerhead','Carrack','Prospector'];
-      var qk = quick.filter(function(n){return SHIP_DATA&&SHIP_DATA[n]&&recent.indexOf(n)<0;}).slice(0,5);
-      if(qk.length){
-        html += '<div class="ss-group-lbl">Quick Select</div>';
-        qk.forEach(function(n){ html += itemHTML(n,n,isTarget); });
-      }
-      return html||'<div class="ss-empty">Type to search '+all.length+' ships</div>';
+      var sorted = all.slice().sort();
+      html += '<div class="ss-group-lbl">All '+sorted.length+' Ships</div>';
+      sorted.forEach(function(n){ html += itemHTML(n,n,isTarget); });
+      return html;
     }
     var results = [];
     all.forEach(function(n){
