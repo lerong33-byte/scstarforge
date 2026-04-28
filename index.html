@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v5.0 DEV</title>
+<title>SC-ShipForge v5.1 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -669,8 +669,8 @@ option,optgroup{background:var(--bg2)}
 #pwrCard #pwrPct{font-family:'JetBrains Mono',monospace!important;font-size:11px!important;font-weight:600!important}
 #pwrCard .con-bar-wrap{height:6px!important;background:rgba(255,255,255,0.06)!important;border-radius:3px!important;overflow:hidden!important;margin-bottom:10px!important}
 #pwrCard #conBar{height:100%!important;border-radius:3px!important;box-shadow:0 0 8px rgba(34,197,94,0.5)!important}
-#pwrCard #spvChart{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(18px,1fr))!important;gap:3px!important;align-items:end!important;padding:4px 0 2px!important;min-height:80px!important}
-#pwrCard #spvChart .spv-col{display:flex!important;flex-direction:column-reverse!important;align-items:stretch!important;gap:2px!important;width:auto!important;flex-shrink:unset!important}
+#pwrCard #spvChart{display:flex!important;flex-wrap:nowrap!important;gap:3px!important;align-items:flex-end!important;padding:4px 0 2px!important;min-height:80px!important}
+#pwrCard #spvChart .spv-col{display:flex!important;flex-direction:column-reverse!important;align-items:stretch!important;gap:2px!important;flex:1!important;min-width:0!important}
 #pwrCard #spvChart .spv-block{width:100%!important;height:10px!important;min-height:10px!important;max-height:10px!important;margin:0!important;border-radius:2px!important;border:none!important;cursor:pointer!important;flex-shrink:0!important;display:block!important;transition:transform 0.1s ease,filter 0.1s ease!important}
 #pwrCard #spvChart .spv-block.filled{background:#22c55e!important;box-shadow:0 0 3px rgba(34,197,94,0.35)!important}
 #pwrCard #spvChart .spv-block.empty{background:#1e2530!important;display:block!important}
@@ -696,7 +696,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.0-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.1-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -6469,3 +6469,4 @@ window.addEventListener('load', function() {
 <!-- v4.8-DEV -->
 <!-- v2.0 LIVE -->
 <!-- v5.0-DEV scoped erkul reskin -->
+<!-- v5.1-DEV fix block orientation -->
