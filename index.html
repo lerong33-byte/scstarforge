@@ -50,7 +50,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v1.5 LIVE</title>
+<title>SC-ShipForge v1.6 LIVE</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -582,7 +582,7 @@ option,optgroup{background:var(--bg2)}
 .ss-inner{height:auto;max-height:80vh;overflow-y:auto;overflow-y:scroll;max-height:100vh;overflow-y:auto}
 .ss-inner::-webkit-scrollbar{width:3px}
 .ss-inner::-webkit-scrollbar-thumb{background:#2a3850}
-.ss-group-lbl{font-size:9px;letter-spacing:1.5px;color:#2e3e52;font-family:'JetBrains Mono',monospace;padding:8px 12px 3px;text-transform:uppercase;background:#0c0e12;position:sticky;top:0;z-index:1}
+.ss-group-lbl{font-size:10px;letter-spacing:2px;color:#38d282;font-family:'JetBrains Mono',monospace;padding:10px 12px 4px;text-transform:uppercase;background:#0c0e12;position:sticky;top:0;z-index:1;border-left:3px solid #38d282;font-weight:700}
 .ss-item{display:block;padding:8px 12px;display:flex;align-items:center;gap:9px;padding:7px 12px;cursor:pointer;transition:background .1s}
 .ss-item:hover,.ss-item.hi{background:#1c2535}
 .ss-thumb{width:36px;height:24px;object-fit:contain;border-radius:3px;flex-shrink:0;background:#0c0e12;opacity:.9}
@@ -648,7 +648,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v1.3</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v1.6</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
