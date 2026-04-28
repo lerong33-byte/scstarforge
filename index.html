@@ -752,8 +752,27 @@ option,optgroup{background:var(--bg2)}
 .wcard[data-cat="cooler"]::before{background:linear-gradient(90deg,#06b6d4,#38bdf8)}
 .wcard[data-cat="qd"]::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
 
-.wcard-icon{position:absolute;top:8px;right:42px;width:32px;height:32px;opacity:0.12}
+.wcard-icon{position:absolute;bottom:10px;right:10px;width:40px;height:40px;opacity:0.22}
 .wcard-icon svg{width:100%;height:100%}
+
+#wpModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+#wpModal.open{display:flex}
+#wpModalCard{background:#0d1117;border:1px solid rgba(56,189,248,0.2);border-radius:12px;padding:24px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+#wpModalCard::-webkit-scrollbar{width:4px}
+#wpModalCard::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.2);border-radius:2px}
+#wpModalClose{position:absolute;top:12px;right:12px;background:none;border:none;color:#8a94a3;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:4px}
+#wpModalClose:hover{color:#e6ebf2;background:rgba(255,255,255,0.06)}
+.wpm-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#e6ebf2;margin:0 0 4px}
+.wpm-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6577;margin-bottom:16px}
+.wpm-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.wpm-stat{background:rgba(255,255,255,0.03);border-radius:6px;padding:8px;text-align:center}
+.wpm-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6577;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+.wpm-stat-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#38bdf8}
+.wpm-section{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:4px}
+.wpm-ships{display:flex;flex-wrap:wrap;gap:6px}
+.wpm-ship{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c0cee0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:4px 10px;cursor:pointer;transition:all .15s}
+.wpm-ship:hover{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3);color:#38bdf8}
+.wpm-ship-sz{font-size:9px;color:#5a6577;margin-left:4px}
 </style>
 
 <div id="app">
@@ -6833,6 +6852,113 @@ setTimeout(function() {
       }
     });
   }, 500);
+
+function closeWpModal(){document.getElementById('wpModal').classList.remove('open')}
+function openWpModal(type, name, data) {
+  var mc = document.getElementById('wpModalContent');
+  var html = '<h2 class="wpm-title">' + name + '</h2>';
+  html += '<div class="wpm-sub">' + (data.sub || '') + '</div>';
+  // Stats grid
+  html += '<div class="wpm-stats">';
+  if (data.stats) {
+    data.stats.forEach(function(s) {
+      html += '<div class="wpm-stat"><span class="wpm-stat-label">' + s.label + '</span><span class="wpm-stat-val">' + s.value + '</span></div>';
+    });
+  }
+  html += '</div>';
+  // Compatible ships
+  html += '<div class="wpm-section">Compatible Ships</div>';
+  html += '<div class="wpm-ships">';
+  var ships = findCompatibleShips(type, data.sz);
+  if (ships.length === 0) {
+    html += '<span style="color:#5a6577;font-size:11px">No compatible ships found</span>';
+  } else {
+    ships.forEach(function(s) {
+      html += '<span class="wpm-ship" onclick="closeWpModal();pick(\'' + s.name.replace(/'/g, "\\'") + '\');showTab(\'lo\',document.querySelector(\'[data-t=lo]\'))">' + s.name + '<span class="wpm-ship-sz">' + s.size + '</span></span>';
+    });
+  }
+  html += '</div>';
+  mc.innerHTML = html;
+  document.getElementById('wpModal').classList.add('open');
+}
+function findCompatibleShips(type, sz) {
+  if (typeof SHIP_DATA === 'undefined') return [];
+  var results = [];
+  var sizeNum = parseInt(sz) || 0;
+  Object.keys(SHIP_DATA).forEach(function(name) {
+    var s = SHIP_DATA[name];
+    if (type === 'weapon') {
+      // Check if ship has weapon slots of this size
+      if (s.slots) {
+        var hasSlot = s.slots.some(function(slot) { return slot.sz === sizeNum && (slot.type === 'weapon' || slot.type === 'turret'); });
+        if (hasSlot) results.push({name: name, size: s.size});
+      }
+    } else {
+      // Components: match compSz
+      var compSzNum = parseInt((s.compSz || '').replace('S', '')) || 0;
+      if (compSzNum === sizeNum) results.push({name: name, size: s.size});
+    }
+  });
+  results.sort(function(a,b) { return a.name.localeCompare(b.name); });
+  return results;
+}
+// Add click handlers to weapon cards
+function attachWcardClicks() {
+  document.querySelectorAll('#wgrid .wcard').forEach(function(c) {
+    if (c._wpClick) return;
+    c._wpClick = true;
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function() {
+      var nm = c.querySelector('.wc-name');
+      var mfr = c.querySelector('.wc-mfr');
+      var type = c.getAttribute('data-wtype') || 'energy';
+      var szEl = c.querySelector('.wc-sz');
+      var sz = szEl ? szEl.textContent.replace('S','') : '1';
+      var stats = [];
+      c.querySelectorAll('.wcs-row, .wc-stats > span').forEach(function(row) {
+        var k = row.querySelector('.wcs-k');
+        var v = row.querySelector('.wcs-v');
+        if (k && v) stats.push({label: k.textContent, value: v.textContent});
+      });
+      openWpModal('weapon', nm ? nm.textContent : '?', {
+        sub: (mfr ? mfr.textContent : '') + ' \u00B7 Size ' + sz + ' ' + type,
+        sz: sz,
+        stats: stats
+      });
+    });
+  });
+  // Component cards
+  document.querySelectorAll('#compGrid .wcard').forEach(function(c) {
+    if (c._wpClick) return;
+    c._wpClick = true;
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function() {
+      var nm = c.querySelector('.wc-nm');
+      var cat = c.getAttribute('data-cat') || 'pp';
+      var szEl = c.querySelector('.wc-sz');
+      var sz = szEl ? szEl.textContent.replace('S','') : '1';
+      var catLabel = {pp:'Power Plant',sg:'Shield Generator',cooler:'Cooler',qd:'Quantum Drive'}[cat] || cat;
+      var stats = [];
+      c.querySelectorAll('.wc-st').forEach(function(row) {
+        var k = row.querySelector('.wc-sl');
+        var v = row.querySelector('.wc-sv');
+        if (k && v) stats.push({label: k.textContent, value: v.textContent});
+      });
+      openWpModal('comp', nm ? nm.textContent : '?', {
+        sub: catLabel + ' \u00B7 Size ' + sz,
+        sz: sz,
+        stats: stats
+      });
+    });
+  });
+}
+// Attach on initial load and when switching categories
+var _origSwitch2 = switchWpCat;
+switchWpCat = function(cat, btn) {
+  _origSwitch2(cat, btn);
+  setTimeout(attachWcardClicks, 100);
+};
+setTimeout(attachWcardClicks, 1000);
 </script>
 
 
@@ -6864,6 +6990,13 @@ setTimeout(function() {
   </div>
       
 </div>
+
+  <div id="wpModal" onclick="if(event.target===this)closeWpModal()">
+    <div id="wpModalCard">
+      <button id="wpModalClose" onclick="closeWpModal()">&times;</button>
+      <div id="wpModalContent"></div>
+    </div>
+  </div>
 </body>
 </html>
 
