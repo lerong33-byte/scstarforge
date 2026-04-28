@@ -7168,6 +7168,9 @@ showTab = function(id, btn) {
   _origShowTab(id, btn);
   if (id === 'ships') setTimeout(fixShipImages, 1000);
 };
+
+// Ensure ships render on load
+if(typeof renderShips==="function")setTimeout(renderShips,500);
 </script>
 
 
