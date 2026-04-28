@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v5.9 DEV</title>
+<title>SC-ShipForge v5.8 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -709,8 +709,8 @@ option,optgroup{background:var(--bg2)}
 #pane-ships .ships-filter-btn{padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;border-radius:20px;border:1px solid rgba(255,255,255,0.08);color:#8a94a3;background:transparent;cursor:pointer;transition:all .2s;text-transform:uppercase}
 #pane-ships .ships-filter-btn:hover{border-color:rgba(56,189,248,0.3);color:#c0cee0}
 #pane-ships .ships-filter-btn.on{background:rgba(56,189,248,0.12);border-color:rgba(56,189,248,0.4);color:#38bdf8}
-#pane-ships .ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;flex:1;overflow-y:auto;min-height:0;padding-bottom:20px}
-#pane-ships .ship-card{position:relative;background:#0d1117;border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+#pane-ships .ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;flex:1;overflow-y:auto;min-height:0;padding-bottom:20px;align-content:start}
+#pane-ships .ship-card{position:relative;background:#0d1117;border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;min-height:280px}
 #pane-ships .ship-card:hover{transform:translateY(-3px);border-color:rgba(56,189,248,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 #pane-ships .ship-card-img-wrap{position:relative;width:100%;height:170px;overflow:hidden;background:#080c12}
 #pane-ships .ship-card-img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
@@ -736,7 +736,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.9-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.8-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
