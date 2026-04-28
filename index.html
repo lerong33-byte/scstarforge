@@ -5977,57 +5977,9 @@ function onRackChange(sel) {
 })();
 
 
-function filterShipsByMfr(mfr) {
-  hideDashboard();
-  // Focus ship search and show ships from that manufacturer
-  var si = document.getElementById('sSearch');
-  if (si) { si.value = mfr; var clr = document.getElementById('sSearchClear'); if(clr)clr.style.display='block'; }
-  buildSrbox(mfr.toLowerCase());
-  if (si) si.focus();
-}
 
-function filterShipsBySize(size) {
-  hideDashboard();
-  // Filter quick launch by size and show search
-  var si = document.getElementById('sSearch');
-  var sizeNames = {XS:'Extra Small',S:'Small',M:'Medium',L:'Large',XL:'Capital'};
-  if (si) { si.value = ''; var clr = document.getElementById('sSearchClear'); if(clr)clr.style.display='none'; }
-  // Filter the ship dropdown and show results
-  var sSel = document.getElementById('sSel');
-  if (sSel) {
-    while(sSel.options.length>1) sSel.remove(1);
-    Object.keys(SHIPS).sort().forEach(function(mfr){
-      if(!SHIPS[mfr])return;
-      var ships=SHIPS[mfr].filter(function(s){return SHIP_DATA[s]&&SHIP_DATA[s].size===size;});
-      if(!ships.length)return;
-      var og=document.createElement('optgroup');og.label=mfr;
-      ships.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;og.appendChild(o);});
-      sSel.appendChild(og);
-    });
-  }
-  // Show search box with filtered results
-  var sb = document.getElementById('srbox');
-  if(sb){
-    var byMfr={};
-    Object.keys(SHIPS).sort().forEach(function(mfr){
-      if(!SHIPS[mfr])return;
-      SHIPS[mfr].forEach(function(s){
-        if(SHIP_DATA[s]&&SHIP_DATA[s].size===size){if(!byMfr[mfr])byMfr[mfr]=[];byMfr[mfr].push(s);}
-      });
-    });
-    var html='';
-    Object.keys(byMfr).sort().forEach(function(mfr){
-      html+='<div style="padding:3px 10px 2px;font-size:9px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);background:var(--bg3);border-bottom:1px solid var(--border)">'+mfr+'</div>';
-      byMfr[mfr].forEach(function(s){html+='<div class="sri" data-n="'+encodeURIComponent(s)+'">'+s+'</div>';});
-    });
-    sb.innerHTML=html||'<div style="padding:8px;color:var(--t3)">No ships found</div>';
-    Array.prototype.forEach.call(sb.querySelectorAll('.sri'),function(el){
-      el.onmousedown=function(e){e.preventDefault();pick(decodeURIComponent(this.getAttribute('data-n')));sb.style.display='none';};
-    });
-    sb.style.display='block';
-  }
-  showDashboard(); // Actually just show search results over dashboard
-}
+
+
 
 
 // ── LIVE STATS from Fleetyards ──
@@ -6618,9 +6570,7 @@ function setShipFilter(role, btn) {
   filterShips();
 }
 
-function filterShips() {
-  renderShips();
-}
+
 
 function openShipInBuilder(name) {
   if (typeof pick === 'function') pick(name);
