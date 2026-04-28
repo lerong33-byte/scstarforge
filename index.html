@@ -50,7 +50,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v2.91-FIX1 LIVE</title>
+<title>SC-ShipForge v2.91-FIX2 LIVE</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1351,7 +1351,7 @@ var WEAPONS=[
   {id:"arr4",name:"Arrester IV",mfr:"Behring",sz:4,type:"missile-emp",dps:0,alpha:0,range:10000,draw:0,heat:0,price:5200,loc:"Conscientious Objects Baijini Point / Everus Harbor — EMP"},
   {id:"s8torp",name:"S8 Capital Torpedo",mfr:"Behring",sz:8,type:"torpedo",dps:0,alpha:100000,range:25000,draw:0,heat:0,price:28000,loc:"Conscientious Objects Baijini Point — capital only"},
   // ── 4.7 & Recent Additions ──
-  {id:"cf447",name:"CF-447 Rhino",mfr:"Klaus & Werner",sz:4,type:"ballistic",dps:280,alpha:42,range:1500,draw:14,heat:22,price:28000,loc:"⭐ CenterMass Area18 / HD Showcase Lorville"},
+  {id:"cf999",name:"CF-447 Rhino",mfr:"Klaus & Werner",sz:4,type:"ballistic",dps:280,alpha:42,range:1500,draw:14,heat:22,price:28000,loc:"⭐ CenterMass Area18 / HD Showcase Lorville"},
   {id:"ad4b",name:"AD4B Cannon",mfr:"Behring",sz:4,type:"ballistic",dps:260,alpha:58,range:1400,draw:12,heat:20,price:26000,loc:"CenterMass Area18 / Omega Pro New Babbage"},
   {id:"att4",name:"Attrition-4",mfr:"Hurston Dynamics",sz:4,type:"energy",dps:310,alpha:48,range:1100,draw:18,heat:28,price:32000,loc:"⭐ HD Showcase Lorville ONLY"},
   {id:"m5a",name:"M5A Laser",mfr:"Behring",sz:5,type:"energy",dps:520,alpha:82,range:1200,draw:28,heat:38,price:58000,loc:"CenterMass Area18 / HD Showcase"},
@@ -6131,7 +6131,7 @@ window.addEventListener('load', function() {
 
   function saveRecent(key, name) {
     var arr = _recent[key];
-    arr = [name].concat(arr.filter(function(n){return n!==name;})).slice(0,6);
+    arr = [name].concat(arr.filter(function(n){return n!==name;})).slice(0, 999);
     _recent[key] = arr;
     try{ localStorage.setItem('ss_r_'+key, JSON.stringify(arr)); }catch(e){}
   }
@@ -6193,7 +6193,7 @@ window.addEventListener('load', function() {
       var html = '';
       if(recent.length){
         html += '<div class="ss-group-lbl">Recent</div>';
-        recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget); });
+        recent.slice(999,5).forEach(function(n){ html += itemHTML(n,n,isTarget); });
       }
       var quick = ['Gladius','Arrow','Sabre','Hammerhead','Carrack','Prospector'];
       var qk = quick.filter(function(n){return SHIP_DATA&&SHIP_DATA[n]&&recent.indexOf(n)<0;}).slice(0,5);
