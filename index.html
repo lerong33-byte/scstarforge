@@ -740,8 +740,6 @@ option,optgroup{background:var(--bg2)}
 #pane-wp .wc-st{display:flex;justify-content:space-between;align-items:center}
 #pane-wp .wc-sl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6577;text-transform:uppercase;letter-spacing:.06em}
 #pane-wp .wc-sv{font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;font-weight:600}
-#compGrid .wcard{padding:12px;overflow:visible}
-
 </style>
 
 <div id="app">
@@ -963,6 +961,8 @@ option,optgroup{background:var(--bg2)}
         </div>
         <div class="wf" id="wfiltBar"></div>
         <div class="wgrid" id="wgrid"></div>
+      
+        <div id="compGrid" class="wgrid" style="display:none"></div>
       </div>
 
       <div class="pane" id="pane-lc">
@@ -972,7 +972,6 @@ option,optgroup{background:var(--bg2)}
       <div class="pane" id="pane-pn">
         <div id="pnContent" style="flex:1;overflow-y:auto;padding:16px 16px 32px;display:flex;flex-direction:column;gap:14px">
           <div style="text-align:center;padding:40px 0;color:var(--t3);font-family:var(--fmono);font-size:13px">Loading patch notes…</div>
-        <div id="compGrid" class="wgrid" style="display:none"></div>
         </div>
       </div>
 
