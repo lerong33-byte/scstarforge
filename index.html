@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v5.6 DEV</title>
+<title>SC-ShipForge v5.7 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -723,7 +723,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.6-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v5.7-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -975,33 +975,7 @@ option,optgroup{background:var(--bg2)}
                 <option value="">— Select ship —</option>
               </select>
             </div>
-      <div class="pane" id="pane-ships">
-        <div id="shipsPage">
-          <div class="ships-header">
-            <h2 class="ships-title">Ship Database</h2>
-            <span class="ships-count" id="shipsCount">187 ships</span>
-          </div>
-          <div class="ships-search-row">
-            <input type="text" id="shipsSearchInput" placeholder="Search ships..." class="ships-search" oninput="filterShips()"/>
-          </div>
-          <div class="ships-filters" id="shipsFilters">
-            <button class="ships-filter-btn on" data-role="All" onclick="setShipFilter('All',this)">All</button>
-            <button class="ships-filter-btn" data-role="Fighter" onclick="setShipFilter('Fighter',this)">Fighter</button>
-            <button class="ships-filter-btn" data-role="Bomber" onclick="setShipFilter('Bomber',this)">Bomber</button>
-            <button class="ships-filter-btn" data-role="Interdiction" onclick="setShipFilter('Interdiction',this)">Interdiction</button>
-            <button class="ships-filter-btn" data-role="Transport" onclick="setShipFilter('Transport',this)">Transport</button>
-            <button class="ships-filter-btn" data-role="Gunship" onclick="setShipFilter('Gunship',this)">Gunship</button>
-            <button class="ships-filter-btn" data-role="Support" onclick="setShipFilter('Support',this)">Support</button>
-            <button class="ships-filter-btn" data-role="Exploration" onclick="setShipFilter('Exploration',this)">Exploration</button>
-            <button class="ships-filter-btn" data-role="Mining" onclick="setShipFilter('Mining',this)">Mining</button>
-            <button class="ships-filter-btn" data-role="Cargo" onclick="setShipFilter('Cargo',this)">Cargo</button>
-            <button class="ships-filter-btn" data-role="Starter" onclick="setShipFilter('Starter',this)">Starter</button>
-            <button class="ships-filter-btn" data-role="Racing" onclick="setShipFilter('Racing',this)">Racing</button>
-            <button class="ships-filter-btn" data-role="Capital" onclick="setShipFilter('Capital',this)">Capital</button>
-          </div>
-          <div class="ships-grid" id="shipsGrid"></div>
-        </div>
-      </div>
+
           </div>
           <div id="cmpTable" style="color:var(--t3);font-size:13px;text-align:center;padding:20px 0;font-family:var(--fmono)">Select two ships to compare</div>
         </div>
@@ -6612,6 +6586,33 @@ showTab = function(id, btn) {
       <div id="fbStatus" style="display:none;text-align:center;padding:8px;border-radius:var(--r-sm);font-size:12px;font-family:var(--fmono)"></div>
     </div>
   </div>
+      <div class="pane" id="pane-ships">
+        <div id="shipsPage">
+          <div class="ships-header">
+            <h2 class="ships-title">Ship Database</h2>
+            <span class="ships-count" id="shipsCount">187 ships</span>
+          </div>
+          <div class="ships-search-row">
+            <input type="text" id="shipsSearchInput" placeholder="Search ships..." class="ships-search" oninput="filterShips()"/>
+          </div>
+          <div class="ships-filters" id="shipsFilters">
+            <button class="ships-filter-btn on" data-role="All" onclick="setShipFilter('All',this)">All</button>
+            <button class="ships-filter-btn" data-role="Fighter" onclick="setShipFilter('Fighter',this)">Fighter</button>
+            <button class="ships-filter-btn" data-role="Bomber" onclick="setShipFilter('Bomber',this)">Bomber</button>
+            <button class="ships-filter-btn" data-role="Interdiction" onclick="setShipFilter('Interdiction',this)">Interdiction</button>
+            <button class="ships-filter-btn" data-role="Transport" onclick="setShipFilter('Transport',this)">Transport</button>
+            <button class="ships-filter-btn" data-role="Gunship" onclick="setShipFilter('Gunship',this)">Gunship</button>
+            <button class="ships-filter-btn" data-role="Support" onclick="setShipFilter('Support',this)">Support</button>
+            <button class="ships-filter-btn" data-role="Exploration" onclick="setShipFilter('Exploration',this)">Exploration</button>
+            <button class="ships-filter-btn" data-role="Mining" onclick="setShipFilter('Mining',this)">Mining</button>
+            <button class="ships-filter-btn" data-role="Cargo" onclick="setShipFilter('Cargo',this)">Cargo</button>
+            <button class="ships-filter-btn" data-role="Starter" onclick="setShipFilter('Starter',this)">Starter</button>
+            <button class="ships-filter-btn" data-role="Racing" onclick="setShipFilter('Racing',this)">Racing</button>
+            <button class="ships-filter-btn" data-role="Capital" onclick="setShipFilter('Capital',this)">Capital</button>
+          </div>
+          <div class="ships-grid" id="shipsGrid"></div>
+        </div>
+      </div>
 </div>
 </body>
 </html>
@@ -6638,3 +6639,4 @@ showTab = function(id, btn) {
 <!-- v5.4-DEV -->
 <!-- v5.5-DEV filled blocks at top -->
 <!-- v5.6-DEV ships tab -->
+<!-- v5.7-DEV fix ships pane nesting -->
