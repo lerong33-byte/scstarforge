@@ -699,7 +699,7 @@ option,optgroup{background:var(--bg2)}
 
 
 /* ── Ships Database Tab ── */
-#pane-ships #shipsPage{padding:0 20px 20px;max-width:1400px;margin:0 auto;flex:1;overflow-y:auto;min-height:0}
+#pane-ships #shipsPage{padding:0 20px 20px;flex:1;overflow-y:auto;min-height:0}
 #pane-ships #shipsPage::-webkit-scrollbar{width:6px}
 #pane-ships #shipsPage::-webkit-scrollbar-track{background:transparent}
 #pane-ships #shipsPage::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.2);border-radius:3px}
@@ -817,7 +817,7 @@ option,optgroup{background:var(--bg2)}
 /* ── Responsive Layout ── */
 #app{max-width:100vw;width:100%}
 .body{width:100%}
-@media(max-width:1200px){
+@media(max-width:100%){
   .rp{min-width:220px;max-width:280px}
 }
 @media(max-width:900px){
@@ -835,6 +835,10 @@ option,optgroup{background:var(--bg2)}
   #pane-ships .ship-card-img-wrap{height:120px}
   .wgrid{grid-template-columns:1fr 1fr !important}
 }
+
+.lp,.rp{flex-shrink:1}
+@media(max-width:1100px){.lp{max-width:200px}.rp{max-width:280px}}
+@media(max-width:800px){.lp{display:none}.rp{display:none}}
 </style>
 
 <div id="app">
