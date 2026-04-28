@@ -725,6 +725,10 @@ option,optgroup{background:var(--bg2)}
 #pane-ships .ship-card-builder{padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(56,189,248,0.3);color:#38bdf8;background:rgba(56,189,248,0.06);cursor:pointer;transition:all .2s;white-space:nowrap}
 #pane-ships .ship-card-builder:hover{background:rgba(56,189,248,0.15);border-color:#38bdf8}
 #pane-ships .ship-card-no-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#2a3240;font-family:'Rajdhani',sans-serif;font-size:40px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em}
+#pane-ships .ship-card-price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:4px 0;border-top:1px solid rgba(255,255,255,0.04)}
+#pane-ships .ship-card-price{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#22c55e}
+#pane-ships .ship-card-price-na{color:#5a6577;font-weight:400;font-style:italic}
+#pane-ships .ship-card-dealer{font-family:'JetBrains Mono',monospace;font-size:9px;color:#8a94a3;background:rgba(255,255,255,0.04);padding:2px 6px;border-radius:4px}
 @media(max-width:600px){#pane-ships .ships-grid{grid-template-columns:1fr 1fr;gap:10px}#pane-ships .ship-card-img-wrap{height:120px}}
 
 </style>
@@ -6430,38 +6434,136 @@ function renderShips() {
     'Sabre':'Aegis Dynamics','Sabre Comet':'Aegis Dynamics','Sabre Raven':'Aegis Dynamics','Sabre Firebird':'Aegis Dynamics',
     'Eclipse':'Aegis Dynamics','Vanguard Warden':'Aegis Dynamics','Vanguard Harbinger':'Aegis Dynamics','Vanguard Sentinel':'Aegis Dynamics','Vanguard Hoplite':'Aegis Dynamics',
     'Hammerhead':'Aegis Dynamics','Redeemer':'Aegis Dynamics','Reclaimer':'Aegis Dynamics','Nautilus':'Aegis Dynamics','Retaliator':'Aegis Dynamics',
-    'Arrow':'Anvil Aerospace','Hornet F7C':'Anvil Aerospace','F7C Hornet Mk I':'Anvil Aerospace','F7C Hornet Mk II':'Anvil Aerospace',
+    'Arrow':'Anvil Aerospace','F7C Hornet Mk I':'Anvil Aerospace','F7C Hornet Mk II':'Anvil Aerospace',
     'F7C-M Super Hornet Mk I':'Anvil Aerospace','F7C-M Super Hornet Mk II':'Anvil Aerospace','F7C-S Hornet Ghost':'Anvil Aerospace','F7C-R Hornet Tracker':'Anvil Aerospace',
     'Hurricane':'Anvil Aerospace','Hawk':'Anvil Aerospace','Gladiator':'Anvil Aerospace','Terrapin':'Anvil Aerospace','Carrack':'Anvil Aerospace','Valkyrie':'Anvil Aerospace',
-    'F8C Lightning':'Anvil Aerospace','Pisces C8X':'Anvil Aerospace','Pisces C8':'Anvil Aerospace','Centurion':'Anvil Aerospace',
-    'Aurora MR':'RSI','Aurora LN':'RSI','Aurora CL':'RSI','Aurora ES':'RSI','Constellation Andromeda':'RSI','Constellation Aquila':'RSI','Constellation Taurus':'RSI','Constellation Phoenix':'RSI',
-    'Mantis':'RSI','Scorpius':'RSI','Scorpius Antares':'RSI','Polaris':'RSI','Bengal':'RSI','Lynx':'RSI','Zeus Mk II CL':'RSI','Zeus Mk II MR':'RSI','Zeus Mk II ES':'RSI',
-    'Cutlass Black':'Drake Interplanetary','Cutlass Blue':'Drake Interplanetary','Cutlass Red':'Drake Interplanetary','Cutlass Steel':'Drake Interplanetary',
-    'Buccaneer':'Drake Interplanetary','Herald':'Drake Interplanetary','Caterpillar':'Drake Interplanetary','Dragonfly Black':'Drake Interplanetary','Dragonfly Yellowjacket':'Drake Interplanetary',
-    'Vulture':'Drake Interplanetary','Corsair':'Drake Interplanetary','Kraken':'Drake Interplanetary','Mule':'Drake Interplanetary','Cutter':'Drake Interplanetary','Cutter Rambler':'Drake Interplanetary','Cutter Scout':'Drake Interplanetary',
-    'Freelancer':'MISC','Freelancer MAX':'MISC','Freelancer MIS':'MISC','Freelancer DUR':'MISC','Starfarer':'MISC','Starfarer Gemini':'MISC','Prospector':'MISC',
-    'Reliant Kore':'MISC','Reliant Tana':'MISC','Reliant Sen':'MISC','Reliant Mako':'MISC','Hull A':'MISC','Hull B':'MISC','Hull C':'MISC','Hull D':'MISC','Hull E':'MISC','Fury':'MISC','Fury MX':'MISC','Fury LX':'MISC','Odyssey':'MISC','Expanse':'MISC','Starlancer TAC':'MISC','Starlancer MAX':'MISC',
-    '100i':'Origin Jumpworks','125a':'Origin Jumpworks','135c':'Origin Jumpworks','300i':'Origin Jumpworks','315p':'Origin Jumpworks','325a':'Origin Jumpworks','350r':'Origin Jumpworks',
-    '400i':'Origin Jumpworks','600i Touring':'Origin Jumpworks','600i Explorer':'Origin Jumpworks','890 Jump':'Origin Jumpworks','X1 Base':'Origin Jumpworks',
+    'F8C Lightning':'Anvil Aerospace','Pisces C8X':'Anvil Aerospace','Pisces C8':'Anvil Aerospace','Centurion':'Anvil Aerospace','Legionnaire':'Anvil Aerospace','Ballista':'Anvil Aerospace','Spartan':'Anvil Aerospace',
+    'Aurora MR':'RSI','Aurora LN':'RSI','Aurora CL':'RSI','Aurora ES':'RSI',
+    'Constellation Andromeda':'RSI','Constellation Aquila':'RSI','Constellation Taurus':'RSI','Constellation Phoenix':'RSI',
+    'Mantis':'RSI','Scorpius':'RSI','Scorpius Antares':'RSI','Polaris':'RSI','Lynx':'RSI',
+    'Zeus Mk II CL':'RSI','Zeus Mk II MR':'RSI','Zeus Mk II ES':'RSI','Arrastra':'RSI','Ursa':'RSI',
+    'Cutlass Black':'Drake','Cutlass Blue':'Drake','Cutlass Red':'Drake','Cutlass Steel':'Drake',
+    'Buccaneer':'Drake','Herald':'Drake','Caterpillar':'Drake','Vulture':'Drake','Corsair':'Drake','Kraken':'Drake',
+    'Mule':'Drake','Cutter':'Drake','Cutter Rambler':'Drake','Cutter Scout':'Drake',
+    'Dragonfly Black':'Drake','Dragonfly Yellowjacket':'Drake',
+    'Freelancer':'MISC','Freelancer MAX':'MISC','Freelancer MIS':'MISC','Freelancer DUR':'MISC',
+    'Starfarer':'MISC','Starfarer Gemini':'MISC','Prospector':'MISC','Expanse':'MISC',
+    'Reliant Kore':'MISC','Reliant Tana':'MISC','Reliant Sen':'MISC','Reliant Mako':'MISC',
+    'Hull A':'MISC','Hull B':'MISC','Hull C':'MISC','Hull D':'MISC','Hull E':'MISC',
+    'Fury':'MISC','Fury MX':'MISC','Fury LX':'MISC','Odyssey':'MISC',
+    'Razor':'MISC','Razor LX':'MISC','Razor EX':'MISC',
+    'Starlancer TAC':'MISC','Starlancer MAX':'MISC','Liberator':'MISC','Endeavor':'MISC',
+    '100i':'Origin','125a':'Origin','135c':'Origin',
+    '300i':'Origin','315p':'Origin','325a':'Origin','350r':'Origin',
+    '400i':'Origin','600i Touring':'Origin','600i Explorer':'Origin','890 Jump':'Origin','X1 Base':'Origin',
     'Defender':'Banu','Merchantman':'Banu',
     'Prowler':'Esperia','Blade':'Esperia','Glaive':'Esperia','Talon':'Esperia','Talon Shrike':'Esperia',
     'Nomad':'Consolidated Outland','Mustang Alpha':'Consolidated Outland','Mustang Beta':'Consolidated Outland','Mustang Gamma':'Consolidated Outland','Mustang Delta':'Consolidated Outland','Pioneer':'Consolidated Outland',
-    'Razor':'MISC','Razor LX':'MISC','Razor EX':'MISC',
-    'Nox':'Aopoa','Nox Kue':'Aopoa','Khartu-Al':'Aopoa',
-    'Driller':'ARGO','RAFT':'ARGO','ATLS':'ARGO','MPUV Cargo':'ARGO','MPUV Personnel':'ARGO','SRV':'ARGO',
-    'Vulcan':'Aegis Dynamics','Mercury Star Runner':'Crusader Industries','Hercules Starlifter C2':'Crusader Industries','Hercules Starlifter M2':'Crusader Industries','Hercules Starlifter A2':'Crusader Industries',
-    'Ares Inferno':'Crusader Industries','Ares Ion':'Crusader Industries','Spirit A1':'Crusader Industries','Spirit C1':'Crusader Industries','Spirit E1':'Crusader Industries',
-    'Genesis Starliner':'Crusader Industries','Intrepid':'Crusader Industries',
-    'Ballista':'Anvil Aerospace','Spartan':'Anvil Aerospace','Nova':'Tumbril','Cyclone':'Tumbril','Cyclone MT':'Tumbril','Cyclone RN':'Tumbril','Cyclone RC':'Tumbril','Cyclone TR':'Tumbril','Cyclone AA':'Tumbril','Storm':'Tumbril','Storm AA':'Tumbril',
-    'Ursa':'RSI','G12':'Gatac','Railen':'Gatac',
-    'San\'tok.yai':'Aopoa','Endeavor':'MISC',
+    'Nox':'Aopoa','Nox Kue':'Aopoa','Khartu-Al':'Aopoa',"San'tok.yai":'Aopoa',
+    'RAFT':'ARGO','ATLS':'ARGO','MPUV Cargo':'ARGO','MPUV Personnel':'ARGO','SRV':'ARGO','MOLE':'ARGO',
+    'Vulcan':'Aegis Dynamics',
+    'Mercury Star Runner':'Crusader','Hercules Starlifter C2':'Crusader','Hercules Starlifter M2':'Crusader','Hercules Starlifter A2':'Crusader',
+    'Ares Inferno':'Crusader','Ares Ion':'Crusader',
+    'Spirit A1':'Crusader','Spirit C1':'Crusader','Spirit E1':'Crusader',
+    'Genesis Starliner':'Crusader','Intrepid':'Crusader',
+    'Nova':'Tumbril','Cyclone':'Tumbril','Cyclone MT':'Tumbril','Cyclone RN':'Tumbril','Cyclone RC':'Tumbril','Cyclone TR':'Tumbril','Cyclone AA':'Tumbril','Storm':'Tumbril','Storm AA':'Tumbril',
+    'Railen':'Gatac','G12':'Gatac',
     'Idris-M':'Aegis Dynamics','Idris-P':'Aegis Dynamics','Javelin':'Aegis Dynamics',
-    'Legionnaire':'Anvil Aerospace','Liberator':'MISC','Arrastra':'RSI',
-    'MOLE':'ARGO',
     'P-52 Merlin':'Kruger','P-72 Archimedes':'Kruger','L-21 Wolf':'Kruger',
-    'Guardian':'Mirai','Guardian QI':'Mirai','Guardian MX':'Mirai',
-    'C1 Spirit':'Crusader Industries'
+    'Guardian':'Mirai','Guardian QI':'Mirai','Guardian MX':'Mirai'
   };
+  var SHIP_BUY = {
+    '100i':{p:695000,d:'New Deal'},
+    '125a':{p:810000,d:'New Deal'},
+    '135c':{p:900000,d:'New Deal'},
+    '300i':{p:955000,d:'Astro Armada'},
+    '315p':{p:1059000,d:'Astro Armada'},
+    '325a':{p:1120000,d:'Astro Armada'},
+    '350r':{p:1575000,d:'Astro Armada'},
+    '400i':{p:7014000,d:'Astro Armada'},
+    '600i Explorer':{p:17000000,d:'New Deal'},
+    '600i Touring':{p:15800000,d:'New Deal'},
+    '890 Jump':{p:32000000,d:'New Deal'},
+    'Arrow':{p:1018000,d:'Astro Armada'},
+    'Aurora MR':{p:230000,d:'New Deal'},
+    'Aurora LN':{p:390000,d:'New Deal'},
+    'Aurora CL':{p:365000,d:'New Deal'},
+    'Aurora ES':{p:225000,d:'New Deal'},
+    'Avenger Titan':{p:785000,d:'Astro Armada'},
+    'Avenger Stalker':{p:815000,d:'Astro Armada'},
+    'Avenger Warlock':{p:980000,d:'Astro Armada'},
+    'Ballista':{p:2705000,d:'New Deal'},
+    'Blade':{p:3800000,d:'Astro Armada'},
+    'Buccaneer':{p:1315000,d:'Astro Armada'},
+    'Carrack':{p:31500000,d:'New Deal'},
+    'Caterpillar':{p:5430000,d:'New Deal'},
+    'Constellation Andromeda':{p:4250000,d:'Astro Armada'},
+    'Constellation Aquila':{p:4700000,d:'Astro Armada'},
+    'Constellation Taurus':{p:3640000,d:'New Deal'},
+    'Constellation Phoenix':{p:7400000,d:'New Deal'},
+    'Corsair':{p:4300000,d:'New Deal'},
+    'Cutlass Black':{p:1385000,d:'New Deal'},
+    'Cutlass Blue':{p:2050000,d:'New Deal'},
+    'Cutlass Red':{p:1705000,d:'New Deal'},
+    'Cutlass Steel':{p:2100000,d:'New Deal'},
+    'Defender':{p:3345000,d:'Astro Armada'},
+    'Eclipse':{p:3450000,d:'Astro Armada'},
+    'Freelancer':{p:1590000,d:'New Deal'},
+    'Freelancer MAX':{p:2030000,d:'New Deal'},
+    'Freelancer MIS':{p:2320000,d:'New Deal'},
+    'Freelancer DUR':{p:1980000,d:'New Deal'},
+    'Fury':{p:640000,d:'Astro Armada'},
+    'Fury MX':{p:740000,d:'Astro Armada'},
+    'Gladiator':{p:1675000,d:'Astro Armada'},
+    'Gladius':{p:1104000,d:'Astro Armada'},
+    'Gladius Valiant':{p:1174000,d:'Astro Armada'},
+    'Hammerhead':{p:18500000,d:'Astro Armada'},
+    'Hawk':{p:1265000,d:'Astro Armada'},
+    'Herald':{p:1150000,d:'New Deal'},
+    'Hercules Starlifter C2':{p:6270000,d:'Crusader Showroom'},
+    'Hercules Starlifter M2':{p:8150000,d:'Crusader Showroom'},
+    'Hercules Starlifter A2':{p:10850000,d:'Crusader Showroom'},
+    'Hull A':{p:750000,d:'New Deal'},
+    'Hull B':{p:2500000,d:'New Deal'},
+    'Hurricane':{p:1685000,d:'Astro Armada'},
+    'Khartu-Al':{p:2175000,d:'Astro Armada'},
+    'Mantis':{p:1520000,d:'Astro Armada'},
+    'Mercury Star Runner':{p:4575000,d:'Crusader Showroom'},
+    'MOLE':{p:5130000,d:'New Deal'},
+    'Mustang Alpha':{p:235000,d:'New Deal'},
+    'Mustang Beta':{p:325000,d:'New Deal'},
+    'Mustang Delta':{p:700000,d:'New Deal'},
+    'Mustang Gamma':{p:435000,d:'New Deal'},
+    'Nomad':{p:810000,d:'New Deal'},
+    'Prospector':{p:2061000,d:'New Deal'},
+    'RAFT':{p:1750000,d:'New Deal'},
+    'Reclaimer':{p:14700000,d:'New Deal'},
+    'Redeemer':{p:6580000,d:'Astro Armada'},
+    'Reliant Kore':{p:870000,d:'New Deal'},
+    'Reliant Tana':{p:1010000,d:'New Deal'},
+    'Reliant Sen':{p:995000,d:'New Deal'},
+    'Reliant Mako':{p:1025000,d:'New Deal'},
+    'Retaliator':{p:5325000,d:'Astro Armada'},
+    'Sabre':{p:2175000,d:'Astro Armada'},
+    'Sabre Firebird':{p:2575000,d:'Astro Armada'},
+    'Scorpius':{p:3200000,d:'Astro Armada'},
+    'Spirit A1':{p:3300000,d:'Crusader Showroom'},
+    'Spirit C1':{p:2780000,d:'Crusader Showroom'},
+    'Starfarer':{p:6710000,d:'New Deal'},
+    'Starfarer Gemini':{p:7240000,d:'New Deal'},
+    'Talon':{p:1795000,d:'Astro Armada'},
+    'Talon Shrike':{p:1915000,d:'Astro Armada'},
+    'Terrapin':{p:3180000,d:'Astro Armada'},
+    'Valkyrie':{p:20000000,d:'New Deal'},
+    'Vanguard Warden':{p:3880000,d:'Astro Armada'},
+    'Vanguard Harbinger':{p:4105000,d:'Astro Armada'},
+    'Vanguard Sentinel':{p:3985000,d:'Astro Armada'},
+    'Vanguard Hoplite':{p:3345000,d:'Astro Armada'},
+    'Vulture':{p:1750000,d:'New Deal'},
+    'Prowler':{p:4600000,d:"Astro Armada"},
+    'F8C Lightning':{p:23400000,d:'New Deal'}
+  };
+  function fmtPrice(n){if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';return(n/1e3).toFixed(0)+'K';}
   var grid = document.getElementById('shipsGrid');
   if (!grid || typeof SHIP_DATA === 'undefined') return;
   grid.innerHTML = '';
@@ -6471,6 +6573,7 @@ function renderShips() {
     var mfr = SHIP_MFR_MAP[name] || '';
     var role = s.role || 'Unknown';
     var size = s.size || '?';
+    var buy = SHIP_BUY[name];
     var wikiTitle = (window._WIKIMAP && window._WIKIMAP[name]) ? window._WIKIMAP[name] : name.replace(/ /g, '_');
     var imgUrl = 'https://starcitizen.tools/api.php?action=query&titles=' + encodeURIComponent(wikiTitle) + '&prop=pageimages&format=json&pithumbsize=400&pilimit=1&origin=*';
     var card = document.createElement('div');
@@ -6478,7 +6581,6 @@ function renderShips() {
     card.setAttribute('data-ship', name);
     card.setAttribute('data-role', role);
     card.setAttribute('data-mfr', mfr);
-    card.onclick = function(e) { if (!e.target.classList.contains('ship-card-builder')) openShipInBuilder(name); };
     var imgWrap = document.createElement('div');
     imgWrap.className = 'ship-card-img-wrap';
     var img = document.createElement('img');
@@ -6509,7 +6611,24 @@ function renderShips() {
     h3.textContent = name;
     var mfrDiv = document.createElement('div');
     mfrDiv.className = 'ship-card-mfr';
-    mfrDiv.textContent = mfr || 'Unknown Manufacturer';
+    mfrDiv.textContent = mfr || '—';
+    var priceRow = document.createElement('div');
+    priceRow.className = 'ship-card-price-row';
+    if (buy) {
+      var priceSpan = document.createElement('span');
+      priceSpan.className = 'ship-card-price';
+      priceSpan.textContent = fmtPrice(buy.p) + ' aUEC';
+      var dealerSpan = document.createElement('span');
+      dealerSpan.className = 'ship-card-dealer';
+      dealerSpan.textContent = buy.d;
+      priceRow.appendChild(priceSpan);
+      priceRow.appendChild(dealerSpan);
+    } else {
+      var naSpan = document.createElement('span');
+      naSpan.className = 'ship-card-price ship-card-price-na';
+      naSpan.textContent = 'Pledge Only';
+      priceRow.appendChild(naSpan);
+    }
     var footer = document.createElement('div');
     footer.className = 'ship-card-footer';
     var roleTag = document.createElement('span');
@@ -6523,9 +6642,11 @@ function renderShips() {
     footer.appendChild(btn);
     body.appendChild(h3);
     body.appendChild(mfrDiv);
+    body.appendChild(priceRow);
     body.appendChild(footer);
     card.appendChild(imgWrap);
     card.appendChild(body);
+    card.onclick = function(e) { if (!e.target.classList.contains('ship-card-builder')) openShipInBuilder(name); };
     grid.appendChild(card);
   });
   var ct = document.getElementById('shipsCount');
