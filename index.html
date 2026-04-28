@@ -50,7 +50,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v1.3 LIVE</title>
+<title>SC-ShipForge v1.4 LIVE</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -6248,8 +6248,7 @@ window.addEventListener('load', function() {
   window.ss_pick_ship = function(name){
     saveRecent('ship',name);
     close('ss_drop_ship');
-    var inp=document.getElementById('654
-        ');
+    var inp=document.getElementById('ss_inp_ship');
     if(inp){inp.value=name;inp.classList.add('has-val');}
     var clr=document.getElementById('ss_clr_ship');
     if(clr) clr.classList.add('show');
@@ -6265,8 +6264,7 @@ window.addEventListener('load', function() {
     selectTarget(name);
   };
   window.ss_clear_ship = function(){
-    var inp=document.getElementById('656
-        ');
+    var inp=document.getElementById('ss_clr_ship');
     if(inp){inp.value='';inp.classList.remove('has-val');inp.focus();}
     document.getElementById('ss_clr_ship')?.classList.remove('show');
     update('ss_drop_ship','',false);
