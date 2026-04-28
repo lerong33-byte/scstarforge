@@ -3803,8 +3803,16 @@ function updatePower() {
     var cols_f = SPV_SYSTEMS.map(function(s){
       var baseSegs = grouped_f[s.key] || 0;
       if (isNAV && (s.key === 'WeaponGun' || s.key === 'Shield')) baseSegs = 0;
-      var segs = (userPwrAdj[selShip] && userPwrAdj[selShip][s.key] !== undefined)
-                 ? userPwrAdj[selShip][s.key] : baseSegs;
+      var _adj=userPwrAdj[selShip]||{};
+      var _cnt=s.key==='Cooler'?(cC.cooler||1):s.key==='Shield'?(cC.sg||1):1;
+      var segs;
+      if(_cnt>1){
+        var _tot=0,_fd=0;
+        for(var _i=0;_i<_cnt;_i++){var _ik=s.key+'_'+_i;if(_adj[_ik]!==undefined){_tot+=_adj[_ik];_fd++;}}
+        segs=_fd>0?_tot:(_adj[s.key]!==undefined?_adj[s.key]:baseSegs);
+      }else{
+        segs=_adj[s.key]!==undefined?_adj[s.key]:baseSegs;
+      }
       return {sys:s, segs:segs, base:baseSegs, key:s.key};
     });
     // SPViewer: one column per physical component instance
@@ -3816,7 +3824,8 @@ function updatePower() {
       var perBase = count > 1 ? col.base / count : col.base;
       for(var ci=0; ci<count; ci++) {
         var instKeyF = count > 1 ? col.key + '_' + ci : col.key;
-        expandedColsF.push({sys:col.sys, segs:perSegs, base:perBase, key:instKeyF, baseKey:col.key, instIdx:ci, instTotal:count});
+        var _is=(userPwrAdj[selShip]&&userPwrAdj[selShip][instKeyF]!==undefined)?userPwrAdj[selShip][instKeyF]:perSegs;
+        expandedColsF.push({sys:col.sys, segs:_is, base:perBase, key:instKeyF, baseKey:col.key, instIdx:ci, instTotal:count});
       }
     });
     cols_f = expandedColsF;
@@ -6420,4 +6429,5 @@ window.addEventListener('load', function() {
 <!-- v4.3-DEV -->
 <!-- v4.4-DEV -->
 <!-- v4.5-DEV -->
+<!-- v4.6-DEV -->
 <!-- v4.6-DEV -->
