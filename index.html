@@ -50,7 +50,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v1.4 LIVE</title>
+<title>SC-ShipForge v1.5 LIVE</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -6178,7 +6178,7 @@ window.addEventListener('load', function() {
     var safe = name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return '<div class="ss-item" onclick="'+fn+'(\''+safe+'\')" data-nm="'+name.replace(/"/g,'&quot;')+'">'+
       '<img class="ss-thumb" src="'+imgURL(name)+'" alt="" onerror="this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\')">'+
-      '<span class="ss-thumb-ph" style="display:none">🚀</span>'+
+      ''+
       '<span class="ss-name">'+hl+'</span>'+
       (sz?'<span class="ss-sz">'+sz+'</span>':'')+
       (mfr?'<span class="ss-mfr">'+mfr.split(' ')[0]+'</span>':'')+
@@ -6195,9 +6195,16 @@ window.addEventListener('load', function() {
         html += '<div class="ss-group-lbl">Recent</div>';
         recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget); });
       }
-      var sorted = all.slice().sort();
-      html += '<div class="ss-group-lbl">All '+sorted.length+' Ships</div>';
-      sorted.forEach(function(n){ html += itemHTML(n,n,isTarget); });
+      var byRole = {};
+      all.forEach(function(n){
+        var role = (SHIP_DATA&&SHIP_DATA[n]&&SHIP_DATA[n].role)||'Other';
+        if(!byRole[role]) byRole[role]=[];
+        byRole[role].push(n);
+      });
+      Object.keys(byRole).sort().forEach(function(role){
+        html += '<div class="ss-group-lbl">'+role+' ('+byRole[role].length+')</div>';
+        byRole[role].sort().forEach(function(n){ html += itemHTML(n,n,isTarget); });
+      });
       return html;
     }
     var results = [];
