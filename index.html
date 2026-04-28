@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v4.10 DEV</title>
+<title>SC-ShipForge v4.11 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -825,7 +825,7 @@ option,optgroup{background:var(--bg2)}
       padding:0 2px;line-height:1;flex-shrink:0" title="Dismiss">×</button>
   </div>
       <div class="tabs">
-        <button class="tab" id="tabShipSelector" data-tab="shipSelector">SHIP SELECTOR</button>
+        <button class="tab" id="tabShipSelector" onclick="showTab('shipSelector')">SHIP SELECTOR</button>
 <button class="tab on" data-t="lo" onclick="showTab('lo',this)">LOADOUT BUILDER</button>
         <button class="tab" data-t="ai" onclick="showTab('ai',this)">AI ADVISOR</button>
         <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS DB</button>
@@ -6415,6 +6415,72 @@ window.addEventListener('load', function() {
     </div>
   </div>
 </div>
+
+  <script>
+  // Ship Selector functionality
+  const shipData = [
+    {name: "Aurora", class: "Light Fighter", image: "/path/to/aurora.jpg"},
+    {name: "Mustang", class: "Light Fighter", image: "/path/to/mustang.jpg"},
+    {name: "Avenger", class: "Combat", image: "/path/to/avenger.jpg"},
+    {name: "Hornet", class: "Medium Fighter", image: "/path/to/hornet.jpg"},
+    {name: "Gladius", class: "Light Fighter", image: "/path/to/gladius.jpg"}
+  ];
+  
+  function populateShipSelector() {
+    const container = document.getElementById('shipListContainer');
+    if (!container) return;
+    
+    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; width: 100%;">';
+    
+    shipData.forEach(ship => {
+      html += `
+        <div style="border: 1px solid #222; border-radius: 4px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s;" 
+             onmouseover="this.style.borderColor='#38bdf8'; this.style.boxShadow='0 0 10px rgba(56,189,248,0.3)'"
+             onmouseout="this.style.borderColor='#222'; this.style.boxShadow='none'">
+          <div style="width: 100%; height: 150px; background: #1a1f2a; border-radius: 2px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #666;">
+            [${ship.name} Image]
+          </div>
+          <div style="font-weight: 600; margin-bottom: 5px;">${ship.name}</div>
+          <div style="font-size: 12px; color: #888; margin-bottom: 10px;">${ship.class}</div>
+          <button onclick="loadShip('${ship.name}')" style="width: 100%; padding: 6px; background: #38bdf8; border: none; color: #000; font-weight: 600; cursor: pointer; border-radius: 2px;">
+            LOADOUT
+          </button>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+  }
+  
+  function loadShip(shipName) {
+    console.log('Loading ship:', shipName);
+    // Switch to Loadout Builder tab
+    const tabBtn = document.querySelector('button:contains("LOADOUT BUILDER")');
+    if (tabBtn) tabBtn.click();
+    // You can add logic here to pre-select the ship
+  }
+  
+  function showTab(tabName) {
+    // Hide all tabs
+    const allTabs = document.querySelectorAll('[id$="Tab"]');
+    allTabs.forEach(tab => tab.style.display = 'none');
+    
+    // Show selected tab
+    const tab = document.getElementById(tabName + 'Tab');
+    if (tab) {
+      tab.style.display = 'block';
+      if (tabName === 'shipSelector') {
+        populateShipSelector();
+      }
+    }
+  }
+  
+  // Initialize when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    populateShipSelector();
+  });
+  </script>
 </body>
 </html>
 
@@ -6433,4 +6499,4 @@ window.addEventListener('load', function() {
 <!-- v4.6-DEV -->
 <!-- v4.7-DEV -->
 <!-- v4.8-DEV -->
-<!-- v4.10 DEV -->
+<!-- v4.11 DEV -->
