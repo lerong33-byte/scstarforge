@@ -62,7 +62,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v2.1 LIVE</title>
+<title>SC-ShipForge v2.2 LIVE</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -112,7 +112,7 @@ option,optgroup{background:var(--bg2)}
 
 /* ── TOP NAV ── */
 .nav{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;position:relative;z-index:20}
-.nav-logo{font-size:15px;font-weight:600;letter-spacing:3px;color:var(--accent);padding-right:14px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+.nav-logo{font-size:15px;font-weight:600;letter-spacing:3px;color:var(--accent);padding-right:14px;border-right:1px solid var(--border);white-space:nowrap}
 .nav-search-wrap{position:relative;display:flex;align-items:center;flex-shrink:0}
 .nav-search-icon{position:absolute;left:11px;color:var(--t3);font-size:14px;pointer-events:none}
 #sSearch{width:210px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:8px 12px 8px 33px;font-size:14px;color:var(--text);outline:none;transition:border-color .15s}
@@ -311,7 +311,7 @@ option,optgroup{background:var(--bg2)}
 .wfbtn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--t2);cursor:pointer;transition:all .15s}
 .wfbtn:hover,.wfbtn.on{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
 .wgrid{flex:1;overflow-y:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;align-content:start}
-.wcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .15s}
+.wcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:visible;cursor:pointer;transition:border-color .15s}
 .wcard:hover{border-color:var(--accent)}
 .wc-top{height:58px;background:var(--bg3);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border)}
 .wc-name{font-size:13px;font-weight:500;color:var(--text);padding:9px 10px 4px}
@@ -691,12 +691,128 @@ option,optgroup{background:var(--bg2)}
 #pwrCard .sig-val{font-family:'JetBrains Mono',monospace!important;font-size:12px!important;font-weight:600!important;color:#e6ebf2!important}
 /* ── End Erkul Reskin ── */
 
+
+/* ── Ships Database Tab ── */
+#pane-ships #shipsPage{padding:0 20px 20px;max-width:1400px;margin:0 auto;flex:1;overflow-y:auto;min-height:0}
+#pane-ships #shipsPage::-webkit-scrollbar{width:6px}
+#pane-ships #shipsPage::-webkit-scrollbar-track{background:transparent}
+#pane-ships #shipsPage::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.2);border-radius:3px}
+#pane-ships #shipsPage::-webkit-scrollbar-thumb:hover{background:rgba(56,189,248,0.4)}
+#pane-ships .ships-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:2;background:#0b0f15;padding:16px 0 4px}
+#pane-ships .ships-title{font-family:'Rajdhani','JetBrains Mono',monospace;font-size:24px;font-weight:700;letter-spacing:0.1em;color:#38bdf8;text-transform:uppercase;margin:0}
+#pane-ships .ships-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a94a3;background:rgba(56,189,248,0.08);padding:4px 10px;border-radius:12px;border:1px solid rgba(56,189,248,0.15)}
+#pane-ships .ships-search-row{margin-bottom:10px;position:sticky;top:44px;z-index:2;background:#0b0f15;padding-bottom:4px}
+#pane-ships .ships-search{width:100%;background:#0d1117;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px 10px 38px;font-size:14px;color:#e6ebf2;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238a94a3' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;box-sizing:border-box}
+#pane-ships .ships-search:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,0.1)}
+#pane-ships .ships-search::placeholder{color:#4a5568}
+#pane-ships .ships-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;position:sticky;top:88px;z-index:2;background:#0b0f15;padding-bottom:8px}
+#pane-ships .ships-filter-btn{padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;border-radius:20px;border:1px solid rgba(255,255,255,0.08);color:#8a94a3;background:transparent;cursor:pointer;transition:all .2s;text-transform:uppercase}
+#pane-ships .ships-filter-btn:hover{border-color:rgba(56,189,248,0.3);color:#c0cee0}
+#pane-ships .ships-filter-btn.on{background:rgba(56,189,248,0.12);border-color:rgba(56,189,248,0.4);color:#38bdf8}
+#pane-ships .ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding-bottom:20px}
+#pane-ships .ship-card{position:relative;background:#0d1117;border:1px solid rgba(255,255,255,0.06);border-radius:10px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+#pane-ships .ship-card:hover{transform:translateY(-3px);border-color:rgba(56,189,248,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+#pane-ships .ship-card-img-wrap{position:relative;width:100%;height:170px;overflow:hidden;background:#080c12;border-radius:10px 10px 0 0}
+#pane-ships .ship-card-img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+#pane-ships .ship-card:hover .ship-card-img{transform:scale(1.05)}
+#pane-ships .ship-card-role-badge{position:absolute;top:10px;left:10px;padding:3px 10px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:4px;color:#fff;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1)}
+#pane-ships .ship-card-size-badge{position:absolute;top:10px;right:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;border-radius:6px;color:#e6ebf2;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1)}
+#pane-ships .ship-card-body{padding:10px 14px 10px}
+#pane-ships .ship-card-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#e6ebf2;margin:0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pane-ships .ship-card-mfr{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6577;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pane-ships .ship-card-footer{display:flex;align-items:center;justify-content:space-between}
+#pane-ships .ship-card-role-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a94a3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+#pane-ships .ship-card-builder{padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(56,189,248,0.3);color:#38bdf8;background:rgba(56,189,248,0.06);cursor:pointer;transition:all .2s;white-space:nowrap}
+#pane-ships .ship-card-builder:hover{background:rgba(56,189,248,0.15);border-color:#38bdf8}
+#pane-ships .ship-card-no-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#2a3240;font-family:'Rajdhani',sans-serif;font-size:40px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em}
+#pane-ships .ship-card-price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:4px 0;border-top:1px solid rgba(255,255,255,0.04)}
+#pane-ships .ship-card-price{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#22c55e}
+#pane-ships .ship-card-price-na{color:#5a6577;font-weight:400;font-style:italic}
+#pane-ships .ship-card-dealer{font-family:'JetBrains Mono',monospace;font-size:9px;color:#8a94a3;background:rgba(255,255,255,0.04);padding:2px 6px;border-radius:4px}
+@media(max-width:600px){#pane-ships .ships-grid{grid-template-columns:1fr 1fr;gap:10px}#pane-ships .ship-card-img-wrap{height:120px}}
+
+
+#pane-wp .wc-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+#pane-wp .wc-nm{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:#e6ebf2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pane-wp .wc-sz{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#0d1117;background:#38bdf8;border-radius:4px;padding:2px 6px;flex-shrink:0;margin-left:6px}
+#pane-wp .wc-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5a6577;margin-bottom:8px}
+#pane-wp .wc-stats{display:flex;flex-direction:column;gap:4px}
+#pane-wp .wc-st{display:flex;justify-content:space-between;align-items:center}
+#pane-wp .wc-sl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6577;text-transform:uppercase;letter-spacing:.06em}
+#pane-wp .wc-sv{font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;font-weight:600}
+#compGrid .wcard{padding:12px}
+
+
+.wcard{position:relative}
+.wcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:8px 8px 0 0}
+.wcard[data-wtype="ballistic"]::before{background:linear-gradient(90deg,#ef4444,#f97316)}
+.wcard[data-wtype="energy"]::before{background:linear-gradient(90deg,#3b82f6,#38bdf8)}
+.wcard[data-cat="pp"]::before{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.wcard[data-cat="sg"]::before{background:linear-gradient(90deg,#a855f7,#c084fc)}
+.wcard[data-cat="cooler"]::before{background:linear-gradient(90deg,#06b6d4,#38bdf8)}
+.wcard[data-cat="qd"]::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+
+.wcard-icon{position:absolute;bottom:10px;right:10px;width:40px;height:40px;opacity:0.22}
+.wcard-icon svg{width:100%;height:100%}
+
+#wpModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+#wpModal.open{display:flex}
+#wpModalCard{background:#0d1117;border:1px solid rgba(56,189,248,0.2);border-radius:12px;padding:24px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+#wpModalCard::-webkit-scrollbar{width:4px}
+#wpModalCard::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.2);border-radius:2px}
+#wpModalClose{position:absolute;top:12px;right:12px;background:none;border:none;color:#8a94a3;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:4px}
+#wpModalClose:hover{color:#e6ebf2;background:rgba(255,255,255,0.06)}
+.wpm-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#e6ebf2;margin:0 0 4px}
+.wpm-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6577;margin-bottom:16px}
+.wpm-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.wpm-stat{background:rgba(255,255,255,0.03);border-radius:6px;padding:8px;text-align:center}
+.wpm-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6577;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+.wpm-stat-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#38bdf8}
+.wpm-section{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:4px}
+.wpm-ships{display:flex;flex-wrap:wrap;gap:6px}
+.wpm-ship{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c0cee0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:4px 10px;cursor:pointer;transition:all .15s}
+.wpm-ship:hover{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3);color:#38bdf8}
+.wpm-ship-sz{font-size:9px;color:#5a6577;margin-left:4px}
+
+#shipModal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+#shipModal.open{display:flex}
+#shipModalCard{background:#0d1117;border:1px solid rgba(56,189,248,0.2);border-radius:12px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.5)}
+#shipModalCard::-webkit-scrollbar{width:4px}
+#shipModalCard::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.2);border-radius:2px}
+.sm-close{position:absolute;top:12px;right:12px;background:none;border:none;color:#8a94a3;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:4px;z-index:2}
+.sm-close:hover{color:#e6ebf2;background:rgba(255,255,255,0.06)}
+.sm-img{width:100%;height:200px;object-fit:cover;border-radius:12px 12px 0 0;display:block;background:#080c12}
+.sm-body{padding:20px}
+.sm-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#e6ebf2;margin:0 0 2px}
+.sm-mfr{font-family:'JetBrains Mono',monospace;font-size:11px;color:#5a6577;margin-bottom:12px}
+.sm-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.sm-ov{background:rgba(255,255,255,0.03);border-radius:6px;padding:8px;text-align:center}
+.sm-ov-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5a6577;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px}
+.sm-ov-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#38bdf8}
+.sm-price{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:8px 12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px}
+.sm-price-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#22c55e}
+.sm-price-loc{font-family:'JetBrains Mono',monospace;font-size:10px;color:#8a94a3}
+.sm-section{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:4px}
+.sm-slots{display:flex;flex-direction:column;gap:4px}
+.sm-slot{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:rgba(255,255,255,0.02);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.sm-slot-name{color:#c0cee0}
+.sm-slot-sz{color:#38bdf8;font-weight:700;font-size:10px;background:rgba(56,189,248,0.1);padding:2px 6px;border-radius:4px}
+.sm-comps{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sm-comp{padding:6px 8px;background:rgba(255,255,255,0.02);border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.sm-comp-lbl{color:#5a6577;font-size:9px;text-transform:uppercase;display:block;margin-bottom:2px}
+.sm-comp-val{color:#c0cee0}
+.sm-comp-ct{color:#5a6577;font-size:9px}
+.sm-tips{margin-top:12px}
+.sm-tip{font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a94a3;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.sm-tip::before{content:'\25B8 ';color:#38bdf8}
+.sm-builder-btn{display:block;width:100%;margin-top:16px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;border-radius:8px;border:1px solid rgba(56,189,248,0.4);color:#38bdf8;background:rgba(56,189,248,0.08);cursor:pointer;transition:all .2s}
+.sm-builder-btn:hover{background:rgba(56,189,248,0.2);border-color:#38bdf8}
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.1</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.2-LIVE</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -861,8 +977,8 @@ option,optgroup{background:var(--bg2)}
   </div>
       <div class="tabs">
         <button class="tab on" data-t="lo" onclick="showTab('lo',this)">LOADOUT BUILDER</button>
-        <button class="tab" data-t="ai" onclick="showTab('ai',this)">AI ADVISOR</button>
-        <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS DB</button>
+        <button class="tab" data-t="ships" onclick="showTab('ships',this)">SHIPS</button>
+        <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS &amp; COMPS</button>
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
         <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
         <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}">⬡ COMPARE</button>
@@ -892,22 +1008,7 @@ option,optgroup{background:var(--bg2)}
 <div id="loContent" style="flex:1;overflow-y:auto;padding:16px"></div>
       </div>
 
-      <div class="pane" id="pane-ai">
-        <div class="ai-banner" id="aiBanner">
-          <span>&#9888; API KEY:</span>
-          <input type="password" id="apiKeyInput" placeholder="sk-ant-..."/>
-          <button onclick="saveKey()">SAVE</button>
-        </div>
-        <div class="ai-active" id="aiActive">&#10003; AI ONLINE &mdash; Ask anything about ships, builds, meta</div>
-        <div class="msgs" id="aiMsgs">
-          <div class="msg"><div class="av a">AI</div><div class="bub">Enter your Anthropic API key above to enable AI build advice.</div></div>
-        </div>
-        <div class="typing-row" id="aiTyping"><div class="td"></div><div class="td"></div><div class="td"></div><span style="font-size:11px;color:var(--t3);margin-left:4px">Thinking&hellip;</span></div>
-        <div class="inp-row">
-          <input class="chat-inp" id="aiInput" placeholder="Ask about builds, meta, ship comparisons&hellip;" onkeydown="if(event.key==='Enter')sendAI()"/>
-          <button class="sbtn" id="aiSend" onclick="sendAI()">SEND</button>
-        </div>
-      </div>
+      
 
       <div class="pane" id="pane-sv" style="flex-direction:column">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
@@ -918,8 +1019,17 @@ option,optgroup{background:var(--bg2)}
       </div>
 
       <div class="pane" id="pane-wp">
+        <div id="wpCatBar" style="display:flex;gap:4px;padding:8px 12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <button class="wp-cat-btn on" data-cat="weapons" onclick="switchWpCat('weapons',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(56,189,248,.4);color:#38bdf8;background:rgba(56,189,248,.12);cursor:pointer">Weapons</button>
+          <button class="wp-cat-btn" data-cat="pp" onclick="switchWpCat('pp',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Power Plants</button>
+          <button class="wp-cat-btn" data-cat="sg" onclick="switchWpCat('sg',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Shields</button>
+          <button class="wp-cat-btn" data-cat="cooler" onclick="switchWpCat('cooler',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Coolers</button>
+          <button class="wp-cat-btn" data-cat="qd" onclick="switchWpCat('qd',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Quantum Drives</button>
+        </div>
         <div class="wf" id="wfiltBar"></div>
         <div class="wgrid" id="wgrid"></div>
+      
+        <div id="compGrid" class="wgrid" style="display:none"></div>
       </div>
 
       <div class="pane" id="pane-lc">
@@ -947,8 +1057,38 @@ option,optgroup{background:var(--bg2)}
                 <option value="">— Select ship —</option>
               </select>
             </div>
+
           </div>
           <div id="cmpTable" style="color:var(--t3);font-size:13px;text-align:center;padding:20px 0;font-family:var(--fmono)">Select two ships to compare</div>
+        </div>
+      
+
+      </div>
+      <div class="pane" id="pane-ships">
+        <div id="shipsPage">
+          <div class="ships-header">
+            <h2 class="ships-title">Ship Database</h2>
+            <span class="ships-count" id="shipsCount"></span>
+          </div>
+          <div class="ships-search-row">
+            <input type="text" id="shipsSearchInput" placeholder="Search ships by name, manufacturer, or role..." class="ships-search" oninput="filterShips()"/>
+          </div>
+          <div class="ships-filters" id="shipsFilters">
+            <button class="ships-filter-btn on" data-role="All" onclick="setShipFilter('All',this)">All</button>
+            <button class="ships-filter-btn" data-role="Fighter" onclick="setShipFilter('Fighter',this)">Fighter</button>
+            <button class="ships-filter-btn" data-role="Bomber" onclick="setShipFilter('Bomber',this)">Bomber</button>
+            <button class="ships-filter-btn" data-role="Interdiction" onclick="setShipFilter('Interdiction',this)">Interdiction</button>
+            <button class="ships-filter-btn" data-role="Gunship" onclick="setShipFilter('Gunship',this)">Gunship</button>
+            <button class="ships-filter-btn" data-role="Transport" onclick="setShipFilter('Transport',this)">Transport</button>
+            <button class="ships-filter-btn" data-role="Support" onclick="setShipFilter('Support',this)">Support</button>
+            <button class="ships-filter-btn" data-role="Exploration" onclick="setShipFilter('Exploration',this)">Exploration</button>
+            <button class="ships-filter-btn" data-role="Mining" onclick="setShipFilter('Mining',this)">Mining</button>
+            <button class="ships-filter-btn" data-role="Cargo" onclick="setShipFilter('Cargo',this)">Cargo</button>
+            <button class="ships-filter-btn" data-role="Starter" onclick="setShipFilter('Starter',this)">Starter</button>
+            <button class="ships-filter-btn" data-role="Racing" onclick="setShipFilter('Racing',this)">Racing</button>
+            <button class="ships-filter-btn" data-role="Capital" onclick="setShipFilter('Capital',this)">Capital</button>
+          </div>
+          <div class="ships-grid" id="shipsGrid"></div>
         </div>
       </div>
     </div>
@@ -2504,7 +2644,49 @@ window._WIKIMAP = {
   "Spirit C1":"Spirit_C1","Spirit A1":"Spirit_A1","Spirit E1":"Spirit_E1",
   "Hercules C2":"Hercules_C2","Hercules M2":"Hercules_M2","Hercules A2":"Hercules_A2",
   "Paladin":"Paladin","MOLE":"MOLE","Carrack Expedition":"Carrack_Expedition"
-};
+,
+  "Gladius Valiant":"Gladius_Valiant","Sabre Comet":"Sabre_Comet","Sabre Raven":"Sabre_Raven","Sabre Firebird":"Sabre_Firebird",
+  "Nautilus":"Nautilus_(ship)","Retaliator":"Retaliator",
+  "F7A Hornet Mk2":"F7A_Hornet_Mk_II","F7C Hornet Mk2":"F7C_Hornet_Mk_II","F7C-M Super Hornet Mk2":"F7C-M_Super_Hornet_Mk_II",
+  "F7C-S Hornet Ghost Mk2":"F7C-S_Hornet_Ghost_Mk_II","F7C-R Hornet Tracker Mk2":"F7C-R_Hornet_Tracker_Mk_II",
+  "Pisces C8X":"C8X_Pisces_Expedition","C8X Pisces Expedition":"C8X_Pisces_Expedition","C8 Pisces":"C8_Pisces","C8R Pisces":"C8R_Pisces",
+  "RAFT":"RAFT","SRV":"SRV_(ship)","MPUV-1C":"MPUV-1C","MPUV-1P":"MPUV-1P","MPUV-1S":"MPUV-1S",
+  "Defender":"Defender","Mustang Alpha":"Mustang_Alpha","Mustang Beta":"Mustang_Beta","Mustang Gamma":"Mustang_Gamma","Mustang Delta":"Mustang_Delta",
+  "Intrepid":"Intrepid_(ship)","Cutlass Steel":"Cutlass_Steel","Cutter":"Cutter_(ship)","Cutter Rambler":"Cutter_Rambler","Cutter Scout":"Cutter_Scout",
+  "Talon":"Talon_(ship)","Talon Shrike":"Talon_Shrike","Blade":"Blade_(ship)","Glaive":"Glaive","Prowler":"Prowler",
+  "P-52 Merlin":"P-52_Merlin","P-72 Archimedes":"P-72_Archimedes","L-21 Wolf":"L-21_Wolf",
+  "Freelancer MIS":"Freelancer_MIS","Freelancer DUR":"Freelancer_DUR","Freelancer MAX":"Freelancer_MAX",
+  "Constellation Andromeda":"Constellation_Andromeda","Constellation Aquila":"Constellation_Aquila",
+  "Constellation Taurus":"Constellation_Taurus","Constellation Phoenix":"Constellation_Phoenix",
+  "Cutlass Black":"Cutlass_Black","Cutlass Blue":"Cutlass_Blue","Cutlass Red":"Cutlass_Red",
+  "Aurora MR":"Aurora_MR","Aurora LN":"Aurora_LN","Aurora CL":"Aurora_CL","Aurora ES":"Aurora_ES",
+  "Ares Inferno":"Ares_Inferno","Ares Ion":"Ares_Ion","Spirit A1":"Spirit_A1","Spirit C1":"Spirit_C1","Spirit E1":"Spirit_E1",
+  "Hercules A2":"Hercules_Starlifter","Hercules C2":"C2_Hercules","Hercules M2":"M2_Hercules",
+  "Mercury Star Runner":"Mercury_Star_Runner","Corsair":"Corsair_(ship)",
+  "Caterpillar":"Caterpillar_(ship)","Starfarer":"Starfarer","Starfarer Gemini":"Starfarer_Gemini",
+  "Vulture":"Vulture_(ship)","Herald":"Herald_(ship)","Prospector":"Prospector_(ship)",
+  "Hull A":"Hull_A","Hull B":"Hull_B","Hull C":"Hull_C","Hull D":"Hull_D","Hull E":"Hull_E",
+  "Reliant Kore":"Reliant_Kore","Reliant Tana":"Reliant_Tana","Reliant Sen":"Reliant_Sen","Reliant Mako":"Reliant_Mako",
+  "100i":"100i","125a":"125a","135c":"135c","300i":"300i","315p":"315p","325a":"325a","350r":"350r","400i":"400i",
+  "600i Explorer":"600i_Explorer","600i Touring":"600i_Touring","890 Jump":"890_Jump",
+  "Vanguard Warden":"Vanguard_Warden","Vanguard Harbinger":"Vanguard_Harbinger","Vanguard Sentinel":"Vanguard_Sentinel","Vanguard Hoplite":"Vanguard_Hoplite",
+  "Reclaimer":"Reclaimer","Redeemer":"Redeemer_(ship)","Valkyrie":"Valkyrie_(ship)",
+  "Terrapin":"Terrapin_(ship)","Hurricane":"Hurricane_(ship)","Hawk":"Hawk_(ship)","Gladiator":"Gladiator_(ship)",
+  "Scorpius":"Scorpius_(ship)","Scorpius Antares":"Scorpius_Antares","Mantis":"Mantis_(ship)",
+  "Nomad":"Nomad_(ship)","Buccaneer":"Buccaneer_(ship)","Ballista":"Ballista_(vehicle)",
+  "Fury":"Fury_(ship)","Fury MX":"Fury_MX","Fury LX":"Fury_LX","Razor":"Razor_(ship)","Razor LX":"Razor_LX","Razor EX":"Razor_EX",
+  "Carrack":"Carrack","Eclipse":"Eclipse_(ship)","Centurion":"Centurion_(ship)",
+  "MOLE":"MOLE","ATLS":"ATLS","Nox":"Nox_(ship)","Khartu-Al":"Khartu-Al",
+  "Cyclone":"Cyclone_(vehicle)","Cyclone MT":"Cyclone_MT","Cyclone RN":"Cyclone_RN","Cyclone RC":"Cyclone_RC","Cyclone TR":"Cyclone_TR","Cyclone AA":"Cyclone_AA",
+  "Nova":"Nova_(vehicle)","Storm":"Storm_(vehicle)","Ursa":"Ursa_(vehicle)",
+  "Dragonfly Black":"Dragonfly_Black","Dragonfly Yellowjacket":"Dragonfly_Yellowjacket",
+  "Mule":"Mule_(vehicle)","Galaxy":"RSI_Galaxy","Polaris":"Polaris_(ship)",
+  "Merchantman":"Merchantman","Railen":"Railen","Starlancer TAC":"Starlancer_TAC","Starlancer MAX":"Starlancer_MAX",
+  "Guardian":"Guardian_(ship)","Guardian QI":"Guardian_QI","Guardian MX":"Guardian_MX",
+  "Zeus Mk II CL":"Zeus_Mk_II_CL","Zeus Mk II MR":"Zeus_Mk_II_MR","Zeus Mk II ES":"Zeus_Mk_II_ES",
+  "Idris-M":"Idris-M","Idris-P":"Idris-P","Javelin":"Javelin_(ship)","Kraken":"Kraken_(ship)",
+  "Expanse":"Expanse_(ship)","Vulcan":"Vulcan_(ship)","Liberator":"Liberator_(ship)",
+  "Legionnaire":"Legionnaire","Spartan":"Spartan_(vehicle)"};
 
 var selShip='',selAct='Stock Build',curSlots={},curMissiles={},curComps={};
 var curCompEnabled={};
@@ -5558,42 +5740,22 @@ function hideDashboard() {
 window.addEventListener('load',function(){renderDashboard();});
 
 
-function filterShipsByRole(role) {
-  var qlEl = document.getElementById('dQuickLaunch');
-  if (!qlEl) return;
-  qlEl.innerHTML = '';
+function filterShips() {
+  var q = (document.getElementById('shipsSearchInput').value || '').toLowerCase();
+  var role = window._shipsActiveRole || 'All';
+  var cards = document.querySelectorAll('#pane-ships .ship-card');
   var shown = 0;
-  Object.keys(SHIPS).sort().forEach(function(mfr) {
-    if (!SHIPS[mfr] || shown >= 8) return;
-    SHIPS[mfr].forEach(function(s) {
-      if (shown >= 8) return;
-      var def = SHIP_DATA[s]; if (!def) return;
-      if (role && (!def.role || def.role.split('/')[0].trim() !== role)) return;
-      var sc={XS:'var(--cyan)',S:'var(--green)',M:'var(--accent)',L:'var(--warn)',XL:'var(--red)'}[def.size]||'var(--t3)';
-      var card=document.createElement('div');
-      card.style.cssText='background:var(--bg4);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 6px;cursor:pointer;transition:border-color .15s';
-      card.innerHTML='<div style="font-size:10px;font-weight:600;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+s+'</div><span style="font-size:8px;font-family:var(--fmono);color:'+sc+';border:1px solid '+sc+';padding:1px 4px;border-radius:8px">'+def.size+'</span>';
-      card.onmouseover=function(){this.style.borderColor='var(--accent)';};
-      card.onmouseout=function(){this.style.borderColor='var(--border)';};
-      card.onclick=(function(n){return function(){pick(n);};})(s);
-      qlEl.appendChild(card); shown++;
-    });
+  cards.forEach(function(c) {
+    var sName = (c.getAttribute('data-ship') || '').toLowerCase();
+    var sRole = (c.getAttribute('data-role') || '').toLowerCase();
+    var sMfr = (c.getAttribute('data-mfr') || '').toLowerCase();
+    var matchRole = (role === 'All') || sRole === role.toLowerCase();
+    var matchQ = !q || sName.indexOf(q) > -1 || sRole.indexOf(q) > -1 || sMfr.indexOf(q) > -1;
+    if (matchRole && matchQ) { c.style.display = ''; shown++; }
+    else { c.style.display = 'none'; }
   });
-  // Also filter the main ship dropdown
-  var sSel=document.getElementById('sSel'); if(!sSel) return;
-  while(sSel.options.length>1) sSel.remove(1);
-  Object.keys(SHIPS).sort().forEach(function(mfr){
-    if(!SHIPS[mfr])return;
-    var ships=SHIPS[mfr].filter(function(s){
-      if(!role)return true;
-      var def=SHIP_DATA[s];
-      return def&&def.role&&def.role.split('/')[0].trim()===role;
-    });
-    if(!ships.length)return;
-    var og=document.createElement('optgroup'); og.label=mfr;
-    ships.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;og.appendChild(o);});
-    sSel.appendChild(og);
-  });
+  var el = document.getElementById('shipsCount');
+  if (el) el.textContent = shown + ' of ' + cards.length + ' ships';
 }
 
 
@@ -5934,57 +6096,9 @@ function onRackChange(sel) {
 })();
 
 
-function filterShipsByMfr(mfr) {
-  hideDashboard();
-  // Focus ship search and show ships from that manufacturer
-  var si = document.getElementById('sSearch');
-  if (si) { si.value = mfr; var clr = document.getElementById('sSearchClear'); if(clr)clr.style.display='block'; }
-  buildSrbox(mfr.toLowerCase());
-  if (si) si.focus();
-}
 
-function filterShipsBySize(size) {
-  hideDashboard();
-  // Filter quick launch by size and show search
-  var si = document.getElementById('sSearch');
-  var sizeNames = {XS:'Extra Small',S:'Small',M:'Medium',L:'Large',XL:'Capital'};
-  if (si) { si.value = ''; var clr = document.getElementById('sSearchClear'); if(clr)clr.style.display='none'; }
-  // Filter the ship dropdown and show results
-  var sSel = document.getElementById('sSel');
-  if (sSel) {
-    while(sSel.options.length>1) sSel.remove(1);
-    Object.keys(SHIPS).sort().forEach(function(mfr){
-      if(!SHIPS[mfr])return;
-      var ships=SHIPS[mfr].filter(function(s){return SHIP_DATA[s]&&SHIP_DATA[s].size===size;});
-      if(!ships.length)return;
-      var og=document.createElement('optgroup');og.label=mfr;
-      ships.sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;og.appendChild(o);});
-      sSel.appendChild(og);
-    });
-  }
-  // Show search box with filtered results
-  var sb = document.getElementById('srbox');
-  if(sb){
-    var byMfr={};
-    Object.keys(SHIPS).sort().forEach(function(mfr){
-      if(!SHIPS[mfr])return;
-      SHIPS[mfr].forEach(function(s){
-        if(SHIP_DATA[s]&&SHIP_DATA[s].size===size){if(!byMfr[mfr])byMfr[mfr]=[];byMfr[mfr].push(s);}
-      });
-    });
-    var html='';
-    Object.keys(byMfr).sort().forEach(function(mfr){
-      html+='<div style="padding:3px 10px 2px;font-size:9px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);background:var(--bg3);border-bottom:1px solid var(--border)">'+mfr+'</div>';
-      byMfr[mfr].forEach(function(s){html+='<div class="sri" data-n="'+encodeURIComponent(s)+'">'+s+'</div>';});
-    });
-    sb.innerHTML=html||'<div style="padding:8px;color:var(--t3)">No ships found</div>';
-    Array.prototype.forEach.call(sb.querySelectorAll('.sri'),function(el){
-      el.onmousedown=function(e){e.preventDefault();pick(decodeURIComponent(this.getAttribute('data-n')));sb.style.display='none';};
-    });
-    sb.style.display='block';
-  }
-  showDashboard(); // Actually just show search results over dashboard
-}
+
+
 
 
 // ── LIVE STATS from Fleetyards ──
@@ -6419,6 +6533,639 @@ window.addEventListener('load', function() {
 
 
 
+
+
+// ── Ships Database Tab ──
+var _shipsFilter = 'All';
+var _shipsImgCache = {};
+
+function renderShips() {
+  var SHIP_MFR_MAP = {
+    'Gladius':'Aegis Dynamics','Gladius Valiant':'Aegis Dynamics','Avenger Titan':'Aegis Dynamics','Avenger Stalker':'Aegis Dynamics','Avenger Warlock':'Aegis Dynamics',
+    'Sabre':'Aegis Dynamics','Sabre Comet':'Aegis Dynamics','Sabre Raven':'Aegis Dynamics','Sabre Firebird':'Aegis Dynamics',
+    'Eclipse':'Aegis Dynamics','Vanguard Warden':'Aegis Dynamics','Vanguard Harbinger':'Aegis Dynamics','Vanguard Sentinel':'Aegis Dynamics','Vanguard Hoplite':'Aegis Dynamics',
+    'Hammerhead':'Aegis Dynamics','Redeemer':'Aegis Dynamics','Reclaimer':'Aegis Dynamics','Nautilus':'Aegis Dynamics','Retaliator':'Aegis Dynamics',
+    'Arrow':'Anvil Aerospace','F7C Hornet Mk I':'Anvil Aerospace','F7C Hornet Mk II':'Anvil Aerospace',
+    'F7C-M Super Hornet Mk I':'Anvil Aerospace','F7C-M Super Hornet Mk II':'Anvil Aerospace','F7C-S Hornet Ghost':'Anvil Aerospace','F7C-R Hornet Tracker':'Anvil Aerospace',
+    'Hurricane':'Anvil Aerospace','Hawk':'Anvil Aerospace','Gladiator':'Anvil Aerospace','Terrapin':'Anvil Aerospace','Carrack':'Anvil Aerospace','Valkyrie':'Anvil Aerospace',
+    'F8C Lightning':'Anvil Aerospace','Pisces C8X':'Anvil Aerospace','Pisces C8':'Anvil Aerospace','Centurion':'Anvil Aerospace','Legionnaire':'Anvil Aerospace','Ballista':'Anvil Aerospace','Spartan':'Anvil Aerospace',
+    'Aurora MR':'RSI','Aurora LN':'RSI','Aurora CL':'RSI','Aurora ES':'RSI',
+    'Constellation Andromeda':'RSI','Constellation Aquila':'RSI','Constellation Taurus':'RSI','Constellation Phoenix':'RSI',
+    'Mantis':'RSI','Scorpius':'RSI','Scorpius Antares':'RSI','Polaris':'RSI','Lynx':'RSI',
+    'Zeus Mk II CL':'RSI','Zeus Mk II MR':'RSI','Zeus Mk II ES':'RSI','Arrastra':'RSI','Ursa':'RSI',
+    'Cutlass Black':'Drake','Cutlass Blue':'Drake','Cutlass Red':'Drake','Cutlass Steel':'Drake',
+    'Buccaneer':'Drake','Herald':'Drake','Caterpillar':'Drake','Vulture':'Drake','Corsair':'Drake','Kraken':'Drake',
+    'Mule':'Drake','Cutter':'Drake','Cutter Rambler':'Drake','Cutter Scout':'Drake',
+    'Dragonfly Black':'Drake','Dragonfly Yellowjacket':'Drake',
+    'Freelancer':'MISC','Freelancer MAX':'MISC','Freelancer MIS':'MISC','Freelancer DUR':'MISC',
+    'Starfarer':'MISC','Starfarer Gemini':'MISC','Prospector':'MISC','Expanse':'MISC',
+    'Reliant Kore':'MISC','Reliant Tana':'MISC','Reliant Sen':'MISC','Reliant Mako':'MISC',
+    'Hull A':'MISC','Hull B':'MISC','Hull C':'MISC','Hull D':'MISC','Hull E':'MISC',
+    'Fury':'MISC','Fury MX':'MISC','Fury LX':'MISC','Odyssey':'MISC',
+    'Razor':'MISC','Razor LX':'MISC','Razor EX':'MISC',
+    'Starlancer TAC':'MISC','Starlancer MAX':'MISC','Liberator':'MISC','Endeavor':'MISC',
+    '100i':'Origin','125a':'Origin','135c':'Origin',
+    '300i':'Origin','315p':'Origin','325a':'Origin','350r':'Origin',
+    '400i':'Origin','600i Touring':'Origin','600i Explorer':'Origin','890 Jump':'Origin','X1 Base':'Origin',
+    'Defender':'Banu','Merchantman':'Banu',
+    'Prowler':'Esperia','Blade':'Esperia','Glaive':'Esperia','Talon':'Esperia','Talon Shrike':'Esperia',
+    'Nomad':'Consolidated Outland','Mustang Alpha':'Consolidated Outland','Mustang Beta':'Consolidated Outland','Mustang Gamma':'Consolidated Outland','Mustang Delta':'Consolidated Outland','Pioneer':'Consolidated Outland',
+    'Nox':'Aopoa','Nox Kue':'Aopoa','Khartu-Al':'Aopoa',"San'tok.yai":'Aopoa',
+    'RAFT':'ARGO','ATLS':'ARGO','MPUV Cargo':'ARGO','MPUV Personnel':'ARGO','SRV':'ARGO','MOLE':'ARGO',
+    'Vulcan':'Aegis Dynamics',
+    'Mercury Star Runner':'Crusader','Hercules Starlifter C2':'Crusader','Hercules Starlifter M2':'Crusader','Hercules Starlifter A2':'Crusader',
+    'Ares Inferno':'Crusader','Ares Ion':'Crusader',
+    'Spirit A1':'Crusader','Spirit C1':'Crusader','Spirit E1':'Crusader',
+    'Genesis Starliner':'Crusader','Intrepid':'Crusader',
+    'Nova':'Tumbril','Cyclone':'Tumbril','Cyclone MT':'Tumbril','Cyclone RN':'Tumbril','Cyclone RC':'Tumbril','Cyclone TR':'Tumbril','Cyclone AA':'Tumbril','Storm':'Tumbril','Storm AA':'Tumbril',
+    'Railen':'Gatac','G12':'Gatac',
+    'Idris-M':'Aegis Dynamics','Idris-P':'Aegis Dynamics','Javelin':'Aegis Dynamics',
+    'P-52 Merlin':'Kruger','P-72 Archimedes':'Kruger','L-21 Wolf':'Kruger',
+    'Guardian':'Mirai','Guardian QI':'Mirai','Guardian MX':'Mirai'
+  };
+  var SHIP_BUY = {
+    '100i':{p:695000,d:'New Deal'},
+    '125a':{p:810000,d:'New Deal'},
+    '135c':{p:900000,d:'New Deal'},
+    '300i':{p:955000,d:'Astro Armada'},
+    '315p':{p:1059000,d:'Astro Armada'},
+    '325a':{p:1120000,d:'Astro Armada'},
+    '350r':{p:1575000,d:'Astro Armada'},
+    '400i':{p:7014000,d:'Astro Armada'},
+    '600i Explorer':{p:17000000,d:'New Deal'},
+    '600i Touring':{p:15800000,d:'New Deal'},
+    '890 Jump':{p:32000000,d:'New Deal'},
+    'Arrow':{p:1018000,d:'Astro Armada'},
+    'Aurora MR':{p:230000,d:'New Deal'},
+    'Aurora LN':{p:390000,d:'New Deal'},
+    'Aurora CL':{p:365000,d:'New Deal'},
+    'Aurora ES':{p:225000,d:'New Deal'},
+    'Avenger Titan':{p:785000,d:'Astro Armada'},
+    'Avenger Stalker':{p:815000,d:'Astro Armada'},
+    'Avenger Warlock':{p:980000,d:'Astro Armada'},
+    'Ballista':{p:2705000,d:'New Deal'},
+    'Blade':{p:3800000,d:'Astro Armada'},
+    'Buccaneer':{p:1315000,d:'Astro Armada'},
+    'Carrack':{p:31500000,d:'New Deal'},
+    'Caterpillar':{p:5430000,d:'New Deal'},
+    'Constellation Andromeda':{p:4250000,d:'Astro Armada'},
+    'Constellation Aquila':{p:4700000,d:'Astro Armada'},
+    'Constellation Taurus':{p:3640000,d:'New Deal'},
+    'Constellation Phoenix':{p:7400000,d:'New Deal'},
+    'Corsair':{p:4300000,d:'New Deal'},
+    'Cutlass Black':{p:1385000,d:'New Deal'},
+    'Cutlass Blue':{p:2050000,d:'New Deal'},
+    'Cutlass Red':{p:1705000,d:'New Deal'},
+    'Cutlass Steel':{p:2100000,d:'New Deal'},
+    'Defender':{p:3345000,d:'Astro Armada'},
+    'Eclipse':{p:3450000,d:'Astro Armada'},
+    'Freelancer':{p:1590000,d:'New Deal'},
+    'Freelancer MAX':{p:2030000,d:'New Deal'},
+    'Freelancer MIS':{p:2320000,d:'New Deal'},
+    'Freelancer DUR':{p:1980000,d:'New Deal'},
+    'Fury':{p:640000,d:'Astro Armada'},
+    'Fury MX':{p:740000,d:'Astro Armada'},
+    'Gladiator':{p:1675000,d:'Astro Armada'},
+    'Gladius':{p:1104000,d:'Astro Armada'},
+    'Gladius Valiant':{p:1174000,d:'Astro Armada'},
+    'Hammerhead':{p:18500000,d:'Astro Armada'},
+    'Hawk':{p:1265000,d:'Astro Armada'},
+    'Herald':{p:1150000,d:'New Deal'},
+    'Hercules Starlifter C2':{p:6270000,d:'Crusader Showroom'},
+    'Hercules Starlifter M2':{p:8150000,d:'Crusader Showroom'},
+    'Hercules Starlifter A2':{p:10850000,d:'Crusader Showroom'},
+    'Hull A':{p:750000,d:'New Deal'},
+    'Hull B':{p:2500000,d:'New Deal'},
+    'Hurricane':{p:1685000,d:'Astro Armada'},
+    'Khartu-Al':{p:2175000,d:'Astro Armada'},
+    'Mantis':{p:1520000,d:'Astro Armada'},
+    'Mercury Star Runner':{p:4575000,d:'Crusader Showroom'},
+    'MOLE':{p:5130000,d:'New Deal'},
+    'Mustang Alpha':{p:235000,d:'New Deal'},
+    'Mustang Beta':{p:325000,d:'New Deal'},
+    'Mustang Delta':{p:700000,d:'New Deal'},
+    'Mustang Gamma':{p:435000,d:'New Deal'},
+    'Nomad':{p:810000,d:'New Deal'},
+    'Prospector':{p:2061000,d:'New Deal'},
+    'RAFT':{p:1750000,d:'New Deal'},
+    'Reclaimer':{p:14700000,d:'New Deal'},
+    'Redeemer':{p:6580000,d:'Astro Armada'},
+    'Reliant Kore':{p:870000,d:'New Deal'},
+    'Reliant Tana':{p:1010000,d:'New Deal'},
+    'Reliant Sen':{p:995000,d:'New Deal'},
+    'Reliant Mako':{p:1025000,d:'New Deal'},
+    'Retaliator':{p:5325000,d:'Astro Armada'},
+    'Sabre':{p:2175000,d:'Astro Armada'},
+    'Sabre Firebird':{p:2575000,d:'Astro Armada'},
+    'Scorpius':{p:3200000,d:'Astro Armada'},
+    'Spirit A1':{p:3300000,d:'Crusader Showroom'},
+    'Spirit C1':{p:2780000,d:'Crusader Showroom'},
+    'Starfarer':{p:6710000,d:'New Deal'},
+    'Starfarer Gemini':{p:7240000,d:'New Deal'},
+    'Talon':{p:1795000,d:'Astro Armada'},
+    'Talon Shrike':{p:1915000,d:'Astro Armada'},
+    'Terrapin':{p:3180000,d:'Astro Armada'},
+    'Valkyrie':{p:20000000,d:'New Deal'},
+    'Vanguard Warden':{p:3880000,d:'Astro Armada'},
+    'Vanguard Harbinger':{p:4105000,d:'Astro Armada'},
+    'Vanguard Sentinel':{p:3985000,d:'Astro Armada'},
+    'Vanguard Hoplite':{p:3345000,d:'Astro Armada'},
+    'Vulture':{p:1750000,d:'New Deal'},
+    'Prowler':{p:4600000,d:"Astro Armada"},
+    'F8C Lightning':{p:23400000,d:'New Deal'}
+  };
+  function fmtPrice(n){if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';return(n/1e3).toFixed(0)+'K';}
+  var grid = document.getElementById('shipsGrid');
+  if (!grid || typeof SHIP_DATA === 'undefined') return;
+  grid.innerHTML = '';
+  var names = Object.keys(SHIP_DATA).sort();
+  names.forEach(function(name) {
+    var s = SHIP_DATA[name];
+    var mfr = SHIP_MFR_MAP[name] || '';
+    var role = s.role || 'Unknown';
+    var size = s.size || '?';
+    var buy = SHIP_BUY[name];
+    var wikiTitle = (window._WIKIMAP && window._WIKIMAP[name]) ? window._WIKIMAP[name] : name.replace(/ /g, '_');
+    var imgUrl = 'https://starcitizen.tools/api.php?action=query&titles=' + encodeURIComponent(wikiTitle) + '&prop=pageimages&format=json&pithumbsize=400&pilimit=1&origin=*';
+    var card = document.createElement('div');
+    card.className = 'ship-card';
+    card.setAttribute('data-ship', name);
+    card.setAttribute('data-role', role);
+    card.setAttribute('data-mfr', mfr);
+    var imgWrap = document.createElement('div');
+    imgWrap.className = 'ship-card-img-wrap';
+    var img = document.createElement('img');
+    img.className = 'ship-card-img';
+    img.alt = name;
+    img.loading = 'lazy';
+    var placeholder = document.createElement('div');
+    placeholder.className = 'ship-card-no-img';
+    placeholder.textContent = size;
+    imgWrap.appendChild(placeholder);
+    imgWrap.appendChild(img);
+    fetch(imgUrl).then(function(r){return r.json()}).then(function(d){
+      var pages = d && d.query && d.query.pages;
+      if(pages){var pg=Object.values(pages)[0];if(pg&&pg.thumbnail&&pg.thumbnail.source){img.src=pg.thumbnail.source;img.onload=function(){placeholder.style.display='none'};img.onerror=function(){img.style.display='none'}}}
+    }).catch(function(){});
+    var roleBadge = document.createElement('span');
+    roleBadge.className = 'ship-card-role-badge';
+    roleBadge.textContent = role;
+    var sizeBadge = document.createElement('span');
+    sizeBadge.className = 'ship-card-size-badge';
+    sizeBadge.textContent = size;
+    imgWrap.appendChild(roleBadge);
+    imgWrap.appendChild(sizeBadge);
+    var body = document.createElement('div');
+    body.className = 'ship-card-body';
+    var h3 = document.createElement('h3');
+    h3.className = 'ship-card-name';
+    h3.textContent = name;
+    var mfrDiv = document.createElement('div');
+    mfrDiv.className = 'ship-card-mfr';
+    mfrDiv.textContent = mfr || '—';
+    var priceRow = document.createElement('div');
+    priceRow.className = 'ship-card-price-row';
+    if (buy) {
+      var priceSpan = document.createElement('span');
+      priceSpan.className = 'ship-card-price';
+      priceSpan.textContent = fmtPrice(buy.p) + ' aUEC';
+      var dealerSpan = document.createElement('span');
+      dealerSpan.className = 'ship-card-dealer';
+      dealerSpan.textContent = buy.d;
+      priceRow.appendChild(priceSpan);
+      priceRow.appendChild(dealerSpan);
+    } else {
+      var naSpan = document.createElement('span');
+      naSpan.className = 'ship-card-price ship-card-price-na';
+      naSpan.textContent = 'Pledge Only';
+      priceRow.appendChild(naSpan);
+    }
+    var footer = document.createElement('div');
+    footer.className = 'ship-card-footer';
+    var roleTag = document.createElement('span');
+    roleTag.className = 'ship-card-role-tag';
+    roleTag.textContent = role + ' \u00B7 ' + size;
+    var btn = document.createElement('button');
+    btn.className = 'ship-card-builder';
+    btn.textContent = 'Builder';
+    btn.onclick = function(e) { e.stopPropagation(); openShipInBuilder(name); };
+    footer.appendChild(roleTag);
+    footer.appendChild(btn);
+    body.appendChild(h3);
+    body.appendChild(mfrDiv);
+    body.appendChild(priceRow);
+    body.appendChild(footer);
+    card.appendChild(imgWrap);
+    card.appendChild(body);
+    card.onclick = function(e) { if (!e.target.classList.contains('ship-card-builder')) openShipModal(name); };
+    grid.appendChild(card);
+  });
+  var ct = document.getElementById('shipsCount');
+  if(ct) ct.textContent = names.length + ' of ' + names.length + ' ships';
+  window._shipsActiveRole = 'All';
+}
+
+function loadShipCardImage(shipName) {
+  if (_shipsImgCache[shipName]) {
+    setShipCardImg(shipName, _shipsImgCache[shipName]);
+    return;
+  }
+  var wmap = window._WIKIMAP || {};
+  var title = wmap[shipName] || shipName.replace(/ /g,'_');
+  var url = 'https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(title)+'&prop=pageimages&format=json&pithumbsize=400&pilimit=1&origin=*';
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    var pages = d.query && d.query.pages;
+    if (!pages) return;
+    var pid = Object.keys(pages)[0];
+    if (pages[pid] && pages[pid].thumbnail) {
+      var src = pages[pid].thumbnail.source;
+      _shipsImgCache[shipName] = src;
+      setShipCardImg(shipName, src);
+    }
+  }).catch(function(){});
+}
+
+function setShipCardImg(shipName, src) {
+  var card = document.querySelector('.ship-card[data-ship="'+shipName+'"]');
+  if (!card) return;
+  var placeholder = card.querySelector('.ship-card-img-placeholder');
+  if (placeholder) {
+    var img = document.createElement('img');
+    img.className = 'ship-card-img';
+    img.src = src;
+    img.alt = shipName;
+    img.loading = 'lazy';
+    placeholder.replaceWith(img);
+  }
+}
+
+function setShipFilter(role, btn) {
+  window._shipsActiveRole = role;
+  document.querySelectorAll('#pane-ships .ships-filter-btn').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  filterShips();
+}
+
+
+
+function openShipInBuilder(name) {
+  if (typeof pick === 'function') pick(name);
+  var loBtn = document.querySelector('[data-t="lo"]');
+  if (loBtn) showTab('lo', loBtn);
+}
+
+// Auto-render when ships tab is shown
+// image fix runs on tab click via event
+document.querySelector('[data-t="ships"]').addEventListener("click",function(){setTimeout(fixShipImages,2000)});
+
+
+function switchWpCat(cat, btn) {
+  document.querySelectorAll('.wp-cat-btn').forEach(function(b) {
+    b.style.border = '1px solid rgba(255,255,255,0.08)';
+    b.style.color = '#8a94a3';
+    b.style.background = 'transparent';
+    b.classList.remove('on');
+  });
+  btn.style.border = '1px solid rgba(56,189,248,0.4)';
+  btn.style.color = '#38bdf8';
+  btn.style.background = 'rgba(56,189,248,0.12)';
+  btn.classList.add('on');
+  var wf = document.getElementById('wfiltBar');
+  var wg = document.getElementById('wgrid');
+  var cg = document.getElementById('compGrid');
+  if (cat === 'weapons') {
+    wf.style.display = '';
+    wg.style.display = '';
+    cg.style.display = 'none';
+  } else {
+    wf.style.display = 'none';
+    wg.style.display = 'none';
+    cg.style.display = '';
+    buildCompGrid(cat);
+  }
+}
+function buildCompGrid(cat) {
+  var grid = document.getElementById('compGrid');
+  if (!grid || typeof COMP_DB === 'undefined') return;
+  grid.innerHTML = '';
+  var db = COMP_DB[cat];
+  if (!db) return;
+  var labels = {pp:{h1:'OUTPUT',h2:'HEAT',h3:'EM SIG'},sg:{h1:'TOTAL HP',h2:'FACE HP',h3:'REGEN/s'},cooler:{h1:'COOLING',h2:'DRAW MIN',h3:'IR SIG'},qd:{h1:'RANGE',h2:'SPEED',h3:'SPOOL'}};
+  var icons = {
+    pp:'<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    sg:'<svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    cooler:'<svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>',
+    qd:'<svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>'
+  };
+  var lbl = labels[cat] || {h1:'STAT1',h2:'STAT2',h3:'STAT3'};
+  var icon = icons[cat] || '';
+  var names = Object.keys(db).sort(function(a,b){ return (db[b].sz||0)-(db[a].sz||0) || a.localeCompare(b); });
+  names.forEach(function(name) {
+    var c = db[name];
+    var card = document.createElement('div');
+    card.className = 'wcard';
+    card.setAttribute('data-cat', cat);
+    var sz = c.sz || '?';
+    var v1, v2, v3;
+    if (cat === 'pp') { v1 = c.out; v2 = c.heat; v3 = c.em; }
+    else if (cat === 'sg') { v1 = c.totalHP; v2 = c.faceHP; v3 = c.regen; }
+    else if (cat === 'cooler') { v1 = c.cool; v2 = c.drawMin; v3 = c.ir; }
+    else if (cat === 'qd') { v1 = c.range + ' Mkm'; v2 = c.speed + ' Mm/s'; v3 = c.spool + 's'; }
+    card.innerHTML = '<div class="wcard-icon">' + icon + '</div>' +
+      '<div class="wc-hd"><span class="wc-nm">' + name + '</span><span class="wc-sz">S' + sz + '</span></div>' +
+      '<div class="wc-sub">' + (cat==='pp'?'Power Plant':cat==='sg'?'Shield Generator':cat==='cooler'?'Cooler':'Quantum Drive') + '</div>' +
+      '<div class="wc-stats"><div class="wc-st"><span class="wc-sl">' + lbl.h1 + '</span><span class="wc-sv">' + v1 + '</span></div>' +
+      '<div class="wc-st"><span class="wc-sl">' + lbl.h2 + '</span><span class="wc-sv">' + v2 + '</span></div>' +
+      '<div class="wc-st"><span class="wc-sl">' + lbl.h3 + '</span><span class="wc-sv">' + v3 + '</span></div></div>';
+    grid.appendChild(card);
+  });
+}
+
+// Tag weapon cards with data-wtype after they render
+var _origBuildWpn = buildWeaponsDB;
+buildWeaponsDB = function() {
+  _origBuildWpn.apply(this, arguments);
+  var cards = document.querySelectorAll('#wgrid .wcard');
+  cards.forEach(function(c) {
+    var typeEl = c.querySelector('.wc-b');
+    if (typeEl) {
+      var t = typeEl.textContent.trim().toLowerCase();
+      c.setAttribute('data-wtype', t);
+    }
+  });
+};
+// Patch buildCompGrid to add data-cat
+var _origBuildComp = buildCompGrid;
+buildCompGrid = function(cat) {
+  _origBuildComp(cat);
+  var cards = document.querySelectorAll('#compGrid .wcard');
+  cards.forEach(function(c) { c.setAttribute('data-cat', cat); });
+};
+// Run the weapon tagger now if cards already exist
+setTimeout(function() {
+  var cards = document.querySelectorAll('#wgrid .wcard');
+  cards.forEach(function(c) {
+    var typeEl = c.querySelector('.wc-b');
+    if (typeEl) c.setAttribute('data-wtype', typeEl.textContent.trim().toLowerCase());
+  });
+
+    // Add weapon icons
+    cards.forEach(function(c) {
+      if (!c.querySelector('.wcard-icon')) {
+        var type = c.getAttribute('data-wtype') || '';
+        var iconSvg = type === 'ballistic' 
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+        var iconDiv = document.createElement('div');
+        iconDiv.className = 'wcard-icon';
+        iconDiv.innerHTML = iconSvg;
+        c.insertBefore(iconDiv, c.firstChild);
+      }
+    });
+  }, 500);
+
+function closeWpModal(){document.getElementById('wpModal').classList.remove('open')}
+function openWpModal(type, name, data) {
+  var mc = document.getElementById('wpModalContent');
+  var html = '<h2 class="wpm-title">' + name + '</h2>';
+  html += '<div class="wpm-sub">' + (data.sub || '') + '</div>';
+  // Stats grid
+  html += '<div class="wpm-stats">';
+  if (data.stats) {
+    data.stats.forEach(function(s) {
+      html += '<div class="wpm-stat"><span class="wpm-stat-label">' + s.label + '</span><span class="wpm-stat-val">' + s.value + '</span></div>';
+    });
+  }
+  html += '</div>';
+  // Compatible ships
+  html += '<div class="wpm-section">Compatible Ships</div>';
+  html += '<div class="wpm-ships">';
+  var ships = findCompatibleShips(type, data.sz);
+  if (ships.length === 0) {
+    html += '<span style="color:#5a6577;font-size:11px">No compatible ships found</span>';
+  } else {
+    ships.forEach(function(s) {
+      html += '<span class="wpm-ship" onclick="closeWpModal();pick(\'' + s.name.replace(/'/g, "\\'") + '\');showTab(\'lo\',document.querySelector(\'[data-t=lo]\'))">' + s.name + '<span class="wpm-ship-sz">' + s.size + '</span></span>';
+    });
+  }
+  html += '</div>';
+  mc.innerHTML = html;
+  document.getElementById('wpModal').classList.add('open');
+}
+function findCompatibleShips(type, sz) {
+  if (typeof SHIP_DATA === 'undefined') return [];
+  var results = [];
+  var sizeNum = parseInt(sz) || 0;
+  Object.keys(SHIP_DATA).forEach(function(name) {
+    var s = SHIP_DATA[name];
+    if (type === 'weapon') {
+      // Check if ship has weapon slots of this size
+      if (s.slots) {
+        var hasSlot = s.slots.some(function(slot) { return slot.sz === sizeNum && (slot.type === 'weapon' || slot.type === 'turret'); });
+        if (hasSlot) results.push({name: name, size: s.size});
+      }
+    } else {
+      // Components: match compSz
+      var compSzNum = parseInt((s.compSz || '').replace('S', '')) || 0;
+      if (compSzNum === sizeNum) results.push({name: name, size: s.size});
+    }
+  });
+  results.sort(function(a,b) { return a.name.localeCompare(b.name); });
+  return results;
+}
+// Add click handlers to weapon cards
+function attachWcardClicks() {
+  document.querySelectorAll('#wgrid .wcard').forEach(function(c) {
+    if (c._wpClick) return;
+    c._wpClick = true;
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function() {
+      var nm = c.querySelector('.wc-name');
+      var mfr = c.querySelector('.wc-mfr');
+      var type = c.getAttribute('data-wtype') || 'energy';
+      var szEl = c.querySelector('.wc-sz');
+      var sz = szEl ? szEl.textContent.replace('S','') : '1';
+      var stats = [];
+      c.querySelectorAll('.wcs-row, .wc-stats > span').forEach(function(row) {
+        var k = row.querySelector('.wcs-k');
+        var v = row.querySelector('.wcs-v');
+        if (k && v) stats.push({label: k.textContent, value: v.textContent});
+      });
+      openWpModal('weapon', nm ? nm.textContent : '?', {
+        sub: (mfr ? mfr.textContent : '') + ' \u00B7 Size ' + sz + ' ' + type,
+        sz: sz,
+        stats: stats
+      });
+    });
+  });
+  // Component cards
+  document.querySelectorAll('#compGrid .wcard').forEach(function(c) {
+    if (c._wpClick) return;
+    c._wpClick = true;
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function() {
+      var nm = c.querySelector('.wc-nm');
+      var cat = c.getAttribute('data-cat') || 'pp';
+      var szEl = c.querySelector('.wc-sz');
+      var sz = szEl ? szEl.textContent.replace('S','') : '1';
+      var catLabel = {pp:'Power Plant',sg:'Shield Generator',cooler:'Cooler',qd:'Quantum Drive'}[cat] || cat;
+      var stats = [];
+      c.querySelectorAll('.wc-st').forEach(function(row) {
+        var k = row.querySelector('.wc-sl');
+        var v = row.querySelector('.wc-sv');
+        if (k && v) stats.push({label: k.textContent, value: v.textContent});
+      });
+      openWpModal('comp', nm ? nm.textContent : '?', {
+        sub: catLabel + ' \u00B7 Size ' + sz,
+        sz: sz,
+        stats: stats
+      });
+    });
+  });
+}
+// Attach on initial load and when switching categories
+var _origSwitch2 = switchWpCat;
+switchWpCat = function(cat, btn) {
+  _origSwitch2(cat, btn);
+  setTimeout(attachWcardClicks, 100);
+};
+setTimeout(attachWcardClicks, 1000);
+
+function closeShipModal(){document.getElementById('shipModal').classList.remove('open')}
+function openShipModal(name) {
+  var s = SHIP_DATA[name];
+  if (!s) return;
+  var mc = document.getElementById('shipModalContent');
+  var mfr = (typeof renderShips !== 'undefined' && renderShips.toString().indexOf('SHIP_MFR_MAP') > -1) ? '' : '';
+  // Get manufacturer from the card data attribute
+  var card = document.querySelector('#pane-ships .ship-card[data-ship="' + name.replace(/"/g,'\\"') + '"]');
+  var mfrText = card ? (card.getAttribute('data-mfr') || '') : '';
+  // Get buy info
+  var buyHTML = '';
+  try {
+    var fn = renderShips.toString();
+    var buyMatch = fn.match(/SHIP_BUY\s*=\s*\{([^;]+?)\};/);
+  } catch(e) {}
+  // Try to get price from card
+  var priceEl = card ? card.querySelector('.ship-card-price') : null;
+  var dealerEl = card ? card.querySelector('.ship-card-dealer') : null;
+  if (priceEl && !priceEl.classList.contains('ship-card-price-na')) {
+    buyHTML = '<div class="sm-price"><span class="sm-price-val">' + priceEl.textContent + '</span><span class="sm-price-loc">' + (dealerEl ? dealerEl.textContent : '') + '</span></div>';
+  }
+  // Get image from card
+  var imgEl = card ? card.querySelector('.ship-card-img') : null;
+  var imgSrc = imgEl && imgEl.src ? imgEl.src : '';
+  var imgHTML = imgSrc ? '<img class="sm-img" src="' + imgSrc + '" alt="' + name + '">' : '<div class="sm-img" style="display:flex;align-items:center;justify-content:center;color:#2a3240;font-family:Rajdhani,sans-serif;font-size:36px;font-weight:700">' + s.size + '</div>';
+  var html = imgHTML;
+  html += '<div class="sm-body">';
+  html += '<h2 class="sm-name">' + name + '</h2>';
+  html += '<div class="sm-mfr">' + (mfrText || '—') + '</div>';
+  // Overview stats
+  html += '<div class="sm-overview">';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">Role</span><span class="sm-ov-val" style="font-size:12px">' + (s.role || '—') + '</span></div>';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">Size</span><span class="sm-ov-val">' + (s.size || '?') + '</span></div>';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">Crew</span><span class="sm-ov-val">' + (s.crew || '?') + '</span></div>';
+  html += '<div class="sm-ov"><span class="sm-ov-lbl">SCM Speed</span><span class="sm-ov-val">' + (s.scm || '?') + '</span></div>';
+  html += '</div>';
+  // Price
+  html += buyHTML;
+  // Weapons
+  if (s.slots && s.slots.length) {
+    html += '<div class="sm-section">Weapons (' + s.slots.length + ')</div>';
+    html += '<div class="sm-slots">';
+    s.slots.forEach(function(sl) {
+      html += '<div class="sm-slot"><span class="sm-slot-name">' + sl.lbl + (sl.note ? ' — ' + sl.note : '') + '</span><span class="sm-slot-sz">S' + sl.sz + '</span></div>';
+    });
+    html += '</div>';
+  }
+  // Missiles
+  if (s.missiles && s.missiles.length) {
+    html += '<div class="sm-section">Missiles (' + s.missiles.length + ' racks)</div>';
+    html += '<div class="sm-slots">';
+    s.missiles.forEach(function(m) {
+      html += '<div class="sm-slot"><span class="sm-slot-name">' + m.lbl + (m.count > 1 ? ' (x' + m.count + ')' : '') + '</span><span class="sm-slot-sz">S' + m.sz + '</span></div>';
+    });
+    html += '</div>';
+  }
+  // Components
+  if (s.comps) {
+    html += '<div class="sm-section">Components (Size ' + (s.compSz || '?') + ')</div>';
+    html += '<div class="sm-comps">';
+    var compLabels = {pp:'Power Plant',sg:'Shields',cooler:'Cooler',qd:'Quantum Drive',radar:'Radar'};
+    ['pp','sg','cooler','qd','radar'].forEach(function(k) {
+      if (s.comps[k]) {
+        var ct = s.comps.counts && s.comps.counts[k] ? s.comps.counts[k] : 1;
+        html += '<div class="sm-comp"><span class="sm-comp-lbl">' + (compLabels[k]||k) + '</span><span class="sm-comp-val">' + s.comps[k] + '</span> <span class="sm-comp-ct">x' + ct + '</span></div>';
+      }
+    });
+    html += '</div>';
+  }
+  // Tips
+  if (s.tips && Array.isArray(s.tips) && s.tips.length) {
+    html += '<div class="sm-section">Tips</div>';
+    html += '<div class="sm-tips">';
+    s.tips.forEach(function(t) { html += '<div class="sm-tip">' + t + '</div>'; });
+    html += '</div>';
+  }
+  // Builder button
+  html += '<button class="sm-builder-btn" onclick="closeShipModal();openShipInBuilder(\'' + name.replace(/'/g, "\\'") + '\')">Open in Loadout Builder</button>';
+  html += '</div>';
+  mc.innerHTML = html;
+  document.getElementById('shipModal').classList.add('open');
+}
+
+function fixShipImages() {
+  var cards = document.querySelectorAll('#pane-ships .ship-card');
+  cards.forEach(function(c) {
+    var img = c.querySelector('.ship-card-img');
+    var placeholder = c.querySelector('.ship-card-no-img');
+    // Skip if image already loaded
+    if (img && img.src && img.naturalWidth > 0) return;
+    var name = c.getAttribute('data-ship');
+    var wikiTitle = (window._WIKIMAP && window._WIKIMAP[name]) ? window._WIKIMAP[name] : name.replace(/ /g, '_');
+    // Try: get page images list then fetch first image URL
+    var apiBase = 'https://starcitizen.tools/api.php?format=json&origin=*&action=query&titles=';
+    fetch(apiBase + encodeURIComponent(wikiTitle) + '&prop=images&imlimit=5')
+      .then(function(r){return r.json()})
+      .then(function(d){
+        var pg = Object.values(d.query.pages)[0];
+        if (!pg || !pg.images || pg.images.length === 0) return;
+        // Find a good image - prefer ones with the ship name, skip icons/logos
+        var imgFile = null;
+        for (var i = 0; i < pg.images.length; i++) {
+          var title = pg.images[i].title;
+          if (title.match(/\.(jpg|jpeg|png|webp)$/i) && !title.match(/icon|logo|silhouette|placeholder|thumb/i)) {
+            imgFile = title;
+            break;
+          }
+        }
+        if (!imgFile) return;
+        // Get the thumbnail URL for this image
+        return fetch(apiBase + encodeURIComponent(imgFile) + '&prop=imageinfo&iiprop=url&iiurlwidth=400');
+      })
+      .then(function(r){if(r)return r.json()})
+      .then(function(d){
+        if (!d) return;
+        var pg = Object.values(d.query.pages)[0];
+        if (pg && pg.imageinfo && pg.imageinfo[0]) {
+          var thumbUrl = pg.imageinfo[0].thumburl || pg.imageinfo[0].url;
+          if (thumbUrl && img) {
+            img.src = thumbUrl;
+            img.onload = function(){ if(placeholder) placeholder.style.display='none'; };
+          }
+        }
+      })
+      .catch(function(){});
+  });
+}
+// Run image fixer after a delay to let initial render complete
+setTimeout(fixShipImages, 3000);
+// Also run when switching to ships tab
+var _origShowTab = showTab;
+showTab = function(id, btn) {
+  _origShowTab(id, btn);
+  if (id === 'ships') setTimeout(fixShipImages, 1000);
+};
 </script>
 
 
@@ -6448,7 +7195,22 @@ window.addEventListener('load', function() {
       <div id="fbStatus" style="display:none;text-align:center;padding:8px;border-radius:var(--r-sm);font-size:12px;font-family:var(--fmono)"></div>
     </div>
   </div>
+      
 </div>
+
+  <div id="wpModal" onclick="if(event.target===this)closeWpModal()">
+    <div id="wpModalCard">
+      <button id="wpModalClose" onclick="closeWpModal()">&times;</button>
+      <div id="wpModalContent"></div>
+    </div>
+  </div>
+
+  <div id="shipModal" onclick="if(event.target===this)closeShipModal()">
+    <div id="shipModalCard">
+      <button class="sm-close" onclick="closeShipModal()">&times;</button>
+      <div id="shipModalContent"></div>
+    </div>
+  </div>
 </body>
 </html>
 
@@ -6473,4 +7235,5 @@ window.addEventListener('load', function() {
 <!-- v5.2-DEV cap column height -->
 <!-- v5.4-DEV -->
 <!-- v5.5-DEV filled blocks at top -->
-<!-- v2.1 LIVE -->
+<!-- v5.6-DEV ships tab -->
+<!-- v5.7-DEV fix ships pane nesting -->
