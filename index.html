@@ -64,7 +64,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.7 DEV</title>
+<title>SC-ShipForge v6.8 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -857,6 +857,50 @@ option,optgroup{background:var(--bg2)}
 .lp .lp-card h3,.lp .lp-card .lp-section-hd{font-size:11px!important;color:#8892a0!important;font-weight:600!important;letter-spacing:.5px!important;margin:0 0 6px!important;text-transform:uppercase}
 #liveStatsPanel{position:relative}
 #liveStatsPanel::before{content:"⋯";position:absolute;top:8px;right:12px;font-size:16px;color:#8892a0;cursor:pointer;padding:2px 6px;border-radius:4px}
+
+/* === LEFT PANE V2 - MOCKUP MATCH v6.8 === */
+.lp{padding:10px!important;display:flex;flex-direction:column;gap:6px;overflow-y:auto}
+.lp2-silhouette{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:10px;display:flex;align-items:center;justify-content:center;height:90px}
+.lp2-silhouette img{max-width:100%;max-height:80px;opacity:.85}
+.lp2-kpi-row{display:flex;justify-content:space-between;padding:6px 4px 10px;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:4px}
+.lp2-kpi{text-align:center;flex:1}
+.lp2-kpi b{font-size:18px;font-weight:700;display:block;color:#c9d1d9}
+.lp2-kpi span{font-size:9px;color:#8892a0;letter-spacing:.5px}
+.lp2-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:9px}
+.lp2-sec-hd{font-size:10px;color:#8892a0;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.lp2-pwr-hdr{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600;margin-bottom:4px}
+.lp2-pwr-hdr .pwr-eu{font-weight:700;margin-left:4px}
+.lp2-pwr-hdr .pwr-eu:nth-child(1){color:#fbbf24}
+.lp2-pwr-hdr .pwr-eu:nth-child(2){color:#34d399}
+.lp2-pwr-con{display:flex;justify-content:space-between;font-size:9px;color:#8892a0;margin-bottom:3px;letter-spacing:.5px}
+.lp2-pwr-bar{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.lp2-pwr-bar>div{height:100%;background:linear-gradient(90deg,#34d399,#fbbf24,#ef4444);width:0%;transition:width .3s}
+.lp2-pwr-icons{display:flex;gap:2px;margin:6px 0;flex-wrap:wrap}
+.lp2-pwr-chart{width:100%;height:50px;display:block;margin-bottom:6px}
+.lp2-modes{display:flex;gap:4px;margin-bottom:6px}
+.spv-mode-btn{flex:1!important;padding:5px 8px!important;border-radius:5px!important;font-size:10px!important;font-weight:700!important;letter-spacing:.5px!important;border:1px solid rgba(255,255,255,.08)!important;background:transparent!important;color:#8892a0!important;cursor:pointer;transition:all .2s}
+.spv-mode-btn.on{background:rgba(96,165,250,.12)!important;color:#60a5fa!important;border-color:rgba(96,165,250,.3)!important}
+.lp2-speed{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-top:1px solid rgba(255,255,255,.05)}
+.lp2-speed span{color:#8892a0}
+.lp2-speed b{font-weight:700}
+.lp2-reset{width:100%;padding:5px;margin-top:6px;border-radius:5px;border:1px solid rgba(255,255,255,.08);background:transparent;color:#8892a0;font-size:10px;cursor:pointer;letter-spacing:.5px}
+.lp2-reset:hover{background:rgba(255,255,255,.04)}
+.lp2-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0}
+.lp2-row span:first-child{color:#8892a0}
+.lp2-row b{font-weight:600}
+.lp2-bar-mini{flex:1;max-width:80px;height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-left:8px;overflow:hidden;display:block}
+.lp2-bar-mini>div{height:100%;background:#fbbf24;width:0%}
+
+/* === MIDDLE WEAPON CARDS - MOCKUP MATCH === */
+#loContent .slot-row{background:rgba(255,255,255,.02)!important;border:1px solid rgba(255,255,255,.05)!important;border-radius:8px!important;padding:10px!important;margin-bottom:8px!important;transition:opacity .2s}
+#loContent .slot-row.weapon-off{opacity:.4}
+#loContent .slot-row.weapon-off .slot-body-top button{background:rgba(255,255,255,.08)!important;color:#666!important}
+#loContent .slot-body-top button{border-radius:14px!important;padding:3px 10px!important;font-size:10px!important;font-weight:700!important;letter-spacing:.5px!important;background:#34d399!important;color:#fff!important;border:none!important;cursor:pointer}
+#loContent .slot-row select{border-radius:6px!important;background:rgba(0,0,0,.3)!important;border:1px solid rgba(255,255,255,.1)!important;font-size:13px!important;padding:6px 10px!important;font-weight:600!important}
+
+/* === LIVE STATS PANEL menu icon === */
+#liveStatsPanel{position:relative}
+#liveStatsPanel::before{content:"⋯";position:absolute;top:4px;right:8px;font-size:18px;color:#8892a0;cursor:pointer;padding:2px 6px;border-radius:4px}
 </style>
 
 <div id="app">
@@ -917,88 +961,7 @@ option,optgroup{background:var(--bg2)}
   <div class="body">
 
     <!-- LEFT: ship dashboard -->
-                        <aside class="lp">
-<div class="ship-img-wrap" style="height:155px">
-        <span class="ship-img-placeholder" id="shipPh">Select a ship</span>
-        <img id="rpShipImg" alt=""/>
-        <div class="ship-img-overlay">
-          <div id="rpShipImgName"></div>
-        </div>
-        <span id="rpPatch"></span>
-      </div>
-      <div class="kpi-strip" id="kpiStrip" style="display:none">
-        <div class="kpi"><div class="kpi-lbl">SCM</div><div class="kpi-val" id="kpiScm">—<span class="kpi-unit">m/s</span></div></div>
-        <div class="kpi"><div class="kpi-lbl">SHIELD</div><div class="kpi-val" id="kpiShield">—<span class="kpi-unit">HP</span></div></div>
-        <div class="kpi"><div class="kpi-lbl">TOTAL DPS</div><div class="kpi-val" id="kpiDps">—<span class="kpi-unit">DPS</span></div></div>
-      </div>
-      <div class="lp-scroll">
-        <div class="lp-card" id="pwrCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">POWER</span><span id="segUsed" class="pwr-eu">—</span><span style="color:var(--t3);font-size:10px"> / </span><span id="segTotal" class="pwr-eu" style="color:var(--warn)">—</span><span style="color:var(--t3);font-size:9px"> EU</span></div>
-          <div class="con-row"><span class="con-lbl">CONSUMPTION</span><span id="pwrPct" style="font-size:10px;font-family:var(--fmono);color:var(--red)"></span></div>
-          <div class="con-bar-wrap"><div id="conBar"></div></div>
-          <div class="spv-icons" id="spvIcons" style="display:none"></div>
-          <div class="spv-chart" id="spvChart"></div>
-          <div id="navModeBanner">&#9888; Weapons offline &middot; Shields collapsed</div>
-          <div class="spv-modes">
-            <button class="spv-mode-btn" id="mSCM" onclick="setMode('SCM')">SCM MODE</button>
-            <button class="spv-mode-btn" id="mNAV" onclick="setMode('NAV')">NAV MODE</button>
-          </div>
-          <div class="speed-row"><span class="sig-lbl">SPEED</span><span class="sig-val" id="modeSpeed">—</span></div>
-          <button class="reset-pwr" onclick="resetPower()">&#10227; RESET POWER</button>
-        </div>
-        <div class="lp-card" id="sigCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">SIGNATURES</span></div>
-          <div class="sig-row"><span class="sig-lbl">IR</span><span class="sig-val" id="sigIR" style="color:var(--warn)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">EM idle</span><span class="sig-val" id="sigEM" style="color:var(--cyan)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">EM max</span><span class="sig-val" id="sigEMmax" style="color:var(--cyan)">&#8212;</span></div>
-        </div>
-        <div class="dps-block" id="dpsCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">FIREPOWER</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
-            <div><div style="font-size:9px;color:var(--t3);font-family:var(--fmono);letter-spacing:1px">TOTAL DPS</div><div style="font-size:20px;font-weight:700;font-family:var(--fmono);color:var(--warn)" id="totalDPS">—</div></div>
-            <div><div style="font-size:9px;color:var(--t3);font-family:var(--fmono);letter-spacing:1px">ALPHA</div><div style="font-size:20px;font-weight:700;font-family:var(--fmono);color:var(--red)" id="totalAlpha">—</div></div>
-          </div>
-          <div id="dpsBarsWrap" style="display:none"><div style="font-size:9px;color:var(--t3);font-family:var(--fmono);letter-spacing:1px;margin-bottom:4px">BY WEAPON</div><div id="dpsBars"></div></div>
-          <div id="shieldSection" style="display:none">
-            <div class="sig-row"><span class="sig-lbl">Shield HP</span><span class="sig-val" id="shpTotal" style="color:var(--green)">&#8212;</span></div>
-            <div class="sig-row"><span class="sig-lbl">Regen/s</span><span class="sig-val" id="shpRegen" style="color:var(--cyan)">&#8212;</span></div>
-            <div class="sig-row"><span class="sig-lbl">Face HP</span><span class="sig-val" id="shpFace">&#8212;</span></div>
-          </div>
-          <div class="sig-row"><span class="sig-lbl">QD Range</span><span class="sig-val" id="qdRange">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Spool</span><span class="sig-val" id="qdSpool">&#8212;</span></div>
-        </div>
-        <div class="lp-card" id="liveStatsCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">FLIGHT</span></div>
-          <div class="sig-row"><span class="sig-lbl">AB Speed</span><span class="sig-val" id="statAB" style="color:var(--cyan)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Pitch</span><span class="sig-val" id="statPitch" style="color:var(--t2)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Roll</span><span class="sig-val" id="statRoll" style="color:var(--t2)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Yaw</span><span class="sig-val" id="statYaw" style="color:var(--t2)">&#8212;</span></div>
-        </div>
-        <div class="lp-card" id="vesselStatsCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">VESSEL</span></div>
-          <div class="sig-row"><span class="sig-lbl">Focus</span><span class="sig-val" id="statFocus" style="color:var(--accent)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Crew</span><span class="sig-val" id="statCrew" style="color:var(--text)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Cargo</span><span class="sig-val" id="statCargo" style="color:var(--warn)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Mass</span><span class="sig-val" id="statMass" style="color:var(--t2)">&#8212;</span></div>
-        </div>
-        <div class="lp-card" id="dimensionsCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">DIMENSIONS</span></div>
-          <div class="sig-row"><span class="sig-lbl">Length</span><span class="sig-val" id="statLen" style="color:var(--t2)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Beam</span><span class="sig-val" id="statBeam" style="color:var(--t2)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">Height</span><span class="sig-val" id="statHeight" style="color:var(--t2)">&#8212;</span></div>
-        </div>
-        <div class="lp-card" id="fuelCard" style="display:none">
-          <div class="lp-card-hd"><span class="lp-card-title">FUEL</span></div>
-          <div class="sig-row"><span class="sig-lbl">H&#8322; Fuel</span><span class="sig-val" id="statH2" style="color:var(--cyan)">&#8212;</span></div>
-          <div class="sig-row"><span class="sig-lbl">QT Fuel</span><span class="sig-val" id="statQT" style="color:var(--purple)">&#8212;</span></div>
-        </div>
-      </div>
-      <div class="lp-foot" style="display:none">
-        <button id="genBtn" onclick="generate()" disabled>
-          <span>⬡</span><span id="gLbl">GENERATE LOADOUT</span>
-        </button>
-      </div>
-    </aside>
+                        <aside class="lp"><div class="lp2-silhouette" id="shipPh"><svg viewBox="0 0 160 80" style="width:100%;height:80px"><polygon points="80,8 60,28 45,42 35,72 125,72 115,42 100,28" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/></svg></div><h2 id="lp2ShipName" style="font-size:18px;font-weight:700;margin:8px 0 6px;letter-spacing:.5px;text-align:left">SELECT A SHIP</h2><div class="lp2-kpi-row"><div class="lp2-kpi"><b id="kpiScm">—</b><span>SCM</span></div><div class="lp2-kpi"><b id="kpiShield">—</b><span>SHIELD</span></div><div class="lp2-kpi"><b id="kpiDps">—</b><span>DPS</span></div></div><div class="lp2-card" id="pwrCard"><div class="lp2-pwr-hdr"><span class="lp2-pwr-lbl">POWER</span><span><b id="segUsed" class="pwr-eu">—</b><b id="segTotal" class="pwr-eu">—</b></span></div><div class="lp2-pwr-con"><span>CONSUMPTION</span><b id="pwrPct" style="color:#fbbf24"></b></div><div id="conBar" class="lp2-pwr-bar"><div></div></div><div id="spvIcons" class="lp2-pwr-icons"></div><canvas id="spvChart" class="lp2-pwr-chart"></canvas><div class="lp2-modes"><button id="mSCM" class="spv-mode-btn on">SCM MODE</button><button id="mNAV" class="spv-mode-btn">NAV MODE</button></div><div class="lp2-speed"><span>SPEED</span><b id="modeSpeed">—</b></div><button class="lp2-reset" onclick="resetPower&&resetPower()">⟲ RESET POWER</button></div><div class="lp2-card" id="sigCard"><div class="lp2-sec-hd">SIGNATURES</div><div class="lp2-row"><span>IR</span><span class="lp2-bar-mini"><div id="sigIRBar"></div></span></div><div class="lp2-row"><span>EM idle</span><span class="lp2-bar-mini"><div id="sigEMidleBar"></div></span></div><div class="lp2-row"><span>EM max</span><span class="lp2-bar-mini"><div id="sigEMmaxBar"></div></span></div></div><div class="lp2-card" id="flightCard"><div class="lp2-sec-hd">FLIGHT</div><div class="lp2-row"><span>AB Speed</span><b id="flAB" style="color:#34d399">—</b></div><div class="lp2-row"><span>Pitch</span><b id="flPitch">—</b></div><div class="lp2-row"><span>Roll</span><b id="flRoll">—</b></div><div class="lp2-row"><span>Yaw</span><b id="flYaw">—</b></div></div><div class="lp2-card" id="vesselCard"><div class="lp2-sec-hd">VESSEL</div><div class="lp2-row"><span>Focus</span><b id="vFocus">—</b></div><div class="lp2-row"><span>Crew</span><b id="vCrew">—</b></div><div class="lp2-row"><span>Cargo</span><b id="vCargo">—</b></div><div class="lp2-row"><span>Mass</span><b id="vMass">—</b></div></div></aside>
 
 
 
@@ -7222,6 +7185,10 @@ function sdSetMode(m){document.getElementById('sdPveBtn').className='sd-mode-btn
 function initShowdown(){var g=document.getElementById('sdEnemyGrid');if(!g)return;var h='';SD_ENEMIES.forEach(function(e){h+='<div class="sd-enemy" onclick="runShowdown(\''+e.name+'\')">'+'<p class="sd-enemy-name">'+e.name+'</p><p class="sd-enemy-diff" style="color:'+e.color+'">'+e.diff+'</p></div>';});g.innerHTML=h;}
 function runShowdown(opp){var me=selShip;if(!me){document.getElementById('sdArena').innerHTML='<p style="text-align:center;color:#8892a0;padding:20px">Load a ship first</p>';return;}var ms=SHIP_DATA[me],os=SHIP_DATA[opp];if(!os)return;var mySels=document.querySelectorAll('#loContent .slot-sel');var md=0;mySels.forEach(function(s){var w=WEAPONS.find(function(x){return x.id===s.value});if(w&&(w.type==='energy'||w.type==='ballistic'))md+=w.dps;});var od=0;if(os.slots)os.slots.forEach(function(s){if(s.default){var w=WEAPONS.find(function(x){return x.id===s.default});if(w)od+=w.dps;}});var msg=COMP_DB.sg[ms.comps.sg],mh=msg?(msg.totalHP*((ms.comps.counts&&ms.comps.counts.sg)||1)):0;var osg=COMP_DB.sg[os.comps.sg],oh=osg?(osg.totalHP*((os.comps.counts&&os.comps.counts.sg)||1)):0;var mt=od>0?Math.round(mh/od*10)/10:999,ot=md>0?Math.round(oh/md*10)/10:999;var v,vc,vb;if(ot<mt*0.7){v='YOU WIN';vc='#34d399';vb='rgba(34,197,94,.1)';}else if(mt<ot*0.7){v='YOU LOSE';vc='#ef4444';vb='rgba(239,68,68,.1)';}else{v='CLOSE FIGHT';vc='#fbbf24';vb='rgba(234,179,8,.1)';}document.getElementById('sdArena').innerHTML='<div style="display:flex;margin-bottom:16px"><div style="flex:1;text-align:center;padding:16px"><p style="font-size:11px;color:#8892a0;margin:0 0 4px">YOUR SHIP</p><p style="font-size:18px;font-weight:700;margin:0">'+me+'</p><p style="font-size:12px;color:#8892a0;margin:4px 0">DPS: '+md+' | Shield: '+mh.toLocaleString()+'</p></div><div style="display:flex;align-items:center;justify-content:center;width:50px"><div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:700;color:#8892a0">VS</div></div><div style="flex:1;text-align:center;padding:16px"><p style="font-size:11px;color:#8892a0;margin:0 0 4px">OPPONENT</p><p style="font-size:18px;font-weight:700;margin:0">'+opp+'</p><p style="font-size:12px;color:#8892a0;margin:4px 0">DPS: '+od+' | Shield: '+oh.toLocaleString()+'</p></div></div><div class="sd-sim"><p style="font-size:12px;color:#8892a0;text-align:center;margin:0 0 12px;font-weight:600">ENGAGEMENT</p><div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:1"><p style="font-size:12px;margin:0 0 4px"><span style="color:#60a5fa">'+me+'</span> TTK: '+ot+'s</p><div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px"><div style="height:8px;width:'+Math.min(100,Math.round(ot/(mt+ot)*100))+'%;background:#60a5fa;border-radius:4px"></div></div></div><div style="flex:1"><p style="font-size:12px;margin:0 0 4px"><span style="color:#ef4444">'+opp+'</span> TTK: '+mt+'s</p><div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px"><div style="height:8px;width:'+Math.min(100,Math.round(mt/(mt+ot)*100))+'%;background:#ef4444;border-radius:4px"></div></div></div></div></div><div class="sd-verdict" style="background:'+vb+';border:1px solid '+vc+'30"><p style="font-size:20px;font-weight:700;margin:0;color:'+vc+'">'+v+'</p><p style="font-size:13px;color:#8892a0;margin:4px 0 0">You kill in '+ot+'s vs they kill in '+mt+'s</p></div>';document.querySelectorAll('.sd-enemy').forEach(function(el){el.classList.remove('selected');if(el.querySelector('.sd-enemy-name').textContent===opp)el.classList.add('selected');});}
 setTimeout(initShowdown,1000);
+
+// === LP2 ship name updater ===
+function lp2UpdateShipName(){var n=document.getElementById("lp2ShipName");if(!n)return;n.textContent=window.selShip?window.selShip.toUpperCase():"SELECT A SHIP";var s=SHIP_DATA&&window.selShip?SHIP_DATA[window.selShip]:null;if(!s)return;var fl={flAB:s.abSpeed||"—",flPitch:(s.pitch||"—")+(s.pitch?"°/s":""),flRoll:(s.roll||"—")+(s.roll?"°/s":""),flYaw:(s.yaw||"—")+(s.yaw?"°/s":"")};Object.keys(fl).forEach(function(k){var el=document.getElementById(k);if(el)el.textContent=fl[k]+(k==="flAB"&&s.abSpeed?" m/s":"");});var v={vFocus:s.role||"—",vCrew:s.crew||"—",vCargo:s.cargo||"—",vMass:s.mass?s.mass+" t":"—"};Object.keys(v).forEach(function(k){var el=document.getElementById(k);if(el)el.textContent=v[k];});}
+setInterval(lp2UpdateShipName,1500);
 setTimeout(renderShips,500);
 </script>
 
