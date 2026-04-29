@@ -840,73 +840,14 @@ option,optgroup{background:var(--bg2)}
 @media(max-width:1100px){.lp{max-width:200px}.rp{max-width:280px}}
 @media(max-width:800px){.lp{display:none}.rp{display:none}}
 
-/* === LIVE STATS v6.4 === */
-.ls-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04);border-radius:6px;padding:7px 9px}
-.ls-lbl{font-size:9px;color:#8892a0;letter-spacing:.3px;margin:0;text-transform:uppercase}
-.ls-val{font-size:18px;font-weight:700;margin:1px 0 0}
-.ls-sub{font-size:9px;color:#8892a0;margin:1px 0 0}
-.ls-mini{display:flex;justify-content:space-between;font-size:10px;padding:3px 7px;background:rgba(255,255,255,.015);border-radius:4px}
-.ls-mini-l{color:#8892a0}
-.ls-mini-v{font-weight:600;color:#c9d1d9}
-
-/* === SHIP SHOWDOWN v6.2 === */
-#pane-sd{padding:16px}
-#pane-sd .sd-mode-bar{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
-#pane-sd .sd-mode-btn{padding:8px 24px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#8892a0;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
-#pane-sd .sd-mode-btn.active{background:rgba(59,130,246,.15);color:#60a5fa;border-color:rgba(59,130,246,.3)}
-#pane-sd .sd-arena{display:flex;gap:0;margin-bottom:16px}
-#pane-sd .sd-fighter{flex:1;padding:16px;text-align:center}
-#pane-sd .sd-fighter.you{border-right:1px solid rgba(255,255,255,.06)}
-#pane-sd .sd-fighter-label{font-size:11px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-#pane-sd .sd-ship-name{font-size:18px;font-weight:700;margin:4px 0}
-#pane-sd .sd-ship-sub{font-size:12px;color:#8892a0}
-#pane-sd .sd-vs{display:flex;align-items:center;justify-content:center;width:50px}
-#pane-sd .sd-vs-circle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#8892a0}
-#pane-sd .sd-stats{display:flex;flex-direction:column;gap:4px;text-align:left;margin-top:12px}
-#pane-sd .sd-stat{display:flex;justify-content:space-between;font-size:13px;padding:6px 10px;background:rgba(255,255,255,.03);border-radius:6px}
-#pane-sd .sd-stat-lbl{color:#8892a0}
-#pane-sd .sd-stat-val{font-weight:600}
-#pane-sd .sd-sim{padding:16px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.1);margin-bottom:16px}
-#pane-sd .sd-sim-title{font-size:12px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;text-align:center;margin-bottom:12px;font-weight:600}
-#pane-sd .sd-ttk-row{display:flex;gap:12px;margin-bottom:12px}
-#pane-sd .sd-ttk{flex:1}
-#pane-sd .sd-ttk-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
-#pane-sd .sd-ttk-bar{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
-#pane-sd .sd-ttk-fill{height:100%;border-radius:4px;transition:width .5s}
-#pane-sd .sd-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-#pane-sd .sd-metric-card{background:rgba(255,255,255,.03);border-radius:8px;padding:10px;text-align:center}
-#pane-sd .sd-metric-label{font-size:11px;color:#8892a0;margin:0}
-#pane-sd .sd-metric-val{font-size:18px;font-weight:700;margin:2px 0 0}
-#pane-sd .sd-metric-sub{font-size:11px;color:#8892a0;margin:0}
-#pane-sd .sd-verdict{text-align:center;padding:14px;border-radius:10px;margin-bottom:12px}
-#pane-sd .sd-verdict.win{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
-#pane-sd .sd-verdict.lose{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
-#pane-sd .sd-verdict.close{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2)}
-#pane-sd .sd-verdict-text{font-size:20px;font-weight:700;margin:0}
-#pane-sd .sd-verdict-tip{font-size:13px;margin:4px 0 0}
-#pane-sd .sd-actions{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
-#pane-sd .sd-action-btn{padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#c9d1d9;cursor:pointer;font-size:13px;transition:all .2s}
-#pane-sd .sd-action-btn:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15)}
-#pane-sd .sd-enemies-title{font-size:12px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600}
-#pane-sd .sd-enemies{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-#pane-sd .sd-enemy{padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;text-align:center;cursor:pointer;transition:all .2s}
-#pane-sd .sd-enemy:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
-#pane-sd .sd-enemy.selected{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08)}
-#pane-sd .sd-enemy-name{font-size:13px;font-weight:600;margin:0}
-#pane-sd .sd-enemy-diff{font-size:11px;margin:2px 0 0}
-#pane-sd .sd-opponent-select{margin:16px 0}
-#pane-sd .sd-opp-search{width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#c9d1d9;font-size:14px;outline:none}
-#pane-sd .sd-opp-search:focus{border-color:rgba(59,130,246,.4)}
-#pane-sd .sd-opp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px;max-height:200px;overflow-y:auto}
-#pane-sd .sd-opp-card{padding:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:6px;cursor:pointer;font-size:12px;text-align:center;transition:all .2s}
-#pane-sd .sd-opp-card:hover{border-color:rgba(255,255,255,.15)}
-#pane-sd .sd-opp-card.selected{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08)}
+.ls-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.04);border-radius:6px;padding:7px 9px}.ls-lbl{font-size:9px;color:#8892a0;letter-spacing:.3px;margin:0;text-transform:uppercase}.ls-val{font-size:18px;font-weight:700;margin:1px 0 0}.ls-sub{font-size:9px;color:#8892a0;margin:1px 0 0}.ls-mini{display:flex;justify-content:space-between;font-size:10px;padding:3px 7px;background:rgba(255,255,255,.015);border-radius:4px}.ls-mini-l{color:#8892a0}.ls-mini-v{font-weight:600;color:#c9d1d9}
+#pane-sd{padding:16px}#pane-sd .sd-mode-bar{display:flex;justify-content:center;gap:8px;margin-bottom:16px}#pane-sd .sd-mode-btn{padding:8px 24px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#8892a0;cursor:pointer;font-size:13px;font-weight:600}#pane-sd .sd-mode-btn.active{background:rgba(59,130,246,.15);color:#60a5fa;border-color:rgba(59,130,246,.3)}#pane-sd .sd-enemies{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px}#pane-sd .sd-enemy{padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;text-align:center;cursor:pointer}#pane-sd .sd-enemy:hover{border-color:rgba(255,255,255,.15)}#pane-sd .sd-enemy.selected{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08)}#pane-sd .sd-enemy-name{font-size:13px;font-weight:600;margin:0}#pane-sd .sd-enemy-diff{font-size:11px;margin:2px 0 0}#pane-sd .sd-sim{padding:16px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.1);margin:16px 0}#pane-sd .sd-verdict{text-align:center;padding:14px;border-radius:10px;margin:12px 0}
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.5 DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.2-LIVE</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -1101,13 +1042,11 @@ option,optgroup{background:var(--bg2)}
   <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--r);padding:6px 10px;text-align:center"><div style="font-size:9px;font-family:var(--fmono);color:var(--accent);margin-bottom:5px;letter-spacing:1.5px">&#9672; FILTER BY ROLE</div><div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap" id="dRoleFilters"></div></div>
 </div>
 <div id="loContent" style="flex:1;overflow-y:auto;padding:16px"></div>
-
       </div>
 
       
 
-      
-<div class="pane" id="pane-sv" style="flex-direction:column">
+      <div class="pane" id="pane-sv" style="flex-direction:column">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
           <span style="font-size:10px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono)">SAVED LOADOUTS</span>
           <span style="font-size:10px;color:var(--accent);font-family:var(--fmono)" id="svCount2"></span>
@@ -1161,66 +1100,8 @@ option,optgroup{background:var(--bg2)}
       
 
       </div>
-      <div class="pane" id="pane-sd">
-<div class="sd-mode-bar">
-<button class="sd-mode-btn active" id="sdPveBtn">PVE</button>
-<button class="sd-mode-btn" id="sdPvpBtn">PVP</button>
-</div>
-
-<div id="sdPveSection">
-<p class="sd-enemies-title">Choose your opponent</p>
-<div class="sd-enemies" id="sdEnemyGrid"></div>
-</div>
-
-<div id="sdPvpSection" style="display:none">
-<div class="sd-opponent-select">
-<input class="sd-opp-search" id="sdOppSearch" placeholder="Search ships..." />
-<div class="sd-opp-grid" id="sdOppGrid"></div>
-</div>
-</div>
-<div id="sdResult"></div>
-
-
-<div id="sdResults" style="display:none">
-<div class="sd-arena">
-<div class="sd-fighter you">
-<p class="sd-fighter-label">Your ship</p>
-<svg viewBox="0 0 80 60" style="width:64px;margin:8px auto;display:block"><polygon points="40,5 25,30 15,45 10,55 70,55 65,45 55,30" fill="none" stroke="#3b82f6" stroke-width="1.5"/></svg>
-<p class="sd-ship-name" id="sdYourName">-</p>
-<p class="sd-ship-sub" id="sdYourSub"></p>
-<div class="sd-stats" id="sdYourStats"></div>
-</div>
-<div class="sd-vs"><div class="sd-vs-circle">VS</div></div>
-<div class="sd-fighter">
-<p class="sd-fighter-label">Opponent</p>
-<svg viewBox="0 0 80 60" style="width:64px;margin:8px auto;display:block"><polygon points="40,8 20,28 10,50 15,55 65,55 70,50 60,28" fill="none" stroke="#ef4444" stroke-width="1.5"/></svg>
-<p class="sd-ship-name" id="sdOppName">-</p>
-<p class="sd-ship-sub" id="sdOppSub"></p>
-<div class="sd-stats" id="sdOppStats"></div>
-</div>
-</div>
-
-<div class="sd-sim">
-<p class="sd-sim-title">Engagement simulation</p>
-<div class="sd-ttk-row">
-<div class="sd-ttk"><div class="sd-ttk-label"><span id="sdTtkYouLabel" style="color:#3b82f6;font-weight:600">You</span><span id="sdTtkYouVal" style="color:#8892a0">TTK: -</span></div><div class="sd-ttk-bar"><div class="sd-ttk-fill" id="sdTtkYouBar" style="width:0%;background:#3b82f6"></div></div></div>
-<div class="sd-ttk"><div class="sd-ttk-label"><span id="sdTtkOppLabel" style="color:#ef4444;font-weight:600">Opponent</span><span id="sdTtkOppVal" style="color:#8892a0">TTK: -</span></div><div class="sd-ttk-bar"><div class="sd-ttk-fill" id="sdTtkOppBar" style="width:0%;background:#ef4444"></div></div></div>
-</div>
-<div class="sd-metrics">
-<div class="sd-metric-card"><p class="sd-metric-label">DPS vs shields</p><p class="sd-metric-val" id="sdDpsVs" style="color:#3b82f6">-</p><p class="sd-metric-sub" id="sdDpsVsSub"></p></div>
-<div class="sd-metric-card"><p class="sd-metric-label">Range advantage</p><p class="sd-metric-val" id="sdRange" style="color:#3b82f6">-</p><p class="sd-metric-sub" id="sdRangeSub"></p></div>
-<div class="sd-metric-card"><p class="sd-metric-label">Speed edge</p><p class="sd-metric-val" id="sdSpeed" style="color:#34d399">-</p><p class="sd-metric-sub" id="sdSpeedSub"></p></div>
-</div>
-</div>
-
-<div class="sd-verdict" id="sdVerdict"><p class="sd-verdict-text" id="sdVerdictText">-</p><p class="sd-verdict-tip" id="sdVerdictTip"></p></div>
-<div class="sd-actions">
-<button class="sd-action-btn" id="sdBtnLoadout">Try different loadout</button>
-<button class="sd-action-btn" id="sdBtnNewOpp">Pick new opponent</button>
-</div>
-</div>
-</div>
-<div class="pane" id="pane-ships">
+      <div class="pane" id="pane-sd"><div class="sd-mode-bar"><button class="sd-mode-btn active" id="sdPveBtn" onclick="sdSetMode('pve')">PVE</button><button class="sd-mode-btn" id="sdPvpBtn" onclick="sdSetMode('pvp')">PVP</button></div><div id="sdArena"></div><p style="font-size:12px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600">CHOOSE YOUR OPPONENT</p><div class="sd-enemies" id="sdEnemyGrid"></div></div>
+      <div class="pane" id="pane-ships">
         <div id="shipsPage">
           <div class="ships-header">
             <h2 class="ships-title">Ship Database</h2>
@@ -1256,23 +1137,7 @@ option,optgroup{background:var(--bg2)}
 
     
 
-        <aside class="rp">
-<div id="liveStatsPanel" style="padding:10px;display:flex;flex-direction:column;gap:6px;height:100%;overflow-y:auto">
-<p style="font-size:11px;color:#8892a0;font-weight:600;letter-spacing:.5px;text-align:center;margin:0">LIVE STATS</p>
-<div class="ls-card"><p class="ls-lbl">TOTAL DPS</p><p class="ls-val" id="lsDps" style="color:#ef4444">0</p><p class="ls-sub" id="lsDpsSub">select a ship</p></div>
-<div class="ls-card"><p class="ls-lbl">SHIELD HP</p><p class="ls-val" id="lsShield" style="color:#a78bfa">0</p><p class="ls-sub" id="lsShieldSub"></p></div>
-<div class="ls-card"><p class="ls-lbl">POWER</p><p class="ls-val" id="lsPower" style="color:#34d399">0%</p><div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:4px"><div id="lsPowerBar" style="height:4px;border-radius:2px;background:#34d399;width:0%;transition:width .3s"></div></div></div>
-<div class="ls-card"><p class="ls-lbl">ALPHA STRIKE</p><p class="ls-val" id="lsAlpha">0</p></div>
-<div class="ls-card" style="text-align:center"><p class="ls-lbl" style="margin-bottom:4px">HARDPOINTS</p><svg id="lsShipSvg" viewBox="0 0 120 85" style="width:90px"><polygon points="60,8 45,28 33,42 26,72 94,72 87,42 75,28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/></svg><p id="lsHpSummary" style="font-size:9px;color:#8892a0;margin:3px 0 0"></p></div>
-<div id="lsBreakdown" style="display:flex;flex-direction:column;gap:2px"></div>
-<button id="sdLaunchBtn" style="width:100%;padding:8px;border-radius:6px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;font-size:11px;font-weight:600;cursor:pointer;margin-top:auto;letter-spacing:.3px" onclick="showTab('sd',document.querySelector('[data-t=sd]'))">SHIP SHOWDOWN</button>
-</div>
-<div id="targetPanel" style="display:none;padding:10px">
-<h3 style="color:#ef4444;font-size:13px;font-weight:700;letter-spacing:1px;margin:0 0 8px">TARGET ANALYSIS</h3>
-<p style="color:#8892a0;font-size:12px">Select a target to analyse</p>
-<div id="tgtContent"></div>
-</div>
-</aside>
+        <aside class="rp"><div id="liveStatsPanel" style="padding:10px;display:flex;flex-direction:column;gap:6px;height:100%;overflow-y:auto"><p style="font-size:11px;color:#8892a0;font-weight:600;letter-spacing:.5px;text-align:center;margin:0">LIVE STATS</p><div class="ls-card"><p class="ls-lbl">TOTAL DPS</p><p class="ls-val" id="lsDps" style="color:#ef4444">0</p><p class="ls-sub" id="lsDpsSub">select a ship</p></div><div class="ls-card"><p class="ls-lbl">SHIELD HP</p><p class="ls-val" id="lsShield" style="color:#a78bfa">0</p><p class="ls-sub" id="lsShieldSub"></p></div><div class="ls-card"><p class="ls-lbl">POWER</p><p class="ls-val" id="lsPower" style="color:#34d399">0%</p><div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:4px"><div id="lsPowerBar" style="height:4px;border-radius:2px;background:#34d399;width:0%;transition:width .3s"></div></div></div><div class="ls-card"><p class="ls-lbl">ALPHA STRIKE</p><p class="ls-val" id="lsAlpha">0</p></div><div class="ls-card" style="text-align:center"><p class="ls-lbl" style="margin-bottom:4px">HARDPOINTS</p><svg id="lsShipSvg" viewBox="0 0 120 85" style="width:90px"><polygon points="60,8 45,28 33,42 26,72 94,72 87,42 75,28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/></svg><p id="lsHpSummary" style="font-size:9px;color:#8892a0;margin:3px 0 0"></p></div><div id="lsBreakdown" style="display:flex;flex-direction:column;gap:2px"></div><button style="width:100%;padding:8px;border-radius:6px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;font-size:11px;font-weight:600;cursor:pointer;margin-top:auto" onclick="showTab('sd',document.querySelector('[data-t=sd]'))">SHIP SHOWDOWN</button></div></aside>
 
   </div>
 </div>
@@ -7314,175 +7179,34 @@ showTab = function(id, btn) {
 
 // Ensure ships render on load
 if(typeof renderShips==="function")
-
-
-// === LIVE STATS v6.4 ===
+// === LIVE STATS + SHOWDOWN v6.5 ===
 function updateLiveStats(){
   if(!window.selShip||!document.getElementById('lsDps'))return;
   var ship=SHIP_DATA[window.selShip];if(!ship)return;
   var sels=document.querySelectorAll('#loContent .slot-sel');
   var totalDps=0,totalAlpha=0,totalDraw=0,eCount=0,bCount=0;
-  sels.forEach(function(s){
-    var w=WEAPONS.find(function(x){return x.id===s.value});
-    if(!w)return;
-    if(w.type==='energy'){totalDps+=w.dps;totalAlpha+=(w.alpha||0);totalDraw+=(w.draw||0);eCount++;}
-    else if(w.type==='ballistic'){totalDps+=w.dps;totalAlpha+=(w.alpha||0);totalDraw+=(w.draw||0);bCount++;}
-  });
-  var shieldHP=0,shieldRegen=0,ppOut=0;
-  if(ship.comps){
-    var pp=COMP_DB.pp[ship.comps.pp];
-    var ppC=(ship.comps.counts&&ship.comps.counts.pp)||1;
-    if(pp)ppOut=pp.out*ppC;
-    var sg=COMP_DB.sg[ship.comps.sg];
-    var sgC=(ship.comps.counts&&ship.comps.counts.sg)||1;
-    if(sg){shieldHP=sg.totalHP*sgC;shieldRegen=sg.regen*sgC;}
-  }
-  var compDraw=0;
-  if(ship.comps){
-    var sgD=COMP_DB.sg[ship.comps.sg];if(sgD)compDraw+=(sgD.drawMax||0)*((ship.comps.counts&&ship.comps.counts.sg)||1);
-    var clD=COMP_DB.cooler[ship.comps.cooler];if(clD)compDraw+=(clD.drawMax||0)*((ship.comps.counts&&ship.comps.counts.cooler)||1);
-    var qdD=COMP_DB.qd[ship.comps.qd];if(qdD)compDraw+=(qdD.drawMax||0)*((ship.comps.counts&&ship.comps.counts.qd)||1);
-  }
-  var allDraw=totalDraw+compDraw;
-  var powerPct=ppOut>0?Math.round((allDraw/ppOut)*100):0;
+  sels.forEach(function(s){var w=WEAPONS.find(function(x){return x.id===s.value});if(!w)return;if(w.type==='energy'){totalDps+=w.dps;totalAlpha+=(w.alpha||0);totalDraw+=(w.draw||0);eCount++;}else if(w.type==='ballistic'){totalDps+=w.dps;totalAlpha+=(w.alpha||0);totalDraw+=(w.draw||0);bCount++;}});
+  var shieldHP=0,shieldRegen=0,ppOut=0,compDraw=0;
+  if(ship.comps){var pp=COMP_DB.pp[ship.comps.pp];var ppC=(ship.comps.counts&&ship.comps.counts.pp)||1;if(pp)ppOut=pp.out*ppC;var sg=COMP_DB.sg[ship.comps.sg];var sgC=(ship.comps.counts&&ship.comps.counts.sg)||1;if(sg){shieldHP=sg.totalHP*sgC;shieldRegen=sg.regen*sgC;compDraw+=(sg.drawMax||0)*sgC;}var cl=COMP_DB.cooler[ship.comps.cooler];var clC=(ship.comps.counts&&ship.comps.counts.cooler)||1;if(cl)compDraw+=(cl.drawMax||0)*clC;var qd=COMP_DB.qd[ship.comps.qd];if(qd)compDraw+=(qd.drawMax||0)*((ship.comps.counts&&ship.comps.counts.qd)||1);}
+  var allDraw=totalDraw+compDraw;var powerPct=ppOut>0?Math.round((allDraw/ppOut)*100):0;
   document.getElementById('lsDps').textContent=totalDps.toLocaleString();
   document.getElementById('lsDpsSub').textContent=eCount+'x energy + '+bCount+'x ballistic';
   document.getElementById('lsShield').textContent=shieldHP.toLocaleString();
   document.getElementById('lsShieldSub').textContent='regen '+shieldRegen.toLocaleString()+'/s';
   document.getElementById('lsPower').textContent=powerPct+'%';
-  var pb=document.getElementById('lsPowerBar');
-  pb.style.width=Math.min(powerPct,100)+'%';
-  pb.style.background=powerPct>90?'#ef4444':powerPct>70?'#fbbf24':'#34d399';
+  var pb=document.getElementById('lsPowerBar');pb.style.width=Math.min(powerPct,100)+'%';pb.style.background=powerPct>90?'#ef4444':powerPct>70?'#fbbf24':'#34d399';
   document.getElementById('lsAlpha').textContent=totalAlpha.toLocaleString();
-  var svg=document.getElementById('lsShipSvg');
-  var h='<polygon points="60,8 45,28 33,42 26,72 94,72 87,42 75,28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>';
-  var pos=[[60,18],[35,42],[85,42],[45,58],[75,58],[60,35],[50,28],[70,28]];
-  var slots=ship.slots||[];
-  var activeGuns=eCount+bCount;
-  slots.forEach(function(s,i){if(i>=pos.length)return;h+='<circle cx="'+pos[i][0]+'" cy="'+pos[i][1]+'" r="3" fill="#ef4444" opacity=".8"/>';});
-  svg.innerHTML=h;
-  document.getElementById('lsHpSummary').textContent=activeGuns+' weapon'+(activeGuns!==1?'s':'')+' active';
-  var bd=document.getElementById('lsBreakdown');
-  bd.innerHTML='<div class="ls-mini"><span class="ls-mini-l">SCM</span><span class="ls-mini-v">'+(ship.scm||0)+' m/s</span></div>'
-    +'<div class="ls-mini"><span class="ls-mini-l">Size</span><span class="ls-mini-v">'+(ship.size||'?')+'</span></div>'
-    +'<div class="ls-mini"><span class="ls-mini-l">Total draw</span><span class="ls-mini-v">'+allDraw+' EU</span></div>'
-    +'<div class="ls-mini"><span class="ls-mini-l">PP output</span><span class="ls-mini-v">'+ppOut+'</span></div>'
-    +'<div class="ls-mini"><span class="ls-mini-l">Headroom</span><span class="ls-mini-v" style="color:'+(ppOut-allDraw>0?'#34d399':'#ef4444')+'">'+(ppOut-allDraw>0?'+':'')+(ppOut-allDraw)+' EU</span></div>';
+  var svg=document.getElementById('lsShipSvg');var h='<polygon points="60,8 45,28 33,42 26,72 94,72 87,42 75,28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>';var pos=[[60,18],[35,42],[85,42],[45,58],[75,58],[60,35],[50,28],[70,28]];var slots=ship.slots||[];var guns=eCount+bCount;slots.forEach(function(s,i){if(i>=pos.length)return;h+='<circle cx="'+pos[i][0]+'" cy="'+pos[i][1]+'" r="3" fill="#ef4444" opacity=".8"/>';});svg.innerHTML=h;
+  document.getElementById('lsHpSummary').textContent=guns+' weapon'+(guns!==1?'s':'')+' active';
+  var bd=document.getElementById('lsBreakdown');bd.innerHTML='<div class="ls-mini"><span class="ls-mini-l">SCM</span><span class="ls-mini-v">'+(ship.scm||0)+' m/s</span></div><div class="ls-mini"><span class="ls-mini-l">Size</span><span class="ls-mini-v">'+(ship.size||'?')+'</span></div><div class="ls-mini"><span class="ls-mini-l">Total draw</span><span class="ls-mini-v">'+allDraw+' EU</span></div><div class="ls-mini"><span class="ls-mini-l">PP output</span><span class="ls-mini-v">'+ppOut+'</span></div><div class="ls-mini"><span class="ls-mini-l">Headroom</span><span class="ls-mini-v" style="color:'+(ppOut-allDraw>0?'#34d399':'#ef4444')+'">'+(ppOut-allDraw>0?'+':'')+(ppOut-allDraw)+' EU</span></div>';
 }
 document.addEventListener('change',function(e){if(e.target&&e.target.classList.contains('slot-sel'))setTimeout(updateLiveStats,100);});
 setInterval(updateLiveStats,2000);
-
-
-
-// === SHIP SHOWDOWN v6.5 ===
-var SD_ENEMIES = [
-  {name:'Aurora MR',diff:'Easy',color:'#34d399'},
-  {name:'Mustang Delta',diff:'Easy',color:'#34d399'},
-  {name:'Buccaneer',diff:'Medium',color:'#fbbf24'},
-  {name:'Cutlass Black',diff:'Medium',color:'#fbbf24'},
-  {name:'Gladius',diff:'Medium',color:'#fbbf24'},
-  {name:'Vanguard Warden',diff:'Hard',color:'#ef4444'},
-  {name:'Eclipse',diff:'Hard',color:'#ef4444'},
-  {name:'Hammerhead',diff:'Boss',color:'#a32d2d'},
-  {name:'Idris-M',diff:'Boss',color:'#a32d2d'}
-];
-
-function initShowdown(){
-  var grid=document.querySelector('.sd-enemies');
-  if(!grid||grid.children.length>0) return;
-  SD_ENEMIES.forEach(function(e){
-    var card=document.createElement('div');
-    card.className='sd-enemy';
-    card.innerHTML='<p class="sd-enemy-name">'+e.name+'</p><p class="sd-enemy-diff" style="color:'+e.color+'">'+e.diff+'</p>';
-    card.onclick=function(){
-      document.querySelectorAll('.sd-enemy').forEach(function(c){c.classList.remove('selected')});
-      card.classList.add('selected');
-      runShowdown(e.name);
-    };
-    grid.appendChild(card);
-  });
-}
-
-function runShowdown(oppName){
-  var myShip=window.selShip;
-  if(!myShip){document.getElementById('sdResult').innerHTML='<p style="color:#8892a0;text-align:center;padding:20px">Load a ship first in the Loadout Builder</p>';return;}
-  var my=SHIP_DATA[myShip],opp=SHIP_DATA[oppName];
-  if(!my||!opp){return;}
-  var myDps=0,oppDps=0;
-  var sels=document.querySelectorAll('#loContent .slot-sel');
-  sels.forEach(function(s){var w=WEAPONS.find(function(x){return x.id===s.value});if(w&&(w.type==='energy'||w.type==='ballistic'))myDps+=w.dps;});
-  (opp.slots||[]).forEach(function(s){if(s.default){var w=WEAPONS.find(function(x){return x.id===s.default||x.name===s.default});if(w)oppDps+=w.dps;}});
-  if(oppDps===0)(opp.slots||[]).forEach(function(s){if(s.sz){var matches=WEAPONS.filter(function(x){return x.sz==s.sz});if(matches.length)oppDps+=matches[0].dps;}});
-  var mySg=COMP_DB.sg[my.comps&&my.comps.sg];var myHP=mySg?(mySg.totalHP*((my.comps.counts&&my.comps.counts.sg)||1)):5000;
-  var oppSg=COMP_DB.sg[opp.comps&&opp.comps.sg];var oppHP=oppSg?(oppSg.totalHP*((opp.comps.counts&&opp.comps.counts.sg)||1)):5000;
-  var myTTK=oppDps>0?(myHP/oppDps).toFixed(1):'?';
-  var oppTTK=myDps>0?(oppHP/myDps).toFixed(1):'?';
-  var myTTKn=parseFloat(myTTK)||99,oppTTKn=parseFloat(oppTTK)||99;
-  var ratio=myTTKn/oppTTKn;
-  var verdict,vColor,vBg,tip;
-  if(ratio>1.3){verdict='YOU WIN';vColor='#34d399';vBg='rgba(52,211,153,.1)';tip='You can take more hits and kill faster.';}
-  else if(ratio<0.7){verdict='YOU LOSE';vColor='#ef4444';vBg='rgba(239,68,68,.1)';tip='Opponent outguns you. Try different loadout.';}
-  else{verdict='CLOSE FIGHT';vColor='#fbbf24';vBg='rgba(251,191,36,.1)';tip='Could go either way. Piloting decides this one.';}
-  var html='<div class="sd-arena"><div class="sd-fighter you"><p class="sd-fighter-label">YOUR SHIP</p><p class="sd-ship-name" style="color:#60a5fa">'+myShip+'</p><p class="sd-ship-sub">Your loadout</p>';
-  html+='<div class="sd-stats"><div class="sd-stat"><span class="sd-stat-lbl">DPS</span><span class="sd-stat-val" style="color:#ef4444">'+myDps+'</span></div>';
-  html+='<div class="sd-stat"><span class="sd-stat-lbl">Shield</span><span class="sd-stat-val" style="color:#a78bfa">'+myHP.toLocaleString()+'</span></div>';
-  html+='<div class="sd-stat"><span class="sd-stat-lbl">SCM</span><span class="sd-stat-val">'+(my.scm||0)+'</span></div></div></div>';
-  html+='<div class="sd-vs"><div class="sd-vs-circle">VS</div></div>';
-  html+='<div class="sd-fighter"><p class="sd-fighter-label">OPPONENT</p><p class="sd-ship-name" style="color:#ef4444">'+oppName+'</p><p class="sd-ship-sub">Default loadout</p>';
-  html+='<div class="sd-stats"><div class="sd-stat"><span class="sd-stat-lbl">DPS</span><span class="sd-stat-val" style="color:#ef4444">'+oppDps+'</span></div>';
-  html+='<div class="sd-stat"><span class="sd-stat-lbl">Shield</span><span class="sd-stat-val" style="color:#a78bfa">'+oppHP.toLocaleString()+'</span></div>';
-  html+='<div class="sd-stat"><span class="sd-stat-lbl">SCM</span><span class="sd-stat-val">'+(opp.scm||0)+'</span></div></div></div></div>';
-  html+='<div class="sd-sim"><p class="sd-sim-title">ENGAGEMENT SIMULATION</p>';
-  html+='<div class="sd-ttk-row"><div class="sd-ttk"><div class="sd-ttk-label"><span style="color:#60a5fa;font-weight:600">'+myShip+'</span><span style="color:#8892a0">TTK: '+oppTTK+'s</span></div><div class="sd-ttk-bar"><div class="sd-ttk-fill" style="width:'+Math.min(100,Math.round((oppTTKn/(myTTKn+oppTTKn))*100))+'%;background:#60a5fa"></div></div></div>';
-  html+='<div class="sd-ttk"><div class="sd-ttk-label"><span style="color:#ef4444;font-weight:600">'+oppName+'</span><span style="color:#8892a0">TTK: '+myTTK+'s</span></div><div class="sd-ttk-bar"><div class="sd-ttk-fill" style="width:'+Math.min(100,Math.round((myTTKn/(myTTKn+oppTTKn))*100))+'%;background:#ef4444"></div></div></div></div>';
-  html+='<div class="sd-verdict" style="background:'+vBg+';border:1px solid '+vColor+'30"><p class="sd-verdict-text" style="color:'+vColor+'">'+verdict+'</p><p class="sd-verdict-tip" style="color:'+vColor+'99">'+tip+'</p></div></div>';
-  html+='<div class="sd-actions"><button class="sd-action-btn" onclick="showTab('lo',document.querySelector('[data-t=lo]'))">Try different loadout</button></div>';
-  document.getElementById('sdResult').innerHTML=html;
-}
-
-function initShowdownPvp(){
-  var sec=document.getElementById('sdPvpSection');
-  if(!sec) return;
-  var html='<div class="sd-opponent-select"><input class="sd-opp-search" placeholder="Search for opponent ship..." oninput="filterSdOpponents(this.value)"></div>';
-  html+='<div id="sdOppGrid" class="sd-opp-grid">';
-  Object.keys(SHIP_DATA).sort().forEach(function(name){
-    html+='<div class="sd-opp-card" onclick="selectSdOpponent(this,''+name.replace(/'/g,"\\'")+'')">'+name+'</div>';
-  });
-  html+='</div>';
-  sec.innerHTML=html;
-}
-function filterSdOpponents(q){
-  var cards=document.querySelectorAll('.sd-opp-card');
-  q=q.toLowerCase();
-  cards.forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>-1?'':'none';});
-}
-function selectSdOpponent(el,name){
-  document.querySelectorAll('.sd-opp-card').forEach(function(c){c.classList.remove('selected')});
-  el.classList.add('selected');
-  runShowdown(name);
-}
-
-// Mode toggle
-document.getElementById('sdPveBtn')&&document.getElementById('sdPveBtn').addEventListener('click',function(){
-  this.classList.add('active');document.getElementById('sdPvpBtn').classList.remove('active');
-  document.getElementById('sdPveSection').style.display='';
-  document.getElementById('sdPvpSection').style.display='none';
-});
-document.getElementById('sdPvpBtn')&&document.getElementById('sdPvpBtn').addEventListener('click',function(){
-  this.classList.add('active');document.getElementById('sdPveBtn').classList.remove('active');
-  document.getElementById('sdPveSection').style.display='none';
-  document.getElementById('sdPvpSection').style.display='';
-  initShowdownPvp();
-});
-
-// Show tab listener for showdown
-document.addEventListener('click',function(e){
-  if(e.target&&e.target.getAttribute&&e.target.getAttribute('data-t')==='sd'){
-    setTimeout(initShowdown,100);
-  }
-});
+var SD_ENEMIES=[{name:'Aurora MR',diff:'Easy',color:'#34d399'},{name:'Mustang Delta',diff:'Easy',color:'#34d399'},{name:'Buccaneer',diff:'Medium',color:'#fbbf24'},{name:'Cutlass Black',diff:'Medium',color:'#fbbf24'},{name:'Gladius',diff:'Medium',color:'#fbbf24'},{name:'Vanguard Warden',diff:'Hard',color:'#ef4444'},{name:'Eclipse',diff:'Hard',color:'#ef4444'},{name:'Hammerhead',diff:'Boss',color:'#a32d2d'},{name:'Idris-M',diff:'Boss',color:'#a32d2d'}];
+function sdSetMode(m){document.getElementById('sdPveBtn').className='sd-mode-btn'+(m==='pve'?' active':'');document.getElementById('sdPvpBtn').className='sd-mode-btn'+(m==='pvp'?' active':'');}
+function initShowdown(){var g=document.getElementById('sdEnemyGrid');if(!g)return;var h='';SD_ENEMIES.forEach(function(e){h+='<div class="sd-enemy" onclick="runShowdown(\''+e.name+'\')">'+'<p class="sd-enemy-name">'+e.name+'</p><p class="sd-enemy-diff" style="color:'+e.color+'">'+e.diff+'</p></div>';});g.innerHTML=h;}
+function runShowdown(opp){var me=selShip;if(!me){document.getElementById('sdArena').innerHTML='<p style="text-align:center;color:#8892a0;padding:20px">Load a ship first</p>';return;}var ms=SHIP_DATA[me],os=SHIP_DATA[opp];if(!os)return;var mySels=document.querySelectorAll('#loContent .slot-sel');var md=0;mySels.forEach(function(s){var w=WEAPONS.find(function(x){return x.id===s.value});if(w&&(w.type==='energy'||w.type==='ballistic'))md+=w.dps;});var od=0;if(os.slots)os.slots.forEach(function(s){if(s.default){var w=WEAPONS.find(function(x){return x.id===s.default});if(w)od+=w.dps;}});var msg=COMP_DB.sg[ms.comps.sg],mh=msg?(msg.totalHP*((ms.comps.counts&&ms.comps.counts.sg)||1)):0;var osg=COMP_DB.sg[os.comps.sg],oh=osg?(osg.totalHP*((os.comps.counts&&os.comps.counts.sg)||1)):0;var mt=od>0?Math.round(mh/od*10)/10:999,ot=md>0?Math.round(oh/md*10)/10:999;var v,vc,vb;if(ot<mt*0.7){v='YOU WIN';vc='#34d399';vb='rgba(34,197,94,.1)';}else if(mt<ot*0.7){v='YOU LOSE';vc='#ef4444';vb='rgba(239,68,68,.1)';}else{v='CLOSE FIGHT';vc='#fbbf24';vb='rgba(234,179,8,.1)';}document.getElementById('sdArena').innerHTML='<div style="display:flex;margin-bottom:16px"><div style="flex:1;text-align:center;padding:16px"><p style="font-size:11px;color:#8892a0;margin:0 0 4px">YOUR SHIP</p><p style="font-size:18px;font-weight:700;margin:0">'+me+'</p><p style="font-size:12px;color:#8892a0;margin:4px 0">DPS: '+md+' | Shield: '+mh.toLocaleString()+'</p></div><div style="display:flex;align-items:center;justify-content:center;width:50px"><div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:700;color:#8892a0">VS</div></div><div style="flex:1;text-align:center;padding:16px"><p style="font-size:11px;color:#8892a0;margin:0 0 4px">OPPONENT</p><p style="font-size:18px;font-weight:700;margin:0">'+opp+'</p><p style="font-size:12px;color:#8892a0;margin:4px 0">DPS: '+od+' | Shield: '+oh.toLocaleString()+'</p></div></div><div class="sd-sim"><p style="font-size:12px;color:#8892a0;text-align:center;margin:0 0 12px;font-weight:600">ENGAGEMENT</p><div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:1"><p style="font-size:12px;margin:0 0 4px"><span style="color:#60a5fa">'+me+'</span> TTK: '+ot+'s</p><div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px"><div style="height:8px;width:'+Math.min(100,Math.round(ot/(mt+ot)*100))+'%;background:#60a5fa;border-radius:4px"></div></div></div><div style="flex:1"><p style="font-size:12px;margin:0 0 4px"><span style="color:#ef4444">'+opp+'</span> TTK: '+mt+'s</p><div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px"><div style="height:8px;width:'+Math.min(100,Math.round(mt/(mt+ot)*100))+'%;background:#ef4444;border-radius:4px"></div></div></div></div></div><div class="sd-verdict" style="background:'+vb+';border:1px solid '+vc+'30"><p style="font-size:20px;font-weight:700;margin:0;color:'+vc+'">'+v+'</p><p style="font-size:13px;color:#8892a0;margin:4px 0 0">You kill in '+ot+'s vs they kill in '+mt+'s</p></div>';document.querySelectorAll('.sd-enemy').forEach(function(el){el.classList.remove('selected');if(el.querySelector('.sd-enemy-name').textContent===opp)el.classList.add('selected');});}
 setTimeout(initShowdown,1000);
-
 setTimeout(renderShips,500);
 </script>
 
