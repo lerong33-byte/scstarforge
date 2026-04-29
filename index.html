@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.78-DEV</title>
+<title>SC-ShipForge v6.79-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.78-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.79-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7365,7 +7365,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.78-DEV: Live Stats + Showdown + OFF State === */
+/* === v6.79-DEV: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
@@ -8188,6 +8188,59 @@ aside.lp .lp-card .lp-hd,aside.lp .lp-card .card-hd,aside.lp .lp-card h3,aside.l
 </style>
 <script>
 (function(){function ensureDef(){var scroll=document.querySelector('aside.lp .lp-scroll');if(!scroll)return;if(document.getElementById('defCard'))return;var card=document.createElement('div');card.id='defCard';card.className='lp-card';card.innerHTML='<div class="lp-hd">Deflection</div><div id="defRows"><div class="def-row"><span>Phys mod</span><span class="def-missing" id="defPhys">—</span></div><div class="def-row"><span>Energy mod</span><span class="def-missing" id="defEng">—</span></div><div class="def-row"><span>Distortion</span><span class="def-missing" id="defDist">—</span></div><div class="def-row"><span>Penetration</span><span class="def-missing" id="defPen">—</span></div></div>';var dpsCard=document.getElementById('dpsCard');if(dpsCard&&dpsCard.parentNode===scroll)scroll.insertBefore(card,dpsCard.nextSibling);else scroll.appendChild(card);}function pick(d){for(var i=1;i<arguments.length;i++){var k=arguments[i].toLowerCase();if(d[k])return d[k];}return null;}function refreshDef(){ensureDef();var s=window.selShip;var d=(window.MINED&&window.MINED[s])||{};var rows=[['defPhys',pick(d,'phys mod','physical','physical damage modifier')],['defEng',pick(d,'energy mod','energy','energy damage modifier')],['defDist',pick(d,'distortion mod','distortion')],['defPen',pick(d,'penetration')]];rows.forEach(function(r){var el=document.getElementById(r[0]);if(!el)return;if(r[1]){el.textContent=r[1];el.className='';}else{el.textContent='—';el.className='def-missing';}});}function tick(){refreshDef();}var orig=window.pickShip;if(orig&&!window.__lpv2hooked){window.__lpv2hooked=true;window.pickShip=function(n){var r=orig.apply(this,arguments);setTimeout(tick,300);return r;};}document.addEventListener('DOMContentLoaded',tick);setTimeout(tick,1500);setInterval(tick,3000);})();
+</script>
+
+<!-- PHASE_2_LP_REDESIGN -->
+<style id="phase2lpRedesignStyles">
+aside.lp{position:absolute!important;left:-9999px!important;width:280px!important;visibility:hidden!important;display:block!important;}
+#mobiDash{display:none!important;}
+main.body, .body{grid-template-columns:1fr!important;}
+#pane-lo{padding:8px!important;position:relative!important;overflow-y:auto!important;overflow-x:hidden!important;height:auto!important;min-height:100vh!important;}
+#combat-readout{position:static!important;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;height:38px!important;padding:0 14px!important;background:linear-gradient(180deg,#0b1120,#070a14);border:1px solid var(--hud-line-bright);border-radius:6px;margin:0 0 8px;}
+#combat-readout .cr-stat{flex:0 0 auto;display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;gap:5px!important;margin-right:18px!important;line-height:1;}
+#combat-readout .cr-stat .cr-lbl{font-family:var(--fmono);font-size:8px;letter-spacing:1.5px;color:var(--hud-t3);text-transform:uppercase;}
+#combat-readout .cr-stat .cr-val{font-family:var(--fmono);font-weight:800;font-size:13px;color:var(--hud-t1);}
+#combat-readout .cr-stat.cr-power .cr-val,#combat-readout .cr-stat.cr-dps .cr-val{color:var(--hud-orange);text-shadow:0 0 6px rgba(255,138,60,.4);}
+#combat-readout .cr-stat.cr-alpha .cr-val{color:var(--hud-amber);text-shadow:0 0 6px rgba(255,201,77,.4);}
+#combat-readout .cr-stat.cr-shield .cr-val{color:var(--hud-purple);}
+#combat-readout .cr-stat.cr-scm .cr-val{color:var(--hud-cyan);}
+#combat-readout .cr-stat.cr-def .cr-val{color:var(--hud-red);}
+#combat-readout .cr-genbtn{margin-left:auto;background:linear-gradient(180deg,#ff8a3c,#b35a1c);border:1px solid #ff8a3c;color:#0a0e15;padding:4px 14px;font-family:var(--fmono);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:4px;cursor:pointer;}
+#ship-hero{display:block!important;height:180px!important;margin:0 0 8px!important;border:1px solid var(--hud-line-bright)!important;border-radius:6px!important;overflow:hidden!important;position:relative!important;background:#0a0e14!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5)!important;}
+#ship-hero .sh-img-wrap{height:100%!important;width:100%!important;display:block!important;}
+#ship-hero .sh-img,#ship-hero #sh-img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;}
+#ship-hero .sh-overlay{position:absolute!important;bottom:0!important;left:0!important;right:0!important;padding:10px 14px!important;background:linear-gradient(180deg,transparent,rgba(0,0,0,.7))!important;display:flex!important;align-items:flex-end!important;gap:14px!important;}
+#ship-hero .sh-name{font-family:var(--fmono)!important;font-size:18px!important;font-weight:800!important;color:var(--hud-t1)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;text-shadow:0 1px 2px rgba(0,0,0,.8)!important;}
+#loContent{width:100%!important;}
+#pane-lo #loContent .lo{display:grid!important;grid-template-columns:1fr 1fr 1fr 320px!important;gap:8px!important;width:100%!important;max-width:none!important;align-items:start!important;}
+#loContent .lo-section-hd{padding:4px 10px!important;margin:0!important;font-size:9px!important;}
+#loContent .lo > .ship-banner{padding:6px 12px!important;margin-bottom:0!important;}
+#p2cards{grid-column:4!important;grid-row:1 / span 5!important;display:flex!important;flex-direction:column!important;gap:6px!important;position:static!important;width:auto!important;max-height:none!important;overflow-y:visible!important;}
+#p2cards .p2card{padding:6px 10px!important;}
+#p2cards .p2card-hd{padding-bottom:3px!important;margin-bottom:4px!important;}
+#p2cards .p2row{padding:1px 0!important;font-size:10px!important;}
+#p2cards #pwrCard{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-left:3px solid var(--hud-orange)!important;border-radius:6px!important;padding:8px 10px!important;margin:0!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5)!important;visibility:visible!important;position:static!important;}
+#p2cards #pwrCard #spvChart{max-height:90px!important;overflow:hidden!important;}
+#ref-tabs{background:linear-gradient(180deg,#162338,#0d1729);border:1px solid var(--hud-line-bright);border-radius:6px;padding:6px 10px;}
+.rt-tablist{display:flex;gap:1px;border-bottom:1px solid var(--hud-line);margin-bottom:6px;flex-wrap:wrap;}
+.rt-tab{font-family:var(--fmono);font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--hud-t3);background:transparent;border:none;padding:3px 6px;cursor:pointer;text-transform:uppercase;border-bottom:2px solid transparent;}
+.rt-tab:hover{color:var(--hud-t1);}
+.rt-tab.active{color:var(--hud-cyan);border-bottom-color:var(--hud-cyan);}
+.rt-pane{display:none;font-family:var(--fmono);font-size:10px;}
+.rt-pane.active{display:block;}
+.rt-pane .rt-row{display:flex;justify-content:space-between;padding:2px 0;color:var(--hud-t2);}
+.rt-pane .rt-row > span:last-child{color:var(--hud-t1);font-weight:600;}
+#dps-card-rt{background:linear-gradient(180deg,#162338,#0d1729);border:1px solid var(--hud-line-bright);border-left:3px solid var(--hud-cyan);border-radius:6px;padding:6px 10px;}
+#dps-card-rt .dpsrt-hd{font-family:var(--fmono);font-size:9px;font-weight:800;letter-spacing:3px;color:var(--hud-cyan);text-transform:uppercase;border-bottom:1px solid var(--hud-line);padding-bottom:3px;margin-bottom:5px;}
+#dps-card-rt #dpsBars-mirror{display:flex;flex-direction:column;gap:2px;}
+#loContent .lo > .tip-box{grid-column:1 / 4!important;padding:6px 10px!important;font-size:9px!important;}
+#loContent .lo > .lo-foot{grid-column:1 / 4!important;padding:4px 0!important;font-size:9px!important;}
+#loContent .slot-row,#loContent .comp-row{margin-bottom:2px!important;padding:5px 22px 5px 6px!important;}
+@media (max-width:1500px){#pane-lo #loContent .lo{grid-template-columns:1fr 1fr 280px!important;}#p2cards{grid-column:3!important;grid-row:auto!important;}}
+@media (max-width:900px){#pane-lo #loContent .lo{grid-template-columns:1fr!important;}#p2cards{grid-column:1!important;}}
+</style>
+<script>
+(function(){function $(id){return document.getElementById(id);}function txt(id){var el=$(id);return el?el.textContent.trim():'—';}function pickWiki(d){for(var i=1;i<arguments.length;i++){var k=arguments[i].toLowerCase();if(d[k])return d[k];}return null;}function ensureUI(){var pane=$('pane-lo');if(!pane)return;if(!$('combat-readout')){var bar=document.createElement('div');bar.id='combat-readout';bar.innerHTML='<div class="cr-stat cr-power"><span class="cr-lbl">Power</span><span class="cr-val" id="cr-pwrPct">—</span></div><div class="cr-stat cr-dps"><span class="cr-lbl">DPS</span><span class="cr-val" id="cr-dps">—</span></div><div class="cr-stat cr-alpha"><span class="cr-lbl">Alpha</span><span class="cr-val" id="cr-alpha">—</span></div><div class="cr-stat cr-shield"><span class="cr-lbl">Shield HP</span><span class="cr-val" id="cr-shield">—</span></div><div class="cr-stat cr-scm"><span class="cr-lbl">SCM</span><span class="cr-val" id="cr-scm">—</span></div><div class="cr-stat cr-def"><span class="cr-lbl">Deflection</span><span class="cr-val" id="cr-def">—</span></div><button class="cr-genbtn" id="cr-genBtn">⬢ Generate</button>';pane.insertBefore(bar,pane.firstChild);}var sh=$('ship-hero');var lc=$('loContent');if(sh&&lc&&sh.nextSibling!==lc){pane.insertBefore(sh,lc);}var pwrCard=$('pwrCard');var p2=$('p2cards');var lo=document.querySelector('#loContent .lo');if(pwrCard&&p2&&pwrCard.parentNode!==p2){pwrCard.style.cssText='';p2.insertBefore(pwrCard,p2.firstChild);}if(p2&&lo&&p2.parentNode!==lo){lo.appendChild(p2);}var defCard=$('def-card-rt');if(defCard)defCard.remove();var imgRt=$('ship-img-rt');if(imgRt)imgRt.remove();if(p2&&!$('ref-tabs')){var rt=document.createElement('div');rt.id='ref-tabs';rt.innerHTML='<div class="rt-tablist"><button class="rt-tab active" data-pane="flight">Flight</button><button class="rt-tab" data-pane="vessel">Vessel</button><button class="rt-tab" data-pane="dim">Dims</button><button class="rt-tab" data-pane="fuel">Fuel</button><button class="rt-tab" data-pane="sig">Signal</button></div><div class="rt-pane active" data-pane="flight"><div class="rt-row"><span>AB Speed</span><span id="rt-ab">—</span></div><div class="rt-row"><span>Pitch</span><span id="rt-pitch">—</span></div><div class="rt-row"><span>Yaw</span><span id="rt-yaw">—</span></div><div class="rt-row"><span>Roll</span><span id="rt-roll">—</span></div></div><div class="rt-pane" data-pane="vessel"><div class="rt-row"><span>Focus</span><span id="rt-focus">—</span></div><div class="rt-row"><span>Crew</span><span id="rt-crew">—</span></div><div class="rt-row"><span>Cargo</span><span id="rt-cargo">—</span></div><div class="rt-row"><span>Mass</span><span id="rt-mass">—</span></div></div><div class="rt-pane" data-pane="dim"><div class="rt-row"><span>Length</span><span id="rt-len">—</span></div><div class="rt-row"><span>Beam</span><span id="rt-beam">—</span></div><div class="rt-row"><span>Height</span><span id="rt-ht">—</span></div></div><div class="rt-pane" data-pane="fuel"><div class="rt-row"><span>H₂</span><span id="rt-h2">—</span></div><div class="rt-row"><span>Quantum</span><span id="rt-qt">—</span></div></div><div class="rt-pane" data-pane="sig"><div class="rt-row"><span>IR</span><span id="rt-ir">—</span></div><div class="rt-row"><span>EM</span><span id="rt-em">—</span></div><div class="rt-row"><span>EM max</span><span id="rt-emmax">—</span></div></div>';p2.appendChild(rt);rt.addEventListener('click',function(ev){var btn=ev.target.closest('.rt-tab');if(!btn)return;var key=btn.dataset.pane;Array.prototype.forEach.call(rt.querySelectorAll('.rt-tab'),function(b){b.classList.toggle('active',b.dataset.pane===key);});Array.prototype.forEach.call(rt.querySelectorAll('.rt-pane'),function(p){p.classList.toggle('active',p.dataset.pane===key);});});}if(p2&&!$('dps-card-rt')){var dc=document.createElement('div');dc.id='dps-card-rt';dc.innerHTML='<div class="dpsrt-hd">Firepower By Weapon</div><div id="dpsBars-mirror">—</div>';p2.appendChild(dc);}var btn=$('cr-genBtn');if(btn&&window.generate&&!btn.dataset.hooked){btn.dataset.hooked='1';btn.onclick=function(){window.generate();setTimeout(syncReadout,300);};}}function syncReadout(){if($('cr-pwrPct'))$('cr-pwrPct').textContent=txt('pwrPct');if($('cr-dps'))$('cr-dps').textContent=txt('totalDPS');if($('cr-alpha'))$('cr-alpha').textContent=txt('totalAlpha');if($('cr-shield'))$('cr-shield').textContent=txt('shpTotal');if($('cr-scm'))$('cr-scm').textContent=(txt('mSCM')!=='—'?txt('mSCM'):txt('kpiScm'));var d=(window.MINED&&window.MINED[window.selShip])||{};if($('cr-def'))$('cr-def').textContent=pickWiki(d,'phys mod','physical','physical damage modifier')||'—';if($('rt-ab'))$('rt-ab').textContent=txt('statAB');if($('rt-pitch'))$('rt-pitch').textContent=txt('statPitch');if($('rt-yaw'))$('rt-yaw').textContent=txt('statYaw');if($('rt-roll'))$('rt-roll').textContent=txt('statRoll');if($('rt-focus'))$('rt-focus').textContent=txt('statFocus');if($('rt-crew'))$('rt-crew').textContent=txt('statCrew');if($('rt-cargo'))$('rt-cargo').textContent=txt('statCargo');if($('rt-mass'))$('rt-mass').textContent=txt('statMass');if($('rt-len'))$('rt-len').textContent=txt('statLen');if($('rt-beam'))$('rt-beam').textContent=txt('statBeam');if($('rt-ht'))$('rt-ht').textContent=txt('statHeight');if($('rt-h2'))$('rt-h2').textContent=txt('statH2');if($('rt-qt'))$('rt-qt').textContent=txt('statQT');if($('rt-ir'))$('rt-ir').textContent=txt('sigIR');if($('rt-em'))$('rt-em').textContent=txt('sigEM');if($('rt-emmax'))$('rt-emmax').textContent=txt('sigEMmax');var bars=$('dpsBars'),m=$('dpsBars-mirror');if(bars&&m&&bars.innerHTML!==m.dataset.lastHtml){m.innerHTML=bars.innerHTML;m.dataset.lastHtml=bars.innerHTML;}}function tick(){ensureUI();syncReadout();}document.addEventListener('DOMContentLoaded',tick);setTimeout(tick,1000);setInterval(tick,1500);})();
 </script>
 </body>
 <!-- deploy-force --><!-- deploy -->
