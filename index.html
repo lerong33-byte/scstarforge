@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.70-DEV</title>
+<title>SC-ShipForge v6.71-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.70-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.71-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7365,7 +7365,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.70-DEV: Live Stats + Showdown + OFF State === */
+/* === v6.71-DEV: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
@@ -8063,7 +8063,7 @@ document.addEventListener("click",function(e){if(!e.target.closest("#sdSearchWra
 }
 body{background:var(--hud-bg)!important;background-image:linear-gradient(rgba(63,223,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(63,223,255,.025) 1px,transparent 1px)!important;background-size:24px 24px,24px 24px!important;}
 #pane-lo{padding:14px 12px 8px!important;}
-#loContent .lo{max-width:none!important;width:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(280px,1fr))!important;grid-template-rows:auto 32px 1fr auto auto!important;gap:10px 12px!important;align-items:start;}
+#loContent .lo{max-width:none!important;width:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(280px,1fr))!important;grid-template-rows:auto auto auto auto auto!important;gap:10px 12px!important;align-items:start;}
 #loContent .lo > *:nth-child(1){grid-column:1/-1!important;grid-row:1!important;}
 #loContent .lo > .ship-banner{background:var(--hud-surf)!important;border:1px solid var(--hud-line-bright)!important;border-left:3px solid var(--hud-cyan)!important;border-radius:var(--hud-radius)!important;padding:12px 18px!important;display:flex!important;align-items:center!important;gap:14px!important;flex-wrap:wrap!important;box-shadow:var(--hud-bevel)!important;height:auto!important;min-height:auto!important;max-height:none!important;overflow:visible!important;}
 #loContent .ship-banner .sname{font-size:16px!important;font-weight:800!important;letter-spacing:1px!important;color:var(--hud-t1)!important;text-transform:uppercase!important;margin:0!important;line-height:1!important;text-shadow:0 1px 0 rgba(0,0,0,.6)!important;}
@@ -8140,7 +8140,7 @@ aside.lp h2,aside.lp h3{color:var(--hud-cyan)!important;letter-spacing:2px!impor
 #loContent .slot-info > br{display:none!important;}
 </style>
 <script>
-(function(){function ensure(){var lo=document.querySelector('#loContent .lo');if(!lo)return;var hp=lo.children[2];var ms=lo.children[4];var sy=lo.children[6];if(hp && !hp.dataset.hpexpHooked){hp.dataset.hpexpHooked='1';hp.addEventListener('click',function(ev){var row=ev.target.closest('.slot-row');if(!row||row.parentNode!==hp)return;var t=ev.target;if(t.tagName==='SELECT'||t.tagName==='OPTION'||t.tagName==='BUTTON'||t.closest('select')||t.closest('button'))return;row.classList.toggle('hpexp');},true);}if(ms && !ms.dataset.mexpHooked){ms.dataset.mexpHooked='1';ms.addEventListener('click',function(ev){var row=ev.target.closest('.slot-row');if(!row||row.parentNode!==ms)return;var t=ev.target;if(t.tagName==='SELECT'||t.tagName==='OPTION'||t.tagName==='BUTTON'||t.closest('select')||t.closest('button'))return;row.classList.toggle('mexp');},true);}if(sy && !sy.dataset.cexpHooked){sy.dataset.cexpHooked='1';sy.addEventListener('click',function(ev){var row=ev.target.closest('.comp-row');if(!row||row.parentNode!==sy)return;var t=ev.target;if(t.tagName==='SELECT'||t.tagName==='OPTION'||t.tagName==='BUTTON'||t.closest('select')||t.closest('button'))return;row.classList.toggle('cexp');},true);}if(!lo.querySelector('.phase2-ph')){function ph(title,rows,gridRow){var d=document.createElement('div');d.className='phase2-ph';d.style.gridRow=gridRow;var h='<div class="pp-title">'+title+'</div>';rows.forEach(function(r){h+='<div class="pp-row"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>';});d.innerHTML=h;return d;}lo.appendChild(ph('Hull / Mass',[['Mass','\u2014 kg'],['Length','\u2014 m'],['Width','\u2014 m'],['Height','\u2014 m'],['Crew','\u2014'],['Hull HP','\u2014']],'2 / span 1'));lo.appendChild(ph('Signatures',[['IR','\u2014'],['EM idle','\u2014'],['EM max','\u2014'],['CS','\u2014'],['Distortion','\u2014']],'3 / span 1'));}}var lc=document.getElementById('loContent');if(lc){var obs=new MutationObserver(ensure);obs.observe(lc,{childList:true,subtree:true});ensure();}document.addEventListener('DOMContentLoaded',ensure);})();
+(function(){function ensure(){var lo=document.querySelector('#loContent .lo');if(!lo)return;var hp=lo.children[2];var ms=lo.children[4];var sy=lo.children[6];if(hp && !hp.dataset.hpexpHooked){hp.dataset.hpexpHooked='1';hp.addEventListener('click',function(ev){var row=ev.target.closest('.slot-row');if(!row||row.parentNode!==hp)return;var t=ev.target;if(t.tagName==='SELECT'||t.tagName==='OPTION'||t.tagName==='BUTTON'||t.closest('select')||t.closest('button'))return;row.classList.toggle('hpexp');},true);}if(ms && !ms.dataset.mexpHooked){ms.dataset.mexpHooked='1';ms.addEventListener('click',function(ev){var row=ev.target.closest('.slot-row');if(!row||row.parentNode!==ms)return;var t=ev.target;if(t.tagName==='SELECT'||t.tagName==='OPTION'||t.tagName==='BUTTON'||t.closest('select')||t.closest('button'))return;row.classList.toggle('mexp');},true);}if(sy && !sy.dataset.cexpHooked){sy.dataset.cexpHooked='1';sy.addEventListener('click',function(ev){var row=ev.target.closest('.comp-row');if(!row||row.parentNode!==sy)return;var t=ev.target;if(t.tagName==='SELECT'||t.tagName==='OPTION'||t.tagName==='BUTTON'||t.closest('select')||t.closest('button'))return;row.classList.toggle('cexp');},true);}}var lc=document.getElementById('loContent');if(lc){var obs=new MutationObserver(ensure);obs.observe(lc,{childList:true,subtree:true});ensure();}document.addEventListener('DOMContentLoaded',ensure);})();
 </script>
 </body>
 <!-- deploy-force --><!-- deploy -->
