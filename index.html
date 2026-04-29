@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.58-DEV</title>
+<title>SC-ShipForge v6.59-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.58-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.59-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7378,7 +7378,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.58-DEV: Live Stats + Showdown + OFF State === */
+/* === v6.59-DEV: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
@@ -7879,7 +7879,9 @@ var hdr=document.createElement("div");hdr.style.cssText="text-align:center;paddi
 hdr.innerHTML="<div style=\"font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(90deg,#ef4444,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\">ENEMY LOADOUT</div><div style=\"font-size:12px;font-weight:600;color:#ef4444;margin-top:2px;\">"+en+"</div>";cfg.appendChild(hdr);
 var grid=document.createElement("div");grid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:8px;";
 var L=document.createElement("div");L.style.cssText="background:rgba(30,41,59,.6);border:1px solid rgba(100,116,139,.25);border-radius:6px;padding:6px;overflow-y:auto;max-height:380px;scrollbar-width:thin;";
-if(ship.slots){ship.slots.forEach(function(sl,idx){
+if(ship.slots){
+var hpHd=document.createElement("div");hpHd.style.cssText="margin:0 0 4px;font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;";hpHd.textContent="Hardpoints";L.appendChild(hpHd);
+ship.slots.forEach(function(sl,idx){
 var gc=sl.count||1;
 var r=document.createElement("div");r.className="sd-slot";r.dataset.eslotidx=idx;r.style.cssText="display:block;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;";
 var topR=document.createElement("div");topR.style.cssText="display:flex;align-items:center;gap:6px;";
@@ -7903,18 +7905,32 @@ r.appendChild(panel);updEsum();
 }
 L.appendChild(r);});}
 if(ship.missiles&&ship.missiles.length>0){
-var msep=document.createElement('div');msep.style.cssText='margin:8px 0 4px;border-top:1px solid rgba(100,116,139,.3);padding-top:6px;font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;';msep.textContent='Missiles';L.appendChild(msep);
-ship.missiles.forEach(function(ml){
-var mr=document.createElement('div');mr.style.cssText='display:flex;align-items:center;gap:6px;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;';
-var mlb=document.createElement('span');mlb.style.cssText='color:#e2e8f0;font-size:11px;min-width:70px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';mlb.textContent=ml.lbl;
-var msel=document.createElement('select');msel.style.cssText='flex:1;padding:5px 6px;background:rgba(15,23,42,.8);border:1px solid rgba(100,116,139,.3);border-radius:4px;color:#e2e8f0;font-size:11px;min-width:0;';
-var mslWpns=WEAPONS.filter(function(w){return w.sz<=ml.sz&&w.type.indexOf("missile")>-1;});
-mslWpns.forEach(function(w){var o=document.createElement('option');o.value=w.id;o.textContent=w.name;if(w.id===ml.default)o.selected=true;msel.appendChild(o);});
-var mct=document.createElement('span');mct.style.cssText='color:#60a5fa;font-size:10px;font-weight:600;';mct.textContent='x'+(ml.count||1);
-mr.appendChild(mlb);mr.appendChild(msel);mr.appendChild(mct);L.appendChild(mr);
-});}
+var mhd=document.createElement('div');mhd.style.cssText='margin:8px 0 4px;border-top:1px solid rgba(100,116,139,.3);padding-top:6px;font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;';mhd.textContent='Missiles';L.appendChild(mhd);
+ship.missiles.forEach(function(ml,midx){
+var mc=ml.count||1;
+var mr=document.createElement('div');mr.style.cssText='display:block;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;';
+var mtopR=document.createElement('div');mtopR.style.cssText='display:flex;align-items:center;gap:6px;';
+var mlb=document.createElement('span');mlb.style.cssText='color:#e2e8f0;font-size:11px;min-width:70px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;';mlb.textContent=ml.lbl+(mc>1?' ×'+mc:'');
+mtopR.appendChild(mlb);mr.appendChild(mtopR);
+function makeMsel(){var msel=document.createElement('select');msel.className='slot-sel';msel.style.cssText='width:100%;padding:5px 6px;background:rgba(15,23,42,.8);border:1px solid rgba(100,116,139,.3);border-radius:4px;color:#e2e8f0;font-size:11px;margin-top:4px;';WEAPONS.filter(function(w){return w.sz<=ml.sz&&w.type.indexOf('missile')>-1;}).forEach(function(w){var o=document.createElement('option');o.value=w.id;o.textContent=w.name;if(w.id===ml.default)o.selected=true;msel.appendChild(o);});return msel;}
+function syncMsels(srcSel){var allSels=mr.querySelectorAll('select');var v=srcSel.value;allSels.forEach(function(s){if(s!==srcSel)s.value=v;});if(mSumLbl){var w=WEAPONS.find(function(x){return x.id===v;});mSumLbl.textContent=(w?w.name:'—')+(mc>1?' ×'+mc:'');}}
+var mPanel,mSumLbl;
+if(mc===1){
+var msSingle=makeMsel();mr.appendChild(msSingle);
+var mct=document.createElement('span');mct.style.cssText='color:#60a5fa;font-size:10px;font-weight:600;margin-left:8px;';mct.textContent='x1';mtopR.appendChild(mct);
+}else{
+var mhdr=document.createElement('div');var mPanelId='e_emexp'+midx;mhdr.setAttribute('onclick','toggleTurretTree("'+mPanelId+'")');mhdr.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 0 2px;user-select:none;margin-top:2px;';
+var marrow=document.createElement('span');marrow.style.cssText='font-size:9px;color:#94a3b8;font-family:monospace;';marrow.textContent='▼';
+mSumLbl=document.createElement('span');mSumLbl.style.cssText='font-size:10px;color:#cbd5e1;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+mhdr.appendChild(marrow);mhdr.appendChild(mSumLbl);mr.appendChild(mhdr);
+mPanel=document.createElement('div');mPanel.id=mPanelId;mPanel.style.cssText='display:none;padding:2px 0 0 4px;border-left:2px solid rgba(100,116,139,.25);margin-left:4px;';
+for(var mi=0;mi<mc;mi++){var mrowG=document.createElement('div');mrowG.style.cssText='display:flex;align-items:flex-start;gap:4px;';var mconn=document.createElement('span');mconn.style.cssText='font-size:10px;color:rgba(100,116,139,.5);font-family:monospace;padding-top:9px;flex-shrink:0;';mconn.textContent=(mi===mc-1)?'└':'├';var mBox=document.createElement('div');mBox.style.cssText='flex:1;min-width:0;';var msel2=makeMsel();msel2.onchange=function(){syncMsels(this);};mBox.appendChild(msel2);mrowG.appendChild(mconn);mrowG.appendChild(mBox);mPanel.appendChild(mrowG);}
+mr.appendChild(mPanel);
+var firstMsel=mPanel.querySelector('select');if(firstMsel){var w=WEAPONS.find(function(x){return x.id===firstMsel.value;});if(w&&mSumLbl)mSumLbl.textContent=w.name+' ×'+mc;}
+}
+L.appendChild(mr);});}
 if(ship.comps){var co=ship.comps;var cn=co.counts||{};
-var sep=document.createElement("div");sep.style.cssText="margin:8px 0 4px;border-top:1px solid rgba(100,116,139,.3);padding-top:6px;font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;";sep.textContent="Components";L.appendChild(sep);
+var sep=document.createElement("div");sep.style.cssText="margin:8px 0 4px;border-top:1px solid rgba(100,116,139,.3);padding-top:6px;font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;";sep.textContent="Systems";L.appendChild(sep);
 [{k:"pp",l:"PP",c:cn.pp||1},{k:"sg",l:"SG",c:cn.sg||1},{k:"cooler",l:"Cool",c:cn.cooler||1},{k:"qd",l:"QD",c:cn.qd||1}].forEach(function(t){
 if(!co[t.k]||!COMP_DB[t.k])return;
 var r=document.createElement("div");r.style.cssText="display:flex;align-items:center;gap:6px;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;";
