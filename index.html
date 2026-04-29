@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.59-DEV</title>
+<title>SC-ShipForge v6.60-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.59-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.60-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -957,20 +957,7 @@ option,optgroup{background:var(--bg2)}
         <div class="ss-foot"><kbd>&uarr;&darr;</kbd>navigate &nbsp;<kbd>Enter</kbd>select &nbsp;<kbd>Esc</kbd>close</div>
       </div>
     </div>
-    <div style="font-size:9px;color:var(--border);font-family:var(--fmono);padding:0 4px;flex-shrink:0">VS</div>
-    <div class="ss-wrap" id="ss_wrap_tgt" style="max-width:100%">
-          <span class="ss-icon" style="color:#e85060">🎯</span>
-          <input id="ss_inp_tgt" class="ss-input" type="text" placeholder="Search target…" autocomplete="off"
-            style="border-color:#2a3850"
-            oninput="ss_type_tgt(this)"
-            onfocus="ss_open_tgt('')"
-            onkeydown="ss_key_tgt(event)"/>
-          <button class="ss-clear" id="ss_clr_tgt" onclick="ss_clear_tgt()" title="Clear">&times;</button>
-          <div class="ss-drop" id="ss_drop_tgt" style="min-width:260px">
-            <div class="ss-inner"></div>
-            <div class="ss-foot"><kbd>&uarr;&darr;</kbd>navigate &nbsp;<kbd>Enter</kbd>select &nbsp;<kbd>Esc</kbd>close</div>
-          </div>
-        </div>
+    
     <div class="nav-divider" style="display:none"></div>
     <div class="nav-ship" style="display:none">
       <span id="stag" style="display:none"></span>
@@ -7378,7 +7365,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.59-DEV: Live Stats + Showdown + OFF State === */
+/* === v6.60-DEV: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
