@@ -64,7 +64,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.13-DEV</title>
+<title>SC-ShipForge v6.14-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -914,6 +914,14 @@ option,optgroup{background:var(--bg2)}
 .sd-pvp-selected-role{font-size:11px;color:#94a3b8;margin-top:2px;}
 .sd-pvp-fight{margin-top:8px;padding:10px;background:#dc2626;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;letter-spacing:1px;}
 .sd-pvp-fight:hover{background:#ef4444;}
+
+/* v6.14 Enemy Components */
+.sd-comp-section{margin-top:8px;border-top:1px solid rgba(100,116,139,.3);padding-top:8px;}
+.sd-comp-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.sd-comp-row{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:rgba(30,41,59,.5);border-radius:4px;margin-bottom:4px;font-size:12px;}
+.sd-comp-lbl{color:#94a3b8;}
+.sd-comp-val{color:#e2e8f0;font-weight:600;}
+.sd-comp-stat{color:#64748b;font-size:10px;margin-left:8px;}
 </style>
 
 <div id="app">
@@ -7705,6 +7713,72 @@ searchEl.addEventListener("focus",function(){
 if(this.value.length>0)this.dispatchEvent(new Event("input"));
 });
 }
+})();
+</script>
+
+<script>
+/* v6.14 Enemy System Components */
+(function(){
+var origRun = window.runShowdown;
+window.runShowdown = function(enemyName){
+origRun(enemyName);
+setTimeout(function(){
+var cfg = document.querySelector(".sd-config");
+if(!cfg || document.querySelector(".sd-comp-section")) return;
+var ship = SHIP_DATA[enemyName];
+if(!ship || !ship.comps) return;
+var sec = document.createElement("div");
+sec.className = "sd-comp-section";
+var title = document.createElement("div");
+title.className = "sd-comp-title";
+title.textContent = "SYSTEM COMPONENTS";
+sec.appendChild(title);
+var comps = ship.comps;
+var counts = comps.counts || {};
+var rows = [];
+if(comps.pp){
+var pp = COMP_DB.pp[comps.pp];
+var ppC = counts.pp || 1;
+rows.push({lbl:"Power Plant",val:comps.pp+(ppC>1?" x"+ppC:""),stat:pp?"Output: "+(pp.out*ppC)+" EU":""});
+}
+if(comps.sg){
+var sg = COMP_DB.sg[comps.sg];
+var sgC = counts.sg || 1;
+rows.push({lbl:"Shield Gen",val:comps.sg+(sgC>1?" x"+sgC:""),stat:sg?"HP: "+(sg.totalHP*sgC).toLocaleString()+" / Regen: "+(sg.regen*sgC)+"/s":""});
+}
+if(comps.cooler){
+var cl = COMP_DB.cooler[comps.cooler];
+var clC = counts.cooler || 1;
+rows.push({lbl:"Cooler",val:comps.cooler+(clC>1?" x"+clC:""),stat:cl?"Cooling: "+(cl.cool*clC):""});
+}
+if(comps.qd){
+var qd = COMP_DB.qd[comps.qd];
+rows.push({lbl:"Quantum Drive",val:comps.qd,stat:qd?"Range: "+qd.range+"Gm / Speed: "+qd.speed:""});
+}
+rows.forEach(function(r){
+var row = document.createElement("div");
+row.className = "sd-comp-row";
+var lbl = document.createElement("span");
+lbl.className = "sd-comp-lbl";
+lbl.textContent = r.lbl;
+var right = document.createElement("span");
+var val = document.createElement("span");
+val.className = "sd-comp-val";
+val.textContent = r.val;
+var stat = document.createElement("span");
+stat.className = "sd-comp-stat";
+stat.textContent = r.stat;
+right.appendChild(val);
+right.appendChild(stat);
+row.appendChild(lbl);
+row.appendChild(right);
+sec.appendChild(row);
+});
+var totalEl = cfg.querySelector(".sd-enemy-total");
+if(totalEl) cfg.insertBefore(sec, totalEl);
+else cfg.appendChild(sec);
+},150);
+};
 })();
 </script>
 </body>
