@@ -7814,9 +7814,18 @@ if(sgS){var g=COMP_DB.sg[sgS.value];var n=gc(sgS);if(g){shHP=g.totalHP*n;shReg=g
 if(clS){var cl=COMP_DB.cooler[clS.value];if(cl)cDraw+=(cl.drawMax||0)*gc(clS);}
 if(qdS){var qd=COMP_DB.qd[qdS.value];if(qd)cDraw+=(qd.drawMax||0);}
 var ad=draw+cDraw;var pp=ppOut>0?Math.round((ad/ppOut)*100):0;
+var heat=0,minRange=99999,mslCount=0;
+cfg.querySelectorAll(".sd-slot select").forEach(function(s){var r2=s.closest(".sd-slot");var b2=r2?r2.querySelector("button"):null;if(b2&&b2.textContent==="OFF")return;
+var w2=WEAPONS.find(function(x){return x.id===s.value});if(!w2)return;heat+=(w2.heat||0);if(w2.range&&w2.range<minRange)minRange=w2.range;});
+if(minRange>99000)minRange=0;
+var faceHP=0;if(sgS){var sg2=COMP_DB.sg[sgS.value];if(sg2)faceHP=sg2.faceHP*gc(sgS);}
+var cooling=0;if(clS){var cl2=COMP_DB.cooler[clS.value];if(cl2)cooling=cl2.cool*gc(clS);}
+var irSig=0;if(clS){var cl3=COMP_DB.cooler[clS.value];if(cl3)irSig=cl3.ir||0;}
+var emSig=0;if(ppS){var pp2=COMP_DB.pp[ppS.value];if(pp2)emSig=pp2.em||0;}
+if(ship.missiles)ship.missiles.forEach(function(m){mslCount+=m.count||1;});
 var R=cfg.querySelector(".sd-stats");if(!R)return;
 R.innerHTML="";
-[["Total DPS",dps.toLocaleString(),"#ef4444"],["Weapons",eC+"E + "+bC+"B",""],["Alpha",alpha.toLocaleString(),"#fbbf24"],["Shield HP",shHP.toLocaleString(),"#a78bfa"],["Sh Regen",shReg.toLocaleString()+"/s",""],["Power",pp+"%",pp>90?"#ef4444":pp>70?"#fbbf24":"#34d399"],["PP Output",ppOut.toLocaleString()+" EU",""],["Wpn Draw",draw.toLocaleString()+" EU",""],["Headroom",(ppOut-ad).toLocaleString()+" EU",(ppOut-ad)>=0?"#34d399":"#ef4444"],["SCM",(ship.scm||"--")+" m/s",""],["Size",ship.size||"",""]].forEach(function(r){
+[["Total DPS",dps.toLocaleString(),"#ef4444"],["Weapons",eC+"E + "+bC+"B",""],["Alpha",alpha.toLocaleString(),"#fbbf24"],["Shield HP",shHP.toLocaleString(),"#a78bfa"],["Face HP",faceHP.toLocaleString(),"#a78bfa"],["Sh Regen",shReg.toLocaleString()+"/s",""],["Missiles",mslCount>0?mslCount+"x":"None",mslCount>0?"#60a5fa":""],["Range",minRange>0?minRange.toLocaleString()+"m":"--",""],["Heat",heat.toLocaleString(),"#fbbf24"],["Cooling",cooling.toLocaleString(),"#34d399"],["Power",pp+"%",pp>90?"#ef4444":pp>70?"#fbbf24":"#34d399"],["Headroom",(ppOut-ad).toLocaleString()+" EU",(ppOut-ad)>=0?"#34d399":"#ef4444"],["IR Sig",irSig.toLocaleString(),""],["EM Sig",emSig.toLocaleString(),""],["SCM",(ship.scm||"--")+" m/s",""],["Size",ship.size||"",""],["Crew",ship.crew||1,""]].forEach(function(r){
 var d=document.createElement("div");d.style.cssText="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(100,116,139,.1);font-size:12px;";
 d.innerHTML="<span style=color:#94a3b8>"+r[0]+"</span><span style=\"font-weight:600;color:"+(r[2]||"#e2e8f0")+"\">"+r[1]+"</span>";R.appendChild(d);});
 var dEl=document.getElementById("sdEnemyDpsVal");if(dEl)dEl.textContent=dps.toLocaleString();
