@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.84-LIVE</title>
+<title>SC-ShipForge v6.85-LIVE</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.84-LIVE</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.85-LIVE</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7365,7 +7365,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.84-LIVE: Live Stats + Showdown + OFF State === */
+/* === v6.85-LIVE: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
@@ -8238,6 +8238,11 @@ aside.lp .lp-card .lp-hd,aside.lp .lp-card .card-hd,aside.lp .lp-card h3,aside.l
 #pane-sd #sdResult > .sd-verdict.sd-loss,#pane-sd #sdResult > .sd-verdict.sd-lose{background:linear-gradient(180deg,#3a1a25,#200d14)!important;border:1px solid #ff5e6c!important;border-left:4px solid #ff5e6c!important;color:#ff5e6c!important;text-shadow:0 0 10px rgba(255,94,108,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 16px rgba(255,94,108,.2)!important;}
 #pane-sd #sdResult > .sd-config{width:100%!important;max-width:900px!important;}
 #pane-sd #sdResult > .sd-stats{width:100%!important;max-width:900px!important;}
+
+/* FIGHT button: keep visible — kill .sd-config overflow + make it the first child via CSS order */
+#pane-sd .sd-config{overflow:visible!important;max-height:none!important;display:flex!important;flex-direction:column!important;}
+/* The FIGHT button (button direct child of .sd-config) goes to the TOP of the card */
+#pane-sd .sd-config > button{order:-10!important;align-self:center!important;margin:0 auto 12px!important;position:sticky!important;top:8px!important;z-index:5!important;}
 </style>
 
 <!-- FIGHT_BUTTON_FIX -->
