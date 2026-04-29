@@ -1110,6 +1110,17 @@ option,optgroup{background:var(--bg2)}
   <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--r);padding:6px 10px;text-align:center"><div style="font-size:9px;font-family:var(--fmono);color:var(--accent);margin-bottom:5px;letter-spacing:1.5px">&#9672; FILTER BY ROLE</div><div style="display:flex;gap:3px;justify-content:center;flex-wrap:wrap" id="dRoleFilters"></div></div>
 </div>
 <div id="loContent" style="flex:1;overflow-y:auto;padding:16px"></div>
+<div id="liveStats">
+<div class="ls-metric"><p class="ls-label">Total DPS</p><p class="ls-val" id="lsDps" style="color:#ef4444">0</p></div>
+<div class="ls-metric"><p class="ls-label">Shield HP</p><p class="ls-val" id="lsShield" style="color:#a78bfa">0</p></div>
+<div class="ls-metric"><p class="ls-label">Power draw</p><p class="ls-val" id="lsPower" style="color:#34d399">0%</p><div class="ls-bar-bg"><div class="ls-bar-fill" id="lsPowerBar" style="width:0%;background:#34d399"></div></div></div>
+<div class="ls-metric"><p class="ls-label">Alpha strike</p><p class="ls-val" id="lsAlpha">0</p></div>
+<div class="ls-metric"><p class="ls-label">Shield regen</p><p class="ls-val" id="lsRegen">0/s</p></div>
+<p class="ls-section">Hardpoints</p>
+<div class="ls-metric" style="text-align:center"><svg id="lsShipSvg" class="ls-hardpoint-svg" viewBox="0 0 200 140"><polygon points="100,15 75,50 55,70 45,120 155,120 145,70 125,50" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/></svg><p id="lsHpSummary" style="font-size:11px;color:#8892a0;margin:6px 0 0"></p></div>
+<p class="ls-section">Breakdown</p>
+<div id="lsBreakdown"></div>
+</div>
       </div>
 
       
