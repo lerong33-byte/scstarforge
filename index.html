@@ -64,7 +64,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.0 DEV</title>
+<title>SC-ShipForge v6.2 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -839,6 +839,77 @@ option,optgroup{background:var(--bg2)}
 .lp,.rp{flex-shrink:1}
 @media(max-width:1100px){.lp{max-width:200px}.rp{max-width:280px}}
 @media(max-width:800px){.lp{display:none}.rp{display:none}}
+
+/* === LIVE STATS PANEL v6.2 === */
+#pane-lo.split-lo{display:flex;gap:0}
+#pane-lo.split-lo #loContent{flex:1;min-width:0;overflow-y:auto}
+#pane-lo.split-lo #liveStats{width:340px;border-left:1px solid rgba(255,255,255,.08);padding:16px;overflow-y:auto;background:rgba(0,0,0,.15)}
+#liveStats{display:none}
+#pane-lo.split-lo #liveStats{display:block}
+#liveStats .ls-metric{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+#liveStats .ls-label{font-size:11px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin:0}
+#liveStats .ls-val{font-size:24px;font-weight:700;margin:2px 0 0}
+#liveStats .ls-bar-bg{height:6px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:6px}
+#liveStats .ls-bar-fill{height:6px;border-radius:3px;transition:width .3s}
+#liveStats .ls-section{font-size:12px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;font-weight:600}
+#liveStats .ls-hardpoint-svg{width:100%;max-width:200px;margin:0 auto;display:block}
+#liveStats .ls-stat-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 10px;background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:4px}
+#liveStats .ls-stat-lbl{color:#8892a0}
+#liveStats .ls-stat-val{font-weight:600}
+@media(max-width:1399px){#pane-lo.split-lo #liveStats{display:none}#pane-lo.split-lo{display:block}}
+
+/* === SHIP SHOWDOWN v6.2 === */
+#pane-sd{padding:16px}
+#pane-sd .sd-mode-bar{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+#pane-sd .sd-mode-btn{padding:8px 24px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#8892a0;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+#pane-sd .sd-mode-btn.active{background:rgba(59,130,246,.15);color:#60a5fa;border-color:rgba(59,130,246,.3)}
+#pane-sd .sd-arena{display:flex;gap:0;margin-bottom:16px}
+#pane-sd .sd-fighter{flex:1;padding:16px;text-align:center}
+#pane-sd .sd-fighter.you{border-right:1px solid rgba(255,255,255,.06)}
+#pane-sd .sd-fighter-label{font-size:11px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+#pane-sd .sd-ship-name{font-size:18px;font-weight:700;margin:4px 0}
+#pane-sd .sd-ship-sub{font-size:12px;color:#8892a0}
+#pane-sd .sd-vs{display:flex;align-items:center;justify-content:center;width:50px}
+#pane-sd .sd-vs-circle{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#8892a0}
+#pane-sd .sd-stats{display:flex;flex-direction:column;gap:4px;text-align:left;margin-top:12px}
+#pane-sd .sd-stat{display:flex;justify-content:space-between;font-size:13px;padding:6px 10px;background:rgba(255,255,255,.03);border-radius:6px}
+#pane-sd .sd-stat-lbl{color:#8892a0}
+#pane-sd .sd-stat-val{font-weight:600}
+#pane-sd .sd-sim{padding:16px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.1);margin-bottom:16px}
+#pane-sd .sd-sim-title{font-size:12px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;text-align:center;margin-bottom:12px;font-weight:600}
+#pane-sd .sd-ttk-row{display:flex;gap:12px;margin-bottom:12px}
+#pane-sd .sd-ttk{flex:1}
+#pane-sd .sd-ttk-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+#pane-sd .sd-ttk-bar{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+#pane-sd .sd-ttk-fill{height:100%;border-radius:4px;transition:width .5s}
+#pane-sd .sd-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+#pane-sd .sd-metric-card{background:rgba(255,255,255,.03);border-radius:8px;padding:10px;text-align:center}
+#pane-sd .sd-metric-label{font-size:11px;color:#8892a0;margin:0}
+#pane-sd .sd-metric-val{font-size:18px;font-weight:700;margin:2px 0 0}
+#pane-sd .sd-metric-sub{font-size:11px;color:#8892a0;margin:0}
+#pane-sd .sd-verdict{text-align:center;padding:14px;border-radius:10px;margin-bottom:12px}
+#pane-sd .sd-verdict.win{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)}
+#pane-sd .sd-verdict.lose{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2)}
+#pane-sd .sd-verdict.close{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2)}
+#pane-sd .sd-verdict-text{font-size:20px;font-weight:700;margin:0}
+#pane-sd .sd-verdict-tip{font-size:13px;margin:4px 0 0}
+#pane-sd .sd-actions{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+#pane-sd .sd-action-btn{padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:#c9d1d9;cursor:pointer;font-size:13px;transition:all .2s}
+#pane-sd .sd-action-btn:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15)}
+#pane-sd .sd-enemies-title{font-size:12px;color:#8892a0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600}
+#pane-sd .sd-enemies{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+#pane-sd .sd-enemy{padding:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;text-align:center;cursor:pointer;transition:all .2s}
+#pane-sd .sd-enemy:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
+#pane-sd .sd-enemy.selected{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08)}
+#pane-sd .sd-enemy-name{font-size:13px;font-weight:600;margin:0}
+#pane-sd .sd-enemy-diff{font-size:11px;margin:2px 0 0}
+#pane-sd .sd-opponent-select{margin:16px 0}
+#pane-sd .sd-opp-search{width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#c9d1d9;font-size:14px;outline:none}
+#pane-sd .sd-opp-search:focus{border-color:rgba(59,130,246,.4)}
+#pane-sd .sd-opp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px;max-height:200px;overflow-y:auto}
+#pane-sd .sd-opp-card{padding:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:6px;cursor:pointer;font-size:12px;text-align:center;transition:all .2s}
+#pane-sd .sd-opp-card:hover{border-color:rgba(255,255,255,.15)}
+#pane-sd .sd-opp-card.selected{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.08)}
 </style>
 
 <div id="app">
@@ -1014,6 +1085,7 @@ option,optgroup{background:var(--bg2)}
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
         <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
         <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}">⬡ COMPARE</button>
+        <button class="tab-btn" data-t="sd">SHOWDOWN</button>
         <button class="tab" id="feedbackBtn" onclick="toggleFeedback()" style="color:var(--accent);border-left:1px solid var(--border)">&#10022; FEEDBACK</button>
         <button class="tab" id="quickSaveBtn" onclick="quickSave();showTab('sv',this)" style="color:var(--green);border-left:1px solid var(--border)">&#9672; SAVE</button>
       </div>
@@ -1042,7 +1114,18 @@ option,optgroup{background:var(--bg2)}
 
       
 
-      <div class="pane" id="pane-sv" style="flex-direction:column">
+      <div id="liveStats">
+<div class="ls-metric"><p class="ls-label">Total DPS</p><p class="ls-val" id="lsDps" style="color:#ef4444">0</p></div>
+<div class="ls-metric"><p class="ls-label">Shield HP</p><p class="ls-val" id="lsShield" style="color:#a78bfa">0</p></div>
+<div class="ls-metric"><p class="ls-label">Power draw</p><p class="ls-val" id="lsPower" style="color:#34d399">0%</p><div class="ls-bar-bg"><div class="ls-bar-fill" id="lsPowerBar" style="width:0%;background:#34d399"></div></div></div>
+<div class="ls-metric"><p class="ls-label">Alpha strike</p><p class="ls-val" id="lsAlpha">0</p></div>
+<div class="ls-metric"><p class="ls-label">Shield regen</p><p class="ls-val" id="lsRegen">0/s</p></div>
+<p class="ls-section">Hardpoints</p>
+<div class="ls-metric" style="text-align:center"><svg id="lsShipSvg" class="ls-hardpoint-svg" viewBox="0 0 200 140"><polygon points="100,15 75,50 55,70 45,120 155,120 145,70 125,50" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/></svg><p id="lsHpSummary" style="font-size:11px;color:#8892a0;margin:6px 0 0"></p></div>
+<p class="ls-section">Breakdown</p>
+<div id="lsBreakdown"></div>
+</div>
+<div class="pane" id="pane-sv" style="flex-direction:column">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
           <span style="font-size:10px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono)">SAVED LOADOUTS</span>
           <span style="font-size:10px;color:var(--accent);font-family:var(--fmono)" id="svCount2"></span>
@@ -1096,7 +1179,64 @@ option,optgroup{background:var(--bg2)}
       
 
       </div>
-      <div class="pane" id="pane-ships">
+      <div class="pane" id="pane-sd" style="display:none">
+<div class="sd-mode-bar">
+<button class="sd-mode-btn active" id="sdPveBtn">PVE</button>
+<button class="sd-mode-btn" id="sdPvpBtn">PVP</button>
+</div>
+
+<div id="sdPveSection">
+<p class="sd-enemies-title">Choose your opponent</p>
+<div class="sd-enemies" id="sdEnemyGrid"></div>
+</div>
+
+<div id="sdPvpSection" style="display:none">
+<div class="sd-opponent-select">
+<input class="sd-opp-search" id="sdOppSearch" placeholder="Search ships..." />
+<div class="sd-opp-grid" id="sdOppGrid"></div>
+</div>
+</div>
+
+<div id="sdResults" style="display:none">
+<div class="sd-arena">
+<div class="sd-fighter you">
+<p class="sd-fighter-label">Your ship</p>
+<svg viewBox="0 0 80 60" style="width:64px;margin:8px auto;display:block"><polygon points="40,5 25,30 15,45 10,55 70,55 65,45 55,30" fill="none" stroke="#3b82f6" stroke-width="1.5"/></svg>
+<p class="sd-ship-name" id="sdYourName">-</p>
+<p class="sd-ship-sub" id="sdYourSub"></p>
+<div class="sd-stats" id="sdYourStats"></div>
+</div>
+<div class="sd-vs"><div class="sd-vs-circle">VS</div></div>
+<div class="sd-fighter">
+<p class="sd-fighter-label">Opponent</p>
+<svg viewBox="0 0 80 60" style="width:64px;margin:8px auto;display:block"><polygon points="40,8 20,28 10,50 15,55 65,55 70,50 60,28" fill="none" stroke="#ef4444" stroke-width="1.5"/></svg>
+<p class="sd-ship-name" id="sdOppName">-</p>
+<p class="sd-ship-sub" id="sdOppSub"></p>
+<div class="sd-stats" id="sdOppStats"></div>
+</div>
+</div>
+
+<div class="sd-sim">
+<p class="sd-sim-title">Engagement simulation</p>
+<div class="sd-ttk-row">
+<div class="sd-ttk"><div class="sd-ttk-label"><span id="sdTtkYouLabel" style="color:#3b82f6;font-weight:600">You</span><span id="sdTtkYouVal" style="color:#8892a0">TTK: -</span></div><div class="sd-ttk-bar"><div class="sd-ttk-fill" id="sdTtkYouBar" style="width:0%;background:#3b82f6"></div></div></div>
+<div class="sd-ttk"><div class="sd-ttk-label"><span id="sdTtkOppLabel" style="color:#ef4444;font-weight:600">Opponent</span><span id="sdTtkOppVal" style="color:#8892a0">TTK: -</span></div><div class="sd-ttk-bar"><div class="sd-ttk-fill" id="sdTtkOppBar" style="width:0%;background:#ef4444"></div></div></div>
+</div>
+<div class="sd-metrics">
+<div class="sd-metric-card"><p class="sd-metric-label">DPS vs shields</p><p class="sd-metric-val" id="sdDpsVs" style="color:#3b82f6">-</p><p class="sd-metric-sub" id="sdDpsVsSub"></p></div>
+<div class="sd-metric-card"><p class="sd-metric-label">Range advantage</p><p class="sd-metric-val" id="sdRange" style="color:#3b82f6">-</p><p class="sd-metric-sub" id="sdRangeSub"></p></div>
+<div class="sd-metric-card"><p class="sd-metric-label">Speed edge</p><p class="sd-metric-val" id="sdSpeed" style="color:#34d399">-</p><p class="sd-metric-sub" id="sdSpeedSub"></p></div>
+</div>
+</div>
+
+<div class="sd-verdict" id="sdVerdict"><p class="sd-verdict-text" id="sdVerdictText">-</p><p class="sd-verdict-tip" id="sdVerdictTip"></p></div>
+<div class="sd-actions">
+<button class="sd-action-btn" id="sdBtnLoadout">Try different loadout</button>
+<button class="sd-action-btn" id="sdBtnNewOpp">Pick new opponent</button>
+</div>
+</div>
+</div>
+<div class="pane" id="pane-ships">
         <div id="shipsPage">
           <div class="ships-header">
             <h2 class="ships-title">Ship Database</h2>
@@ -7200,7 +7340,266 @@ showTab = function(id, btn) {
 };
 
 // Ensure ships render on load
-if(typeof renderShips==="function")setTimeout(renderShips,500);
+if(typeof renderShips==="function")
+// === LIVE STATS PANEL v6.2 ===
+function updateLiveStats(){
+  var lo=document.getElementById('pane-lo');
+  if(!lo)return;
+  if(window.innerWidth>=1400){lo.classList.add('split-lo')}else{lo.classList.remove('split-lo')}
+  var ship=window._currentShip;if(!ship)return;
+  var totalDps=0,totalAlpha=0,maxRange=0,wpnCount=0;
+  var selects=document.querySelectorAll('#loContent select');
+  var weaponSelects=[];var compSelects={pp:null,sg:null,cooler:null,qd:null};
+  selects.forEach(function(sel){
+    var lbl=sel.getAttribute('data-slot-type')||'';
+    if(sel.id&&sel.id.indexOf('weapon')>-1||lbl==='weapon'){weaponSelects.push(sel)}
+    else{
+      var sid=sel.id||'';
+      if(sid.indexOf('pp')>-1||sid.indexOf('power')>-1||lbl==='pp')compSelects.pp=sel;
+      else if(sid.indexOf('sg')>-1||sid.indexOf('shield')>-1||lbl==='sg')compSelects.sg=sel;
+      else if(sid.indexOf('cool')>-1||lbl==='cooler')compSelects.cooler=sel;
+      else if(sid.indexOf('qd')>-1||sid.indexOf('quantum')>-1||lbl==='qd')compSelects.qd=sel;
+    }
+  });
+  // Calculate weapon stats from selects
+  weaponSelects.forEach(function(sel){
+    var val=sel.value;if(!val||val==='--')return;
+    var wpn=WEAPONS.find(function(w){return w.name===val||w.id===val});
+    if(wpn){totalDps+=wpn.dps||0;totalAlpha+=wpn.alpha||0;if(wpn.range>maxRange)maxRange=wpn.range;wpnCount++}
+  });
+  // If no weapon selects found, use SHIP_DATA defaults
+  if(weaponSelects.length===0&&ship.slots){
+    ship.slots.forEach(function(s){
+      if(s.default){
+        var wpn=WEAPONS.find(function(w){return w.name===s.default});
+        if(wpn){totalDps+=wpn.dps||0;totalAlpha+=wpn.alpha||0;if(wpn.range>maxRange)maxRange=wpn.range;wpnCount++}
+      }
+    });
+  }
+  // Component stats
+  var ppOut=0,sgHP=0,sgRegen=0,totalDraw=0;
+  if(ship.comps){
+    var ppName=compSelects.pp?compSelects.pp.value:ship.comps.pp;
+    var sgName=compSelects.sg?compSelects.sg.value:ship.comps.sg;
+    if(ppName&&COMP_DB&&COMP_DB.pp){var pp=COMP_DB.pp.find(function(c){return c.name===ppName});if(pp)ppOut=pp.out||0}
+    if(sgName&&COMP_DB&&COMP_DB.sg){var sg=COMP_DB.sg.find(function(c){return c.name===sgName});if(sg){sgHP=sg.totalHP||0;sgRegen=sg.regen||0;totalDraw+=(sg.drawMax||0)}}
+  }
+  // Power draw estimate
+  var wpnDraw=wpnCount*2.5;totalDraw+=wpnDraw;
+  var drawPct=ppOut>0?Math.round((totalDraw/ppOut)*100):0;
+  if(drawPct>100)drawPct=100;
+  // Update DOM
+  var el=function(id){return document.getElementById(id)};
+  if(el('lsDps'))el('lsDps').textContent=Math.round(totalDps).toLocaleString();
+  if(el('lsShield'))el('lsShield').textContent=Math.round(sgHP).toLocaleString();
+  if(el('lsPower')){el('lsPower').textContent=drawPct+'%';el('lsPower').style.color=drawPct>85?'#ef4444':drawPct>60?'#f59e0b':'#34d399'}
+  if(el('lsPowerBar')){el('lsPowerBar').style.width=drawPct+'%';el('lsPowerBar').style.background=drawPct>85?'#ef4444':drawPct>60?'#f59e0b':'#34d399'}
+  if(el('lsAlpha'))el('lsAlpha').textContent=Math.round(totalAlpha).toLocaleString()+' dmg';
+  if(el('lsRegen'))el('lsRegen').textContent=Math.round(sgRegen)+'/s';
+  // Hardpoints SVG
+  if(el('lsShipSvg')&&ship.slots){
+    var svg=el('lsShipSvg');
+    var circles=svg.querySelectorAll('circle');circles.forEach(function(c){c.remove()});
+    var texts=svg.querySelectorAll('text');texts.forEach(function(t){t.remove()});
+    var n=ship.slots.length;
+    var positions=[];
+    if(n===1)positions=[[100,40]];
+    else if(n===2)positions=[[60,65],[140,65]];
+    else if(n===3)positions=[[100,35],[60,65],[140,65]];
+    else if(n===4)positions=[[70,40],[130,40],[55,70],[145,70]];
+    else if(n===5)positions=[[100,30],[70,50],[130,50],[55,75],[145,75]];
+    else if(n===6)positions=[[80,35],[120,35],[60,60],[140,60],[55,85],[145,85]];
+    else{for(var i=0;i<n;i++){var a=((i/n)*Math.PI*1.5)-Math.PI/4;positions.push([100+Math.cos(a)*45,70+Math.sin(a)*35])}}
+    ship.slots.forEach(function(s,i){
+      if(i>=positions.length)return;
+      var cx=positions[i][0],cy=positions[i][1];
+      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r','7');c.setAttribute('fill','#ef4444');c.setAttribute('opacity','0.85');
+      svg.appendChild(c);
+      var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',cx);t.setAttribute('y',cy+3);t.setAttribute('text-anchor','middle');t.setAttribute('fill','white');t.setAttribute('font-size','7');t.setAttribute('font-weight','600');
+      t.textContent='S'+s.sz;svg.appendChild(t);
+    });
+    if(el('lsHpSummary'))el('lsHpSummary').textContent=n+'x weapon mount'+(n>1?'s':'');
+  }
+  // Breakdown
+  if(el('lsBreakdown')&&ship.slots){
+    var html='';
+    ship.slots.forEach(function(s,i){
+      var wName=weaponSelects[i]?weaponSelects[i].value:(s.default||'Empty');
+      var wpn=WEAPONS.find(function(w){return w.name===wName});
+      html+='<div class="ls-stat-row"><span class="ls-stat-lbl">'+s.lbl+'</span><span class="ls-stat-val" style="color:#ef4444">'+(wpn?Math.round(wpn.dps)+' dps':'--')+'</span></div>';
+    });
+    el('lsBreakdown').innerHTML=html;
+  }
+}
+window.addEventListener('resize',updateLiveStats);
+document.addEventListener('change',function(e){if(e.target.tagName==='SELECT'&&document.getElementById('pane-lo').style.display!=='none')setTimeout(updateLiveStats,50)});
+
+
+// === SHIP SHOWDOWN v6.2 ===
+var SD_ENEMIES=[
+{name:'Aurora MR',diff:'Easy',color:'#22c55e',dps:280,shieldHP:1800,alpha:560,speed:185,range:1200,role:'Pirate scout'},
+{name:'Mustang Delta',diff:'Easy',color:'#22c55e',dps:420,shieldHP:1600,alpha:840,speed:210,range:1400,role:'Pirate interceptor'},
+{name:'Buccaneer',diff:'Medium',color:'#f59e0b',dps:980,shieldHP:3200,alpha:1900,speed:225,range:1600,role:'Pirate fighter'},
+{name:'Cutlass Black',diff:'Medium',color:'#f59e0b',dps:1680,shieldHP:7200,alpha:3100,speed:170,range:1800,role:'Pirate gunship'},
+{name:'Gladius',diff:'Medium',color:'#f59e0b',dps:1100,shieldHP:4680,alpha:2200,speed:210,range:1500,role:'Security patrol'},
+{name:'Vanguard Warden',diff:'Hard',color:'#ef4444',dps:2100,shieldHP:12800,alpha:4200,speed:180,range:2200,role:'Heavy fighter'},
+{name:'Eclipse',diff:'Hard',color:'#ef4444',dps:3500,shieldHP:5600,alpha:14000,speed:160,range:3000,role:'Stealth bomber'},
+{name:'Hammerhead',diff:'Boss',color:'#a855f7',dps:8400,shieldHP:52000,alpha:16800,speed:130,range:2000,role:'Capital gunship'},
+{name:'Idris-M',diff:'Boss',color:'#a855f7',dps:15000,shieldHP:180000,alpha:30000,speed:70,range:4000,role:'Frigate boss'}
+];
+
+function getPlayerStats(){
+  var ship=window._currentShip;if(!ship)return null;
+  var totalDps=0,totalAlpha=0,maxRange=0,speed=ship.scm||150;
+  var selects=document.querySelectorAll('#loContent select');
+  var weaponSelects=[];
+  selects.forEach(function(sel){var sid=sel.id||'';var lbl=sel.getAttribute('data-slot-type')||'';if(sid.indexOf('weapon')>-1||lbl==='weapon')weaponSelects.push(sel)});
+  weaponSelects.forEach(function(sel){
+    var val=sel.value;if(!val||val==='--')return;
+    var wpn=WEAPONS.find(function(w){return w.name===val||w.id===val});
+    if(wpn){totalDps+=wpn.dps||0;totalAlpha+=wpn.alpha||0;if(wpn.range>maxRange)maxRange=wpn.range}
+  });
+  if(weaponSelects.length===0&&ship.slots){ship.slots.forEach(function(s){if(s.default){var wpn=WEAPONS.find(function(w){return w.name===s.default});if(wpn){totalDps+=wpn.dps||0;totalAlpha+=wpn.alpha||0;if(wpn.range>maxRange)maxRange=wpn.range}}})}
+  var sgHP=0,sgRegen=0;
+  if(ship.comps&&ship.comps.sg&&COMP_DB&&COMP_DB.sg){var sg=COMP_DB.sg.find(function(c){return c.name===ship.comps.sg});if(sg){sgHP=sg.totalHP||0;sgRegen=sg.regen||0}}
+  return{name:ship.name||'Your Ship',role:ship.role||'',dps:totalDps,shieldHP:sgHP,alpha:totalAlpha,speed:speed,range:maxRange,regen:sgRegen};
+}
+
+function getShipAsOpponent(shipName){
+  var ship=SHIP_DATA.find(function(s){return s.name===shipName});if(!ship)return null;
+  var totalDps=0,totalAlpha=0,maxRange=0;
+  if(ship.slots)ship.slots.forEach(function(s){if(s.default){var wpn=WEAPONS.find(function(w){return w.name===s.default});if(wpn){totalDps+=wpn.dps||0;totalAlpha+=wpn.alpha||0;if(wpn.range>maxRange)maxRange=wpn.range}}});
+  var sgHP=0;
+  if(ship.comps&&ship.comps.sg&&COMP_DB&&COMP_DB.sg){var sg=COMP_DB.sg.find(function(c){return c.name===ship.comps.sg});if(sg)sgHP=sg.totalHP||0}
+  return{name:ship.name,role:ship.role||'',dps:totalDps,shieldHP:sgHP,alpha:totalAlpha,speed:ship.scm||150,range:maxRange};
+}
+
+function runShowdown(player,opponent){
+  if(!player||!opponent)return;
+  var el=function(id){return document.getElementById(id)};
+  document.getElementById('sdResults').style.display='block';
+  // Your ship stats
+  el('sdYourName').textContent=player.name;
+  el('sdYourSub').textContent=player.role;
+  el('sdYourStats').innerHTML='<div class="sd-stat"><span class="sd-stat-lbl">DPS</span><span class="sd-stat-val" style="color:#ef4444">'+Math.round(player.dps).toLocaleString()+'</span></div>'+'<div class="sd-stat"><span class="sd-stat-lbl">Shield HP</span><span class="sd-stat-val" style="color:#a78bfa">'+Math.round(player.shieldHP).toLocaleString()+'</span></div>'+'<div class="sd-stat"><span class="sd-stat-lbl">Alpha</span><span class="sd-stat-val">'+Math.round(player.alpha).toLocaleString()+'</span></div>'+'<div class="sd-stat"><span class="sd-stat-lbl">Speed</span><span class="sd-stat-val">'+Math.round(player.speed)+' m/s</span></div>';
+  // Opponent stats
+  el('sdOppName').textContent=opponent.name;
+  el('sdOppSub').textContent=opponent.diff?opponent.diff+' '+opponent.role:opponent.role;
+  el('sdOppStats').innerHTML='<div class="sd-stat"><span class="sd-stat-lbl">DPS</span><span class="sd-stat-val" style="color:#ef4444">'+Math.round(opponent.dps).toLocaleString()+'</span></div>'+'<div class="sd-stat"><span class="sd-stat-lbl">Shield HP</span><span class="sd-stat-val" style="color:#a78bfa">'+Math.round(opponent.shieldHP).toLocaleString()+'</span></div>'+'<div class="sd-stat"><span class="sd-stat-lbl">Alpha</span><span class="sd-stat-val">'+Math.round(opponent.alpha).toLocaleString()+'</span></div>'+'<div class="sd-stat"><span class="sd-stat-lbl">Speed</span><span class="sd-stat-val">'+Math.round(opponent.speed)+' m/s</span></div>';
+  // TTK calculations
+  var yourTTK=opponent.shieldHP>0&&player.dps>0?(opponent.shieldHP/player.dps):999;
+  var oppTTK=player.shieldHP>0&&opponent.dps>0?(player.shieldHP/opponent.dps):999;
+  var maxTTK=Math.max(yourTTK,oppTTK,1);
+  el('sdTtkYouLabel').textContent=player.name;
+  el('sdTtkYouVal').textContent='TTK: '+yourTTK.toFixed(1)+'s';
+  el('sdTtkYouBar').style.width=Math.min((yourTTK/maxTTK)*100,100)+'%';
+  el('sdTtkOppLabel').textContent=opponent.name;
+  el('sdTtkOppVal').textContent='TTK: '+oppTTK.toFixed(1)+'s';
+  el('sdTtkOppBar').style.width=Math.min((oppTTK/maxTTK)*100,100)+'%';
+  // Metrics
+  el('sdDpsVs').textContent=Math.round(player.dps).toLocaleString();
+  el('sdDpsVsSub').textContent='vs '+Math.round(opponent.shieldHP).toLocaleString()+' HP';
+  var rangeDiff=player.range-opponent.range;
+  el('sdRange').textContent=(rangeDiff>0?'+':'')+rangeDiff+'m';
+  el('sdRange').style.color=rangeDiff>=0?'#3b82f6':'#ef4444';
+  el('sdRangeSub').textContent=rangeDiff>=0?'you outrange':'they outrange';
+  var speedDiff=player.speed-opponent.speed;
+  el('sdSpeed').textContent=(speedDiff>0?'+':'')+speedDiff+' m/s';
+  el('sdSpeed').style.color=speedDiff>=0?'#34d399':'#ef4444';
+  el('sdSpeedSub').textContent=speedDiff>=0?"you're faster":"they're faster";
+  // Verdict
+  var ratio=oppTTK>0?yourTTK/oppTTK:0;
+  var verdict=el('sdVerdict'),vText=el('sdVerdictText'),vTip=el('sdVerdictTip');
+  verdict.className='sd-verdict';
+  if(ratio<0.7){verdict.classList.add('win');vText.textContent='YOU WIN';vText.style.color='#22c55e';vTip.style.color='#16a34a';vTip.textContent='You destroy them before they can break your shields.'}
+  else if(ratio<0.9){verdict.classList.add('win');vText.textContent='ADVANTAGE YOU';vText.style.color='#22c55e';vTip.style.color='#16a34a';vTip.textContent='You have the edge. Press the attack.'}
+  else if(ratio<1.1){verdict.classList.add('close');vText.textContent='CLOSE FIGHT';vText.style.color='#eab308';vTip.style.color='#ca8a04';vTip.textContent='Could go either way. Piloting skill decides this one.'}
+  else if(ratio<1.5){verdict.classList.add('lose');vText.textContent='TOUGH FIGHT';vText.style.color='#ef4444';vTip.style.color='#dc2626';vTip.textContent='They have the advantage. Use speed and range to survive.'}
+  else{verdict.classList.add('lose');vText.textContent='OUTGUNNED';vText.style.color='#ef4444';vTip.style.color='#dc2626';vTip.textContent='Heavily outmatched. Retreat or bring backup.'}
+}
+
+function initShowdown(){
+  var grid=document.getElementById('sdEnemyGrid');if(!grid)return;
+  grid.innerHTML='';
+  SD_ENEMIES.forEach(function(e,i){
+    var card=document.createElement('div');card.className='sd-enemy';
+    card.innerHTML='<p class="sd-enemy-name">'+e.name+'</p><p class="sd-enemy-diff" style="color:'+e.color+'">'+e.diff+'</p>';
+    card.addEventListener('click',function(){
+      grid.querySelectorAll('.sd-enemy').forEach(function(c){c.classList.remove('selected')});
+      card.classList.add('selected');
+      var player=getPlayerStats();
+      if(!player){alert('Load a ship in the Loadout Builder first!');return}
+      runShowdown(player,e);
+    });
+    grid.appendChild(card);
+  });
+  // PVE/PVP toggle
+  var pveBtn=document.getElementById('sdPveBtn'),pvpBtn=document.getElementById('sdPvpBtn');
+  if(pveBtn)pveBtn.addEventListener('click',function(){
+    pveBtn.classList.add('active');pvpBtn.classList.remove('active');
+    document.getElementById('sdPveSection').style.display='block';
+    document.getElementById('sdPvpSection').style.display='none';
+    document.getElementById('sdResults').style.display='none';
+  });
+  if(pvpBtn)pvpBtn.addEventListener('click',function(){
+    pvpBtn.classList.add('active');pveBtn.classList.remove('active');
+    document.getElementById('sdPveSection').style.display='none';
+    document.getElementById('sdPvpSection').style.display='block';
+    document.getElementById('sdResults').style.display='none';
+    buildPvpGrid();
+  });
+  // Action buttons
+  var btnLoadout=document.getElementById('sdBtnLoadout');
+  if(btnLoadout)btnLoadout.addEventListener('click',function(){showTab('lo')});
+  var btnNewOpp=document.getElementById('sdBtnNewOpp');
+  if(btnNewOpp)btnNewOpp.addEventListener('click',function(){
+    document.getElementById('sdResults').style.display='none';
+    document.querySelectorAll('.sd-enemy').forEach(function(c){c.classList.remove('selected')});
+    document.querySelectorAll('.sd-opp-card').forEach(function(c){c.classList.remove('selected')});
+  });
+}
+
+function buildPvpGrid(){
+  var grid=document.getElementById('sdOppGrid');if(!grid)return;
+  var search=document.getElementById('sdOppSearch');
+  grid.innerHTML='';
+  var ships=Object.keys(SHIP_DATA).map(function(k){return typeof SHIP_DATA[k]==='object'?SHIP_DATA[k]:null}).filter(Boolean);
+  if(Array.isArray(SHIP_DATA))ships=SHIP_DATA;
+  var filtered=ships;
+  if(search&&search.value){var q=search.value.toLowerCase();filtered=ships.filter(function(s){return s.name&&s.name.toLowerCase().indexOf(q)>-1})}
+  filtered.slice(0,50).forEach(function(s){
+    var card=document.createElement('div');card.className='sd-opp-card';
+    card.textContent=s.name;
+    card.addEventListener('click',function(){
+      grid.querySelectorAll('.sd-opp-card').forEach(function(c){c.classList.remove('selected')});
+      card.classList.add('selected');
+      var player=getPlayerStats();
+      if(!player){alert('Load a ship in the Loadout Builder first!');return}
+      var opp=getShipAsOpponent(s.name);
+      if(opp)runShowdown(player,opp);
+    });
+    grid.appendChild(card);
+  });
+  if(search){search.removeEventListener('input',buildPvpGrid);search.addEventListener('input',buildPvpGrid)}
+}
+
+// Hook showdown init to tab display
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('[data-t="sd"]');
+  if(btn){setTimeout(initShowdown,100)}
+});
+// Also call updateLiveStats when switching to loadout tab
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('[data-t="lo"]');
+  if(btn){setTimeout(updateLiveStats,100)}
+});
+
+// Init live stats on load
+setTimeout(updateLiveStats,800);
+
+setTimeout(renderShips,500);
 </script>
 
 
