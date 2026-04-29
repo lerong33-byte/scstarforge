@@ -64,7 +64,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.2 DEV</title>
+<title>SC-ShipForge v6.3 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1085,7 +1085,7 @@ option,optgroup{background:var(--bg2)}
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
         <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
         <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}">⬡ COMPARE</button>
-        <button class="tab-btn" data-t="sd">SHOWDOWN</button>
+        <button class="tab" data-t="sd" onclick="showTab('sd',this)">SHOWDOWN</button>
         <button class="tab" id="feedbackBtn" onclick="toggleFeedback()" style="color:var(--accent);border-left:1px solid var(--border)">&#10022; FEEDBACK</button>
         <button class="tab" id="quickSaveBtn" onclick="quickSave();showTab('sv',this)" style="color:var(--green);border-left:1px solid var(--border)">&#9672; SAVE</button>
       </div>
@@ -1114,17 +1114,7 @@ option,optgroup{background:var(--bg2)}
 
       
 
-      <div id="liveStats">
-<div class="ls-metric"><p class="ls-label">Total DPS</p><p class="ls-val" id="lsDps" style="color:#ef4444">0</p></div>
-<div class="ls-metric"><p class="ls-label">Shield HP</p><p class="ls-val" id="lsShield" style="color:#a78bfa">0</p></div>
-<div class="ls-metric"><p class="ls-label">Power draw</p><p class="ls-val" id="lsPower" style="color:#34d399">0%</p><div class="ls-bar-bg"><div class="ls-bar-fill" id="lsPowerBar" style="width:0%;background:#34d399"></div></div></div>
-<div class="ls-metric"><p class="ls-label">Alpha strike</p><p class="ls-val" id="lsAlpha">0</p></div>
-<div class="ls-metric"><p class="ls-label">Shield regen</p><p class="ls-val" id="lsRegen">0/s</p></div>
-<p class="ls-section">Hardpoints</p>
-<div class="ls-metric" style="text-align:center"><svg id="lsShipSvg" class="ls-hardpoint-svg" viewBox="0 0 200 140"><polygon points="100,15 75,50 55,70 45,120 155,120 145,70 125,50" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/></svg><p id="lsHpSummary" style="font-size:11px;color:#8892a0;margin:6px 0 0"></p></div>
-<p class="ls-section">Breakdown</p>
-<div id="lsBreakdown"></div>
-</div>
+      
 <div class="pane" id="pane-sv" style="flex-direction:column">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
           <span style="font-size:10px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono)">SAVED LOADOUTS</span>
