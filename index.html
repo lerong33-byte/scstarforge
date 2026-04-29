@@ -7866,9 +7866,9 @@ var se=document.createElement("select");se.dataset.compType=t.k;se.style.cssText
 Object.keys(COMP_DB[t.k]).sort().forEach(function(n){var o=document.createElement("option");o.value=n;o.textContent=n;if(n===co[t.k])o.selected=true;se.appendChild(o);});
 se.onchange=function(){calcEnemyStats(cfg,en);};
 r.appendChild(lb);r.appendChild(se);
-if(t.c>1){var cx=document.createElement("span");cx.className="xcnt";cx.style.cssText="color:#94a3b8;font-size:7px;";cx.textContent="x"+t.c;r.appendChild(cx);}
+if(t.c>1){var cx=document.createElement("span");cx.className="xcnt";cx.style.cssText="color:#fbbf24;font-size:10px;font-weight:700;";cx.textContent="x"+t.c;r.appendChild(cx);}
 L.appendChild(r);});
-if(co.radar){var rr=document.createElement("div");rr.style.cssText="display:flex;gap:3px;padding:3px 4px;background:rgba(15,23,42,.4);border-radius:3px;margin-bottom:2px;font-size:8px;";rr.innerHTML="<span style=color:#94a3b8;min-width:30px>Radar</span><span style=color:#e2e8f0>"+co.radar+"</span>";L.appendChild(rr);}}
+if(co.radar){var rr=document.createElement("div");rr.style.cssText="display:flex;align-items:center;gap:6px;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;font-size:11px;";rr.innerHTML="<span style=color:#e2e8f0;min-width:40px;font-weight:600>Radar</span><span style=color:#e2e8f0>"+co.radar+"</span>";L.appendChild(rr);}}
 grid.appendChild(L);
 var R=document.createElement("div");R.className="sd-stats";R.style.cssText="background:rgba(30,41,59,.6);border:1px solid rgba(100,116,139,.25);border-radius:8px;padding:10px 12px;";
 grid.appendChild(R);cfg.appendChild(grid);
