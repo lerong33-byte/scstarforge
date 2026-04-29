@@ -64,7 +64,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.11 DEV</title>
+<title>SC-ShipForge v6.12-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -839,12 +839,54 @@ option,optgroup{background:var(--bg2)}
 .lp,.rp{flex-shrink:1}
 @media(max-width:1100px){.lp{max-width:200px}.rp{max-width:280px}}
 @media(max-width:800px){.lp{display:none}.rp{display:none}}
+
+/* v6.12 Live Stats */
+.ls-panel{padding:10px 8px;display:flex;flex-direction:column;gap:8px;}
+.ls-title{font-size:13px;font-weight:700;color:#e2e8f0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.ls-card{background:rgba(30,41,59,.7);border:1px solid rgba(100,116,139,.3);border-radius:6px;padding:10px 12px;}
+.ls-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;margin-bottom:2px;}
+.ls-val{font-size:22px;font-weight:700;line-height:1.2;}
+.ls-sub{font-size:10px;color:#64748b;margin-top:2px;}
+.ls-mini{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(100,116,139,.15);}
+.ls-mini-lbl{color:#94a3b8;}
+.ls-mini-val{color:#e2e8f0;font-weight:600;}
+.ls-bar-track{width:100%;height:6px;background:rgba(30,41,59,.9);border-radius:3px;margin-top:4px;overflow:hidden;}
+.ls-bar-fill{height:100%;border-radius:3px;transition:width .3s,background .3s;}
+.ls-btn-sd{display:block;width:100%;padding:10px;margin-top:4px;background:#dc2626;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:background .2s;}
+.ls-btn-sd:hover{background:#ef4444;}
+.ls-row{display:flex;gap:8px;}
+.ls-row .ls-card{flex:1;}
+/* v6.12 Showdown */
+#pane-sd{padding:16px;}
+.sd-toggle{display:flex;gap:0;margin-bottom:16px;border-radius:6px;overflow:hidden;border:1px solid rgba(100,116,139,.3);}
+.sd-toggle button{flex:1;padding:8px 16px;background:rgba(30,41,59,.7);color:#94a3b8;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.sd-toggle button.active{background:#dc2626;color:#fff;}
+.sd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.sd-enemy{background:rgba(30,41,59,.7);border:1px solid rgba(100,116,139,.3);border-radius:6px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;}
+.sd-enemy:hover{border-color:#dc2626;background:rgba(220,38,38,.1);}
+.sd-enemy-name{font-size:13px;font-weight:700;color:#e2e8f0;}
+.sd-enemy-diff{font-size:10px;margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
+.sd-diff-easy{color:#34d399;}
+.sd-diff-medium{color:#fbbf24;}
+.sd-diff-hard{color:#f87171;}
+.sd-diff-boss{color:#c084fc;}
+.sd-result{margin-top:16px;padding:16px;border-radius:8px;text-align:center;border:1px solid rgba(100,116,139,.3);}
+.sd-result h3{font-size:18px;font-weight:700;margin-bottom:8px;}
+.sd-result .sd-ttk-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;}
+.sd-win{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.4);}
+.sd-win h3{color:#22c55e;}
+.sd-lose{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.4);}
+.sd-lose h3{color:#ef4444;}
+.sd-close{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);}
+.sd-close h3{color:#fbbf24;}
+/* v6.12 OFF State */
+#loContent .slot-row.weapon-off{opacity:.4;transition:opacity .2s;}
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v2.2-LIVE</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.12-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -1014,7 +1056,8 @@ option,optgroup{background:var(--bg2)}
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
         <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
         <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}">⬡ COMPARE</button>
-        <button class="tab" id="feedbackBtn" onclick="toggleFeedback()" style="color:var(--accent);border-left:1px solid var(--border)">&#10022; FEEDBACK</button>
+        <div class="tab" onclick="showTab('sd',this)">⚔ SHOWDOWN</div>
+      <button class="tab" id="feedbackBtn" onclick="toggleFeedback()" style="color:var(--accent);border-left:1px solid var(--border)">&#10022; FEEDBACK</button>
         <button class="tab" id="quickSaveBtn" onclick="quickSave();showTab('sv',this)" style="color:var(--green);border-left:1px solid var(--border)">&#9672; SAVE</button>
       </div>
 
@@ -1096,7 +1139,15 @@ option,optgroup{background:var(--bg2)}
       
 
       </div>
-      <div class="pane" id="pane-ships">
+      <div class="pane" id="pane-sd">
+  <div class="sd-toggle" id="sdToggle">
+    <button class="active" onclick="sdSetMode('pve',this)">PVE</button>
+    <button onclick="sdSetMode('pvp',this)">PVP</button>
+  </div>
+  <div id="sdArena"></div>
+  <div id="sdResult"></div>
+</div>
+<div class="pane" id="pane-ships">
         <div id="shipsPage">
           <div class="ships-header">
             <h2 class="ships-title">Ship Database</h2>
@@ -1133,33 +1184,39 @@ option,optgroup{background:var(--bg2)}
     
 
         <aside class="rp">
-      <!-- ── TARGET IMAGE — fixed, never scrolls ── -->
-      <div id="tgtImgWrap" style="position:relative;height:160px;background:var(--bg3);border-radius:var(--r);overflow:hidden;border:1px solid var(--border);flex-shrink:0;margin:8px 8px 0">
-        <img id="tgtImg" style="width:100%;height:100%;object-fit:cover;object-position:center;display:none" alt=""/>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:12px;font-family:var(--fmono)" id="tgtImgPh">Select a target</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;padding:6px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:11px;font-family:var(--fmono);color:#fff;letter-spacing:.5px" id="tgtImgLabel"></div>
-      </div>
-
-      <!-- ── SCROLLABLE: verdict + stats ── -->
-      <div class="rp-scroll">
-
-        <select id="tgtSel" class="tgt-sel-dd" style="display:none"><option value="">— Select target —</option></select>
-
-
-        <!-- ── YOU WIN / YOU LOSE ── -->
-        <div id="verdictWrap" style="display:none;flex-shrink:0"></div>
-
-        <!-- ── TARGET ANALYSIS (collapsible) ── -->
-        <div class="tgt-panel-inner" id="tgtPanel">
-          <div class="tgt-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between">
-            <span>TARGET ANALYSIS</span>
-          </div>
-          <div id="tgtContent" style="font-size:11px">
-            <div style="font-size:12px;color:var(--t3);text-align:center;padding:12px 0;font-style:italic;font-family:var(--fmono)">Select a target to analyse</div>
-          </div>
-        </div>
-      </div>
-    </aside>
+<div class="ls-panel">
+  <div class="ls-title">LIVE STATS</div>
+  <div class="ls-card">
+    <div class="ls-lbl">TOTAL DPS</div>
+    <div class="ls-val" id="lsDps" style="color:#ef4444;">0</div>
+    <div class="ls-sub" id="lsDpsSub">--</div>
+  </div>
+  <div class="ls-row">
+    <div class="ls-card">
+      <div class="ls-lbl">SHIELD HP</div>
+      <div class="ls-val" id="lsShield" style="color:#a78bfa;">0</div>
+      <div class="ls-sub" id="lsShieldSub">--</div>
+    </div>
+    <div class="ls-card">
+      <div class="ls-lbl">ALPHA STRIKE</div>
+      <div class="ls-val" id="lsAlpha" style="color:#fbbf24;">0</div>
+    </div>
+  </div>
+  <div class="ls-card">
+    <div class="ls-lbl">POWER DRAW</div>
+    <div class="ls-val" id="lsPower" style="color:#34d399;">0%</div>
+    <div class="ls-bar-track"><div class="ls-bar-fill" id="lsPowerBar" style="width:0%;background:#34d399;"></div></div>
+  </div>
+  <div class="ls-card" style="padding:6px 12px;">
+    <div class="ls-mini"><span class="ls-mini-lbl">SCM Speed</span><span class="ls-mini-val" id="lsScm">--</span></div>
+    <div class="ls-mini"><span class="ls-mini-lbl">Ship Size</span><span class="ls-mini-val" id="lsSize">--</span></div>
+    <div class="ls-mini"><span class="ls-mini-lbl">Weapon Draw</span><span class="ls-mini-val" id="lsWpnDraw">--</span></div>
+    <div class="ls-mini"><span class="ls-mini-lbl">PP Output</span><span class="ls-mini-val" id="lsPpOut">--</span></div>
+    <div class="ls-mini" style="border:none;"><span class="ls-mini-lbl">Headroom</span><span class="ls-mini-val" id="lsHeadroom">--</span></div>
+  </div>
+  <button class="ls-btn-sd" onclick="showTab('sd',this)">SHIP SHOWDOWN</button>
+</div>
+</aside>
 
   </div>
 </div>
@@ -7246,6 +7303,181 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
       <div id="shipModalContent"></div>
     </div>
   </div>
+
+<script>
+/* === v6.12-DEV: Live Stats + Showdown + OFF State === */
+function updateLiveStats(){
+if(!window.selShip||!document.getElementById("lsDps"))return;
+var ship=SHIP_DATA[window.selShip];
+if(!ship)return;
+var sels=document.querySelectorAll("#loContent .slot-sel");
+var totalDps=0,totalAlpha=0,totalDraw=0,eCount=0,bCount=0;
+sels.forEach(function(s){
+var w=WEAPONS.find(function(x){return x.id===s.value});
+if(!w)return;
+var slotEl=s.closest(".slot-row,.slot");
+var onBtn=slotEl?slotEl.querySelector(".slot-body-top button"):null;
+if(onBtn&&onBtn.textContent.trim()==="OFF"){
+if(slotEl)slotEl.classList.add("weapon-off");
+return;}
+if(slotEl)slotEl.classList.remove("weapon-off");
+if(w.type==="energy"){totalDps+=w.dps;totalAlpha+=(w.alpha||0);totalDraw+=(w.draw||0);eCount++;}
+else if(w.type==="ballistic"){totalDps+=w.dps;totalAlpha+=(w.alpha||0);totalDraw+=(w.draw||0);bCount++;}
+});
+var shieldHP=0,shieldRegen=0,ppOut=0,compDraw=0;
+if(ship.comps){
+var pp=COMP_DB.pp[ship.comps.pp];
+var ppC=(ship.comps.counts&&ship.comps.counts.pp)||1;
+if(pp)ppOut=pp.out*ppC;
+var sg=COMP_DB.sg[ship.comps.sg];
+var sgC=(ship.comps.counts&&ship.comps.counts.sg)||1;
+if(sg){shieldHP=sg.totalHP*sgC;shieldRegen=sg.regen*sgC;compDraw+=(sg.drawMax||0)*sgC;}
+var cl=COMP_DB.cooler[ship.comps.cooler];
+if(cl)compDraw+=(cl.drawMax||0)*((ship.comps.counts&&ship.comps.counts.cooler)||1);
+var qd=COMP_DB.qd[ship.comps.qd];
+if(qd)compDraw+=(qd.drawMax||0)*((ship.comps.counts&&ship.comps.counts.qd)||1);
+}
+var allDraw=totalDraw+compDraw;
+var powerPct=ppOut>0?Math.round((allDraw/ppOut)*100):0;
+document.getElementById("lsDps").textContent=totalDps.toLocaleString();
+document.getElementById("lsDpsSub").textContent=eCount+"x energy + "+bCount+"x ballistic";
+document.getElementById("lsShield").textContent=shieldHP.toLocaleString();
+document.getElementById("lsShieldSub").textContent="regen "+shieldRegen.toLocaleString()+"/s";
+document.getElementById("lsPower").textContent=powerPct+"%";
+var pb=document.getElementById("lsPowerBar");
+pb.style.width=Math.min(powerPct,100)+"%";
+pb.style.background=powerPct>90?"#ef4444":powerPct>70?"#fbbf24":"#34d399";
+document.getElementById("lsPower").style.color=powerPct>90?"#ef4444":powerPct>70?"#fbbf24":"#34d399";
+document.getElementById("lsAlpha").textContent=totalAlpha.toLocaleString();
+document.getElementById("lsScm").textContent=(ship.scm||"--")+" m/s";
+document.getElementById("lsSize").textContent=ship.size||"--";
+document.getElementById("lsWpnDraw").textContent=totalDraw.toLocaleString()+" EU";
+document.getElementById("lsPpOut").textContent=ppOut.toLocaleString()+" EU";
+var headroom=ppOut-allDraw;
+var hrEl=document.getElementById("lsHeadroom");
+hrEl.textContent=headroom.toLocaleString()+" EU";
+hrEl.style.color=headroom>=0?"#34d399":"#ef4444";
+}
+
+document.addEventListener("change",function(e){
+if(e.target&&e.target.classList.contains("slot-sel"))setTimeout(updateLiveStats,100);
+});
+document.addEventListener("click",function(e){
+if(e.target&&e.target.tagName==="BUTTON"){
+var t=e.target.textContent.trim();
+if(t==="ON"||t==="OFF")setTimeout(updateLiveStats,100);
+}
+});
+setInterval(updateLiveStats,2000);
+
+var SD_MODE="pve";
+var SD_ENEMIES=[
+{name:"Aurora MR",diff:"easy"},{name:"Mustang Delta",diff:"easy"},
+{name:"Buccaneer",diff:"medium"},{name:"Cutlass Black",diff:"medium"},{name:"Gladius",diff:"medium"},
+{name:"Vanguard Warden",diff:"hard"},{name:"Eclipse",diff:"hard"},
+{name:"Hammerhead",diff:"boss"},{name:"Idris-M",diff:"boss"}
+];
+function sdSetMode(mode,btn){
+SD_MODE=mode;
+var btns=document.querySelectorAll("#sdToggle button");
+btns.forEach(function(b){b.classList.remove("active");});
+if(btn)btn.classList.add("active");
+document.getElementById("sdResult").innerHTML="";
+}
+function initShowdown(){
+var arena=document.getElementById("sdArena");
+if(!arena)return;
+arena.innerHTML="";
+var grid=document.createElement("div");
+grid.className="sd-grid";
+SD_ENEMIES.forEach(function(en){
+var card=document.createElement("div");
+card.className="sd-enemy";
+card.onclick=function(){runShowdown(en.name);};
+var nm=document.createElement("div");
+nm.className="sd-enemy-name";
+nm.textContent=en.name;
+var df=document.createElement("div");
+df.className="sd-enemy-diff sd-diff-"+en.diff;
+df.textContent=en.diff;
+card.appendChild(nm);
+card.appendChild(df);
+grid.appendChild(card);
+});
+arena.appendChild(grid);
+}
+
+function getShipDps(shipName){
+var ship=SHIP_DATA[shipName];
+if(!ship)return{dps:0,shieldHP:0};
+var dps=0;
+if(ship.slots){
+ship.slots.forEach(function(sl){
+if(!sl.default)return;
+var w=WEAPONS.find(function(x){return x.id===sl.default});
+if(w&&(w.type==="energy"||w.type==="ballistic"))dps+=w.dps;
+});}
+var shieldHP=0;
+if(ship.comps&&ship.comps.sg){
+var sg=COMP_DB.sg[ship.comps.sg];
+var sgC=(ship.comps.counts&&ship.comps.counts.sg)||1;
+if(sg)shieldHP=sg.totalHP*sgC;}
+return{dps:dps,shieldHP:shieldHP};
+}
+function getUserDps(){
+if(!window.selShip)return{dps:0,shieldHP:0};
+var ship=SHIP_DATA[window.selShip];
+if(!ship)return{dps:0,shieldHP:0};
+var sels=document.querySelectorAll("#loContent .slot-sel");
+var dps=0;
+sels.forEach(function(s){
+var w=WEAPONS.find(function(x){return x.id===s.value});
+if(!w)return;
+var slotEl=s.closest(".slot-row,.slot");
+var onBtn=slotEl?slotEl.querySelector(".slot-body-top button"):null;
+if(onBtn&&onBtn.textContent.trim()==="OFF")return;
+if(w.type==="energy"||w.type==="ballistic")dps+=w.dps;
+});
+var shieldHP=0;
+if(ship.comps&&ship.comps.sg){
+var sg=COMP_DB.sg[ship.comps.sg];
+var sgC=(ship.comps.counts&&ship.comps.counts.sg)||1;
+if(sg)shieldHP=sg.totalHP*sgC;}
+return{dps:dps,shieldHP:shieldHP};
+}
+
+function runShowdown(enemyName){
+var me=getUserDps();
+var them=getShipDps(enemyName);
+var resEl=document.getElementById("sdResult");
+if(!resEl)return;
+if(me.dps===0||them.shieldHP===0){
+resEl.innerHTML="<div class=\"sd-result sd-close\"><h3>NO DATA</h3><p>Select a ship and weapons first</p></div>";
+return;}
+var myTTK=them.shieldHP/me.dps;
+var oppTTK=them.dps>0?me.shieldHP/them.dps:9999;
+var verdict,cls;
+if(oppTTK>myTTK*1.43){verdict="YOU WIN";cls="sd-win";}
+else if(myTTK>oppTTK*1.43){verdict="YOU LOSE";cls="sd-lose";}
+else{verdict="CLOSE FIGHT";cls="sd-close";}
+var html="<div class=\"sd-result "+cls+"\">";
+html+="<h3>"+verdict+"</h3>";
+html+="<div class=\"sd-ttk-row\"><span>Your TTK vs "+enemyName+"</span><span>"+myTTK.toFixed(1)+"s</span></div>";
+html+="<div class=\"sd-ttk-row\"><span>"+enemyName+" TTK vs You</span><span>"+(oppTTK>9000?"N/A":oppTTK.toFixed(1)+"s")+"</span></div>";
+html+="<div class=\"sd-ttk-row\"><span>Your DPS</span><span>"+me.dps.toLocaleString()+"</span></div>";
+html+="<div class=\"sd-ttk-row\"><span>Enemy DPS</span><span>"+them.dps.toLocaleString()+"</span></div>";
+html+="</div>";
+resEl.innerHTML=html;
+}
+var _origST=window.showTab;
+if(_origST){
+window.showTab=function(id,btn){
+_origST.call(this,id,btn);
+if(id==="sd")initShowdown();
+};
+}
+
+</script>
 </body>
 </html>
 
