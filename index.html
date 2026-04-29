@@ -64,7 +64,7 @@ window.renderSpvChart = renderSpvChart;
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.8 DEV</title>
+<title>SC-ShipForge v6.9 DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -901,6 +901,19 @@ option,optgroup{background:var(--bg2)}
 /* === LIVE STATS PANEL menu icon === */
 #liveStatsPanel{position:relative}
 #liveStatsPanel::before{content:"⋯";position:absolute;top:4px;right:8px;font-size:18px;color:#8892a0;cursor:pointer;padding:2px 6px;border-radius:4px}
+
+/* === LP2 CSS FIXES v6.9 === */
+.lp #conBar.lp2-pwr-bar{height:5px!important;max-height:5px!important}
+.lp #conBar.lp2-pwr-bar>div{height:100%!important;background:linear-gradient(90deg,#34d399,#fbbf24,#ef4444)!important}
+.lp #spvChart{display:none!important}
+.lp #shipPh.lp2-silhouette{min-height:80px;max-height:90px}
+.lp .lp2-card{padding:8px!important;margin-bottom:4px!important}
+.lp .lp2-pwr-icons{gap:2px!important}
+.lp h2#lp2ShipName{font-size:18px!important;padding:0 4px!important}
+.lp .lp2-kpi-row{padding:4px 0 8px!important}
+.lp .lp2-kpi b{font-size:16px!important}
+.lp .lp2-row{padding:2px 0!important;font-size:11px!important}
+.lp .lp2-sec-hd{margin-bottom:4px!important;font-size:10px!important}
 </style>
 
 <div id="app">
