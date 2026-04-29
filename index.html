@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.69-DEV</title>
+<title>SC-ShipForge v6.70-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.69-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.70-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7365,7 +7365,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.69-DEV: Live Stats + Showdown + OFF State === */
+/* === v6.70-DEV: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
@@ -8063,7 +8063,7 @@ document.addEventListener("click",function(e){if(!e.target.closest("#sdSearchWra
 }
 body{background:var(--hud-bg)!important;background-image:linear-gradient(rgba(63,223,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(63,223,255,.025) 1px,transparent 1px)!important;background-size:24px 24px,24px 24px!important;}
 #pane-lo{padding:14px 12px 8px!important;}
-#loContent .lo{max-width:none!important;width:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(280px,1fr))!important;grid-template-rows:auto auto auto auto auto!important;gap:10px 12px!important;align-items:start;}
+#loContent .lo{max-width:none!important;width:100%!important;display:grid!important;grid-template-columns:repeat(4,minmax(280px,1fr))!important;grid-template-rows:auto 32px 1fr auto auto!important;gap:10px 12px!important;align-items:start;}
 #loContent .lo > *:nth-child(1){grid-column:1/-1!important;grid-row:1!important;}
 #loContent .lo > .ship-banner{background:var(--hud-surf)!important;border:1px solid var(--hud-line-bright)!important;border-left:3px solid var(--hud-cyan)!important;border-radius:var(--hud-radius)!important;padding:12px 18px!important;display:flex!important;align-items:center!important;gap:14px!important;flex-wrap:wrap!important;box-shadow:var(--hud-bevel)!important;height:auto!important;min-height:auto!important;max-height:none!important;overflow:visible!important;}
 #loContent .ship-banner .sname{font-size:16px!important;font-weight:800!important;letter-spacing:1px!important;color:var(--hud-t1)!important;text-transform:uppercase!important;margin:0!important;line-height:1!important;text-shadow:0 1px 0 rgba(0,0,0,.6)!important;}
