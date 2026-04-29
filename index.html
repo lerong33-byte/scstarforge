@@ -7359,7 +7359,7 @@ function updateLiveStats(){
   var activeGuns=eCount+bCount;
   slots.forEach(function(s,i){if(i>=pos.length)return;h+='<circle cx="'+pos[i][0]+'" cy="'+pos[i][1]+'" r="3" fill="#ef4444" opacity=".8"/>';});
   svg.innerHTML=h;
-  document.getElementById('lsHpSummary').textContent=activeGuns+'/'+slots.length+' weapons active';
+  document.getElementById('lsHpSummary').textContent=activeGuns+' weapon'+(activeGuns!==1?'s':'')+' active';
   var bd=document.getElementById('lsBreakdown');
   bd.innerHTML='<div class="ls-mini"><span class="ls-mini-l">SCM</span><span class="ls-mini-v">'+(ship.scm||0)+' m/s</span></div>'
     +'<div class="ls-mini"><span class="ls-mini-l">Size</span><span class="ls-mini-v">'+(ship.size||'?')+'</span></div>'
