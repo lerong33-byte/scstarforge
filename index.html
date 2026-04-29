@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.56-DEV</title>
+<title>SC-ShipForge v6.57-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.56-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.57-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7378,7 +7378,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.56-DEV: Live Stats + Showdown + OFF State === */
+/* === v6.57-DEV: Live Stats + Showdown + OFF State === */
 function updateLiveStats(){
 if(!window.selShip||!document.getElementById("lsDps"))return;
 var ship=SHIP_DATA[window.selShip];
@@ -7880,14 +7880,19 @@ hdr.innerHTML="<div style=\"font-size:14px;font-weight:800;letter-spacing:2px;te
 var grid=document.createElement("div");grid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:8px;";
 var L=document.createElement("div");L.style.cssText="background:rgba(30,41,59,.6);border:1px solid rgba(100,116,139,.25);border-radius:6px;padding:6px;overflow-y:auto;max-height:380px;scrollbar-width:thin;";
 if(ship.slots){ship.slots.forEach(function(sl){
-var r=document.createElement("div");r.className="sd-slot";r.style.cssText="display:flex;align-items:center;gap:6px;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;";
-var lb=document.createElement("span");lb.style.cssText="color:#e2e8f0;font-size:11px;min-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;";lb.textContent=sl.lbl;
+var gc=sl.count||1;
+var r=document.createElement("div");r.className="sd-slot";r.style.cssText="display:flex;align-items:center;gap:6px;padding:7px 8px;background:rgba(15,23,42,.4);border-radius:5px;margin-bottom:4px;flex-wrap:wrap;";
+var lb=document.createElement("span");lb.style.cssText="color:#e2e8f0;font-size:11px;min-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;";lb.textContent=sl.lbl+(gc>1?" ×"+gc:"");
 var ob=document.createElement("button");ob.textContent="ON";ob.style.cssText="padding:3px 8px;font-size:10px;border-radius:2px;border:none;cursor:pointer;background:#22c55e;color:#fff;font-weight:700;";
 ob.onclick=function(){if(ob.textContent==="ON"){ob.textContent="OFF";ob.style.background="#ef4444";r.style.opacity=".4";}else{ob.textContent="ON";ob.style.background="#22c55e";r.style.opacity="1";}calcEnemyStats(cfg,en);};
-var se=document.createElement("select");se.style.cssText="flex:1;padding:5px 6px;background:rgba(15,23,42,.8);border:1px solid rgba(100,116,139,.3);border-radius:4px;color:#e2e8f0;font-size:11px;min-width:0;";
+r.appendChild(lb);r.appendChild(ob);
+for(var gi=0;gi<gc;gi++){
+var se=document.createElement("select");se.style.cssText="flex:1 1 140px;padding:5px 6px;background:rgba(15,23,42,.8);border:1px solid rgba(100,116,139,.3);border-radius:4px;color:#e2e8f0;font-size:11px;min-width:0;";
 WEAPONS.filter(function(w){return w.sz<=sl.sz&&(w.type==="energy"||w.type==="ballistic")}).forEach(function(w){var o=document.createElement("option");o.value=w.id;o.textContent=w.name+" ("+w.dps+")";if(w.id===sl.default)o.selected=true;se.appendChild(o);});
 se.onchange=function(){calcEnemyStats(cfg,en);};
-r.appendChild(lb);r.appendChild(ob);r.appendChild(se);L.appendChild(r);});}
+r.appendChild(se);
+}
+L.appendChild(r);});}
 if(ship.missiles&&ship.missiles.length>0){
 var msep=document.createElement('div');msep.style.cssText='margin:8px 0 4px;border-top:1px solid rgba(100,116,139,.3);padding-top:6px;font-size:10px;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.5px;';msep.textContent='Missiles';L.appendChild(msep);
 ship.missiles.forEach(function(ml){
