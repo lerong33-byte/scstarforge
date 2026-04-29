@@ -916,6 +916,12 @@ option,optgroup{background:var(--bg2)}
 #pane-sd{overflow:visible !important;}
 
 #pane-sd{overflow:visible !important;}
+
+/* v6.31 Role filter */
+.sd-role-bar{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;}
+.sd-role-btn{padding:2px 6px;font-size:8px;border-radius:3px;border:1px solid rgba(100,116,139,.3);background:transparent;color:#94a3b8;cursor:pointer;text-transform:uppercase;letter-spacing:.3px;}
+.sd-role-btn.active{background:#dc2626;color:#fff;border-color:#dc2626;}
+.sd-role-btn:hover{border-color:#dc2626;}
 </style>
 
 <div id="app">
@@ -1187,7 +1193,8 @@ option,optgroup{background:var(--bg2)}
       <div class="ss-inner" id="sdShipInner"></div>
     </div>
   </div>
-  <div id="sdSelectedShip" style="display:none;margin-bottom:6px;padding:5px 10px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.4);border-radius:5px;text-align:center;">
+    <div class="sd-role-bar" id="sdRoleBar"><button class="sd-role-btn active" data-role="all">All</button><button class="sd-role-btn" data-role="Fighter">Fighter</button><button class="sd-role-btn" data-role="Bomber">Bomber</button><button class="sd-role-btn" data-role="Gunship">Gunship</button><button class="sd-role-btn" data-role="Interdiction">Interdict</button><button class="sd-role-btn" data-role="Capital">Capital</button><button class="sd-role-btn" data-role="Cargo">Cargo</button><button class="sd-role-btn" data-role="Transport">Transport</button><button class="sd-role-btn" data-role="Exploration">Explore</button><button class="sd-role-btn" data-role="Mining">Mining</button><button class="sd-role-btn" data-role="Support">Support</button><button class="sd-role-btn" data-role="Racing">Racing</button><button class="sd-role-btn" data-role="Starter">Starter</button></div>
+<div id="sdSelectedShip" style="display:none;margin-bottom:6px;padding:5px 10px;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.4);border-radius:5px;text-align:center;">
     <div id="sdSelName" style="font-size:11px;font-weight:700;color:#e2e8f0;"></div>
     <div id="sdSelRole" style="font-size:9px;color:#94a3b8;margin-top:1px;"></div>
     <button onclick="runShowdown(window._pvpShip)" style="margin-top:4px;padding:5px;background:#dc2626;color:#fff;border:none;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;letter-spacing:.5px;">CONFIGURE ENEMY</button>
@@ -7903,6 +7910,47 @@ var ttk=document.createElement("div");ttk.style.cssText="font-size:11px;color:#9
 ttk.textContent="You kill in "+(myTTK<9000?myTTK.toFixed(1)+"s":"N/A")+" | They kill in "+(oppTTK<9000?oppTTK.toFixed(1)+"s":"N/A");
 vd.appendChild(ttk);resEl.appendChild(vd);
 }
+</script>
+
+<script>
+/* v6.31 Role filter for search */
+(function(){
+var activeRole="all";
+var bar=document.getElementById("sdRoleBar");
+var inp=document.getElementById("sdShipInput");
+var drop=document.getElementById("sdShipDrop");
+var inner=document.getElementById("sdShipInner");
+var clr=document.getElementById("sdShipClear");
+if(!bar||!inp)return;
+function showList(q){
+var names=Object.keys(SHIP_DATA).sort();
+if(activeRole!=="all")names=names.filter(function(n){return SHIP_DATA[n].role===activeRole;});
+if(q)names=names.filter(function(n){return n.toLowerCase().indexOf(q)>-1;});
+inner.innerHTML="";
+var hdr=document.createElement("div");hdr.style.cssText="padding:3px 8px;font-size:9px;color:#64748b;";hdr.textContent=names.length+" ships"+(activeRole!=="all"?" ("+activeRole+")":"");inner.appendChild(hdr);
+names.forEach(function(nm){
+var row=document.createElement("div");row.style.cssText="padding:5px 8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:11px;";
+row.onmouseenter=function(){row.style.background="rgba(220,38,38,.15)";};
+row.onmouseleave=function(){row.style.background="";};
+row.innerHTML="<span style=color:#e2e8f0;font-weight:600>"+nm+"</span><span style=color:#64748b;font-size:10px>"+(SHIP_DATA[nm].role||"")+" "+SHIP_DATA[nm].size+"</span>";
+row.onclick=function(){window._pvpShip=nm;inp.value="";drop.style.display="none";clr.style.display="none";
+document.getElementById("sdSelectedShip").style.display="block";
+document.getElementById("sdSelName").textContent=nm;
+document.getElementById("sdSelRole").textContent=SHIP_DATA[nm].role||"";
+};inner.appendChild(row);});
+drop.style.display="flex";}
+bar.addEventListener("click",function(e){
+var btn=e.target.closest(".sd-role-btn");if(!btn)return;
+bar.querySelectorAll(".sd-role-btn").forEach(function(b){b.classList.remove("active");});
+btn.classList.add("active");
+activeRole=btn.dataset.role;
+showList(inp.value.toLowerCase().trim()||null);
+});
+inp.addEventListener("focus",function(){showList(this.value.toLowerCase().trim()||null);});
+inp.addEventListener("input",function(){var q=this.value.toLowerCase().trim();clr.style.display=q?"block":"none";showList(q||null);});
+clr.addEventListener("click",function(){inp.value="";drop.style.display="none";clr.style.display="none";});
+document.addEventListener("click",function(e){if(!e.target.closest("#sdSearchWrap")&&!e.target.closest("#sdRoleBar"))drop.style.display="none";});
+})();
 </script>
 </body>
 <!-- deploy-force --><!-- deploy -->
