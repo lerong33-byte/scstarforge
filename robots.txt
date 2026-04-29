@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://scstarforge.com/sitemap.xml
