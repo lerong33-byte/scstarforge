@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.0-DEV</title>
+<title>SC-ShipForge v8.1-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -6941,11 +6941,6 @@ window.addEventListener('load', function() {
     if(_rdb)_rdb.style.display='none';
     var _tsb=document.getElementById('testShowdownBtn');
     if(_tsb)_tsb.style.display='none';
-    setTimeout(function(){
-      var i=document.getElementById('sbShipInput');
-      if(i){i.focus();}
-      update('ss_drop_sb','',false,true);
-    },10);
   };
   document.addEventListener('click',function(e){
     if(!e.target.closest('#sbSearchWrap')) close('ss_drop_sb');
