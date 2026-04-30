@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.74-DEV</title>
+<title>SC-ShipForge v7.77-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.74-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.77-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -926,7 +926,7 @@ option,optgroup{background:var(--bg2)}
   <div class="body">
 
     <!-- LEFT: ship dashboard -->
-                        <aside class="lp">
+                        <aside class="lp" id="mainAside" style="display:none">
 <div class="ship-img-wrap" style="height:155px">
         <span class="ship-img-placeholder" id="shipPh">Select a ship</span>
         <img id="rpShipImg" alt=""/>
@@ -7556,6 +7556,12 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
 <script>
 /* === v6.91-DEV: Live Stats + Showdown + OFF State === */
 
+/* Power panel vars — declared early so buildShipBuilder/buildPowerPanel can always access them */
+var _pwrState={mode:'scm',weapons:5,shields:5,engines:5,qd:3,radar:3,cooler:3,thrusters:5};
+var _pwrMax=10;
+var _pwrSystems=['weapons','shields','engines','qd','radar','cooler','thrusters'];
+var _pwrLabels=['WEP','SHD','ENG','QD','RAD','COOL','THR'];
+var _pwrColors=['#ef4444','#60a5fa','#22d3ee','#a78bfa','#34d399','#22d3ee','#f59e0b'];
 
 var SD_MODE="pvp";
 var SD_ENEMIES=[
@@ -8658,11 +8664,7 @@ function runPvpShowdown(enemyName){
 
 
 /* === POWER DISTRIBUTION PANEL === */
-var _pwrState={mode:'scm',weapons:5,shields:5,engines:5,qd:3,radar:3,cooler:3,thrusters:5};
-var _pwrMax=10;
-var _pwrSystems=['weapons','shields','engines','qd','radar','cooler','thrusters'];
-var _pwrLabels=['WEP','SHD','ENG','QD','RAD','COOL','THR'];
-var _pwrColors=['#ef4444','#60a5fa','#22d3ee','#a78bfa','#34d399','#22d3ee','#f59e0b'];
+/* _pwrState/_pwrSystems etc. declared early at top of block — see above */
 function _pwrMaxEU(){
   var ppKey=window._playerPP||'';
   var ppData=COMP_DB.pp&&COMP_DB.pp[ppKey];
