@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.71-DEV</title>
+<title>SC-ShipForge v7.72-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.71-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.72-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -8708,17 +8708,20 @@ function buildPowerPanel(){
     var colBorderLeft=isPPCol?'border-left:1px solid rgba(245,158,11,0.2);padding-left:2px;':'';
     h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;opacity:'+colOpacity+';'+colBorderLeft+'">';
     /* Overclock pips (11-12) at top — red/orange; locked in NAV mode */
-    h+='<div style="display:flex;flex-direction:column;align-items:center;gap:'+PIP_GAP+'px;width:100%;margin-bottom:4px">';
-    for(var oc=TOTAL_PIPS;oc>=NORM_PIPS+1;oc--){
-      var ocFilled=!navLocked&&val>=oc;
-      h+='<div '+(navLocked?'':('onclick="sdSetPwrPip(\''+sys.k+'\','+oc+')"'))+' '
-        +'style="width:100%;height:'+PIP_H+'px;min-height:'+PIP_H+'px;border-radius:2px;border:1px solid rgba(255,80,0,0.4);box-sizing:border-box;cursor:'+(navLocked?'not-allowed':'pointer')+';'
-        +'background:'+(ocFilled?'linear-gradient(180deg,#ff6600,#cc3300)':'rgba(255,80,0,0.12)')+'">'
-        +'</div>';
+    /* PP column: no OC pips — render exact-height spacer so column aligns */
+    if(isPPCol){
+      var _ocSpH=(OC_PIPS*PIP_H+(OC_PIPS-1)*PIP_GAP+4)+(2+4);
+      h+='<div style="width:100%;height:'+_ocSpH+'px;flex-shrink:0"></div>';
+    } else {
+      h+='<div style="display:flex;flex-direction:column;align-items:center;gap:'+PIP_GAP+'px;width:100%;margin-bottom:4px">';
+      for(var oc=TOTAL_PIPS;oc>=NORM_PIPS+1;oc--){
+        var ocFilled=!navLocked&&val>=oc;
+        h+='<div '+(navLocked?'':('onclick="sdSetPwrPip(\''+sys.k+'\','+oc+')"'))+' style="width:100%;height:'+PIP_H+'px;min-height:'+PIP_H+'px;border-radius:2px;border:1px solid rgba(255,80,0,0.4);box-sizing:border-box;cursor:'+(navLocked?'not-allowed':'pointer')+';background:'+(ocFilled?'linear-gradient(180deg,#ff6600,#cc3300)':'rgba(255,80,0,0.12)')+'"></div>';
+      }
+      h+='</div>';
+      /* Separator line between overclock and normal */
+      h+='<div style="width:100%;height:2px;background:rgba(255,100,0,0.4);border-radius:1px;margin-bottom:4px"></div>';
     }
-    h+='</div>';
-    /* Separator line between overclock and normal */
-    h+='<div style="width:100%;height:2px;background:rgba(255,100,0,0.4);border-radius:1px;margin-bottom:4px"></div>';
     /* Normal pips (1-10) */
     if(unitCnt>1){
       /* 1 solid block per unit — each block = ppu pips tall, clicking sets power to that unit's pip threshold */
@@ -8739,7 +8742,8 @@ function buildPowerPanel(){
         var blockOpacity=unitDisabled?'0.2':'1';
         var blockBg=unitDisabled?'rgba(255,80,80,0.10)':(filled?sysColor:'rgba(255,255,255,0.08)');
         var blockBorder=unitDisabled?'1px solid rgba(255,80,80,0.25)':'1px solid rgba(0,0,0,0.3)';
-        h+='<div onclick="'+(navLocked||unitDisabled?'':'sdSetPwrPip(\''+sys.k+'\','+clickVal+')')+' " '
+        var blockClick=isPPCol?'toggleESystem(\'pp\')':((navLocked||unitDisabled)?'':'sdSetPwrPip(\''+sys.k+'\','+clickVal+')');
+        h+='<div onclick="'+blockClick+'" '
           +'style="width:100%;height:'+blockH+'px;min-height:'+blockH+'px;border-radius:3px;border:'+blockBorder+';box-sizing:border-box;cursor:'+(navLocked||unitDisabled?'not-allowed':'pointer')+';'
           +'background:'+blockBg+';opacity:'+blockOpacity+'">' 
           +'</div>';
@@ -8771,7 +8775,7 @@ function buildPowerPanel(){
       h+='<span style="font-size:12px;line-height:1;display:block;margin-bottom:1px;color:'+sysColor+'">'+sys.icon+'</span>';
     }
     h+='<span style="font-size:8px;display:block;color:'+(navLocked||sysIsOff?'#f87171':'var(--t2)')+'">'
-      +(navLocked?'NAV':sysIsOff?'OFF':Math.round(val*10)+'%')+'</span>'
+      +(navLocked?'NAV':sysIsOff?'OFF':(isPPCol?'ON':Math.round(val*10)+'%'))+'</span>'
       +'</div>';
     h+='</div>';
   });
