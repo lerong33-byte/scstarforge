@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.51-DEV</title>
+<title>SC-ShipForge v7.52-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.51-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.52-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -1327,85 +1327,83 @@ function safeProp(id,prop,val){var e=document.getElementById(id);if(e)e[prop]=va
 // ═══ COMPONENT DATABASE ═══
 var COMP_DB={
   pp:{
-    "Regulus S1":{sz:1,out:320,heat:0,em:7920},
-    "Regulus S2":{sz:1,out:320,heat:0,em:7920},
-    "Maelstrom S3":{sz:2,out:400,heat:0,em:9900},
-    "Regulus S3":{sz:1,out:320,heat:0,em:7920},
-    "Defiant S0":{sz:0,out:220,heat:0,em:5450},
-    "DuraJet S0":{sz:0,out:200,heat:0,em:3750},
-    "IonWave S0":{sz:0,out:200,heat:0,em:3750},
-    "Jennet S0":{sz:0,out:220,heat:0,em:5450},
-    "Radix S0":{sz:0,out:200,heat:0,em:3750},
-    "Steadfast S0":{sz:0,out:220,heat:0,em:5450},
-    "Breton S1":{sz:1,out:320,heat:0,em:7920},
-    "Charger S1":{sz:1,out:320,heat:0,em:7920},
-    "DeltaMax S1":{sz:1,out:260,heat:0,em:3250},
-    "DynaFlux S1":{sz:1,out:320,heat:0,em:7920},
-    "Endurance S1":{sz:1,out:300,heat:0,em:7430},
-    "Fierell Cascade S1":{sz:1,out:320,heat:0,em:7920},
-    "Fortitude S1":{sz:1,out:300,heat:0,em:7430},
-    "HyperGen S1":{sz:1,out:320,heat:0,em:7920},
-    "IonBurst S1":{sz:1,out:280,heat:0,em:5250},
-    "JS-300 S1":{sz:1,out:340,heat:0,em:8420},
-    "LightBlossom S1":{sz:1,out:280,heat:0,em:5780},
-    "LumaCore S1":{sz:1,out:320,heat:0,em:6550},
-    "MagnaBloom S1":{sz:1,out:280,heat:0,em:5780},
-    "OverDrive S1":{sz:1,out:320,heat:0,em:7920},
-    "PowerBolt S1":{sz:1,out:280,heat:0,em:5250},
-    "QuadraCell S1":{sz:1,out:340,heat:0,em:8420},
-    "Regulus S1":{sz:1,out:320,heat:0,em:7920},
-    "Roughneck S1":{sz:1,out:300,heat:0,em:7430},
-    "Slipstream S1":{sz:1,out:280,heat:0,em:3500},
-    "SonicLite S1":{sz:1,out:260,heat:0,em:3250},
-    "StarHeart S1":{sz:1,out:320,heat:0,em:6550},
-    "SunFlare S1":{sz:1,out:320,heat:0,em:6550},
-    "WhiteRose S1":{sz:1,out:300,heat:0,em:6190},
-    "ZapJet S1":{sz:1,out:280,heat:0,em:5250},
-    "Bolide S2":{sz:2,out:400,heat:0,em:9900},
-    "Cirrus S2":{sz:2,out:340,heat:0,em:4250},
-    "DayBreak S2":{sz:2,out:360,heat:0,em:7430},
-    "Diligence S2":{sz:2,out:380,heat:0,em:9410},
-    "Eclipse S2":{sz:2,out:360,heat:0,em:4500},
-    "ExoGen S2":{sz:2,out:400,heat:0,em:9900},
-    "FullForce S2":{sz:2,out:360,heat:0,em:6750},
-    "GammaMax S2":{sz:2,out:340,heat:0,em:4250},
-    "Genoa S2":{sz:2,out:400,heat:0,em:9900},
-    "IonSurge S2":{sz:2,out:360,heat:0,em:6750},
-    "JS-400 S2":{sz:2,out:420,heat:0,em:10400},
-    "Lotus S2":{sz:2,out:380,heat:0,em:7840},
-    "LuxCore S2":{sz:2,out:400,heat:0,em:8180},
-    "Maelstrom S2":{sz:2,out:400,heat:0,em:9900},
-    "QuadraCell MT S2":{sz:2,out:420,heat:0,em:10400},
-    "Radiance S2":{sz:2,out:360,heat:0,em:7430},
-    "Sedulity S2":{sz:2,out:380,heat:0,em:9410},
-    "SolarFlare S2":{sz:2,out:400,heat:0,em:8180},
-    "SparkJet S2":{sz:2,out:360,heat:0,em:6750},
-    "StarBurn S2":{sz:2,out:400,heat:0,em:8180},
-    "Trommel S2":{sz:2,out:380,heat:0,em:9410},
-    "TurboDrive S2":{sz:2,out:400,heat:0,em:9900},
-    "UltraFlux S2":{sz:2,out:400,heat:0,em:9900},
-    "Vortex S2":{sz:2,out:400,heat:0,em:9900},
-    "Celestial S3":{sz:3,out:440,heat:0,em:9080},
-    "Centurion S3":{sz:3,out:480,heat:0,em:11900},
-    "Drassik S3":{sz:3,out:480,heat:0,em:11900},
-    "Durango S3":{sz:3,out:480,heat:0,em:11900},
-    "Fulgur S3":{sz:3,out:480,heat:0,em:11900},
-    "FullForce Pro S3":{sz:3,out:440,heat:0,em:8250},
-    "Ginzel S3":{sz:3,out:460,heat:0,em:11400},
-    "IonSurge Pro S3":{sz:3,out:440,heat:0,em:8250},
-    "JS-500 S3":{sz:3,out:500,heat:0,em:12400},
-    "MegaFlux S3":{sz:3,out:480,heat:0,em:11900},
-    "NewDawn S3":{sz:3,out:440,heat:0,em:9080},
-    "QuadraCell MX S3":{sz:3,out:500,heat:0,em:12400},
-    "Reliance S3":{sz:3,out:460,heat:0,em:11400},
-    "SmartGen S3":{sz:3,out:480,heat:0,em:11900},
-    "SparkJet Pro S3":{sz:3,out:440,heat:0,em:8250},
-    "SuperDrive S3":{sz:3,out:480,heat:0,em:11900},
-    "TigerLilly S3":{sz:3,out:460,heat:0,em:9490},
-    "Idris Power Plant S4":{sz:4,out:580,heat:0,em:14400},
-    "Reclaimer Power Plant S4":{sz:4,out:560,heat:0,em:13900},
-    "Stellate S4":{sz:4,out:540,heat:0,em:11100},
-    "Stellate S4":{sz:4,out:540,heat:0,em:12200},
+    "Regulus S1":{sz:1,out:16,heat:0,em:7920},
+    "Regulus S2":{sz:2,out:16,heat:0,em:7920},
+    "Maelstrom S3":{sz:3,out:20,heat:0,em:9900},
+    "Regulus S3":{sz:3,out:16,heat:0,em:7920},
+    "Defiant S0":{sz:0,out:11,heat:0,em:5450},
+    "DuraJet S0":{sz:0,out:10,heat:0,em:3750},
+    "IonWave S0":{sz:0,out:10,heat:0,em:3750},
+    "Jennet S0":{sz:0,out:11,heat:0,em:5450},
+    "Radix S0":{sz:0,out:10,heat:0,em:3750},
+    "Steadfast S0":{sz:0,out:11,heat:0,em:5450},
+    "Breton S1":{sz:1,out:16,heat:0,em:7920},
+    "Charger S1":{sz:1,out:16,heat:0,em:7920},
+    "DeltaMax S1":{sz:1,out:13,heat:0,em:3250},
+    "DynaFlux S1":{sz:1,out:16,heat:0,em:7920},
+    "Endurance S1":{sz:1,out:15,heat:0,em:7430},
+    "Fierell Cascade S1":{sz:1,out:16,heat:0,em:7920},
+    "Fortitude S1":{sz:1,out:15,heat:0,em:7430},
+    "HyperGen S1":{sz:1,out:16,heat:0,em:7920},
+    "IonBurst S1":{sz:1,out:14,heat:0,em:5250},
+    "JS-300 S1":{sz:1,out:17,heat:0,em:8420},
+    "LightBlossom S1":{sz:1,out:14,heat:0,em:5780},
+    "LumaCore S1":{sz:1,out:16,heat:0,em:6550},
+    "MagnaBloom S1":{sz:1,out:14,heat:0,em:5780},
+    "OverDrive S1":{sz:1,out:16,heat:0,em:7920},
+    "PowerBolt S1":{sz:1,out:14,heat:0,em:5250},
+    "QuadraCell S1":{sz:1,out:17,heat:0,em:8420},
+    "Roughneck S1":{sz:1,out:15,heat:0,em:7430},
+    "Slipstream S1":{sz:1,out:14,heat:0,em:3500},
+    "SonicLite S1":{sz:1,out:13,heat:0,em:3250},
+    "StarHeart S1":{sz:1,out:16,heat:0,em:6550},
+    "SunFlare S1":{sz:1,out:16,heat:0,em:6550},
+    "WhiteRose S1":{sz:1,out:15,heat:0,em:6190},
+    "ZapJet S1":{sz:1,out:14,heat:0,em:5250},
+    "Bolide S2":{sz:2,out:20,heat:0,em:9900},
+    "Cirrus S2":{sz:2,out:17,heat:0,em:4250},
+    "DayBreak S2":{sz:2,out:18,heat:0,em:7430},
+    "Diligence S2":{sz:2,out:19,heat:0,em:9410},
+    "Eclipse S2":{sz:2,out:18,heat:0,em:4500},
+    "ExoGen S2":{sz:2,out:20,heat:0,em:9900},
+    "FullForce S2":{sz:2,out:18,heat:0,em:6750},
+    "GammaMax S2":{sz:2,out:17,heat:0,em:4250},
+    "Genoa S2":{sz:2,out:20,heat:0,em:9900},
+    "IonSurge S2":{sz:2,out:18,heat:0,em:6750},
+    "JS-400 S2":{sz:2,out:21,heat:0,em:10400},
+    "Lotus S2":{sz:2,out:19,heat:0,em:7840},
+    "LuxCore S2":{sz:2,out:20,heat:0,em:8180},
+    "Maelstrom S2":{sz:2,out:20,heat:0,em:9900},
+    "QuadraCell MT S2":{sz:2,out:21,heat:0,em:10400},
+    "Radiance S2":{sz:2,out:18,heat:0,em:7430},
+    "Sedulity S2":{sz:2,out:19,heat:0,em:9410},
+    "SolarFlare S2":{sz:2,out:20,heat:0,em:8180},
+    "SparkJet S2":{sz:2,out:18,heat:0,em:6750},
+    "StarBurn S2":{sz:2,out:20,heat:0,em:8180},
+    "Trommel S2":{sz:2,out:19,heat:0,em:9410},
+    "TurboDrive S2":{sz:2,out:20,heat:0,em:9900},
+    "UltraFlux S2":{sz:2,out:20,heat:0,em:9900},
+    "Vortex S2":{sz:2,out:20,heat:0,em:9900},
+    "Celestial S3":{sz:3,out:22,heat:0,em:9080},
+    "Centurion S3":{sz:3,out:24,heat:0,em:11900},
+    "Drassik S3":{sz:3,out:24,heat:0,em:11900},
+    "Durango S3":{sz:3,out:24,heat:0,em:11900},
+    "Fulgur S3":{sz:3,out:24,heat:0,em:11900},
+    "FullForce Pro S3":{sz:3,out:22,heat:0,em:8250},
+    "Ginzel S3":{sz:3,out:23,heat:0,em:11400},
+    "IonSurge Pro S3":{sz:3,out:22,heat:0,em:8250},
+    "JS-500 S3":{sz:3,out:25,heat:0,em:12400},
+    "MegaFlux S3":{sz:3,out:24,heat:0,em:11900},
+    "NewDawn S3":{sz:3,out:22,heat:0,em:9080},
+    "QuadraCell MX S3":{sz:3,out:25,heat:0,em:12400},
+    "Reliance S3":{sz:3,out:23,heat:0,em:11400},
+    "SmartGen S3":{sz:3,out:24,heat:0,em:11900},
+    "SparkJet Pro S3":{sz:3,out:22,heat:0,em:8250},
+    "SuperDrive S3":{sz:3,out:24,heat:0,em:11900},
+    "TigerLilly S3":{sz:3,out:23,heat:0,em:9490},
+    "Idris Power Plant S4":{sz:4,out:29,heat:0,em:14400},
+    "Reclaimer Power Plant S4":{sz:4,out:28,heat:0,em:13900},
+    "Stellate S4":{sz:4,out:27,heat:0,em:11100},
   },
   sg:{
     "Palisade S1":{sz:1,totalHP:2700,faceHP:675,regen:297,drawMin:3,drawMax:6},
@@ -1656,6 +1654,52 @@ var COMP_OPTS={
     S3:["SNS-R6 S3"]
   }
 };
+// ═══ COMPONENT DATABASE (RADAR STATIC DATA) ═══
+// Detection range values from in-game testing; power draw from wiki API
+if(!COMP_DB.radar||typeof COMP_DB.radar!=='object'||Array.isArray(COMP_DB.radar))COMP_DB.radar={};
+(function(){
+  var RD=COMP_DB.radar;
+  // S0 radars
+  RD['Agure S0']={sz:0,dist:5000,drawMin:2,drawMax:3};
+  RD['BroadSpec-Go S0']={sz:0,dist:4000,drawMin:1,drawMax:2};
+  RD['Denning S0']={sz:0,dist:4000,drawMin:1,drawMax:2};
+  RD['Fabian S0']={sz:0,dist:4000,drawMin:1,drawMax:2};
+  RD['FullSpec-Go S0']={sz:0,dist:4000,drawMin:1,drawMax:2};
+  RD['Observer-Go S0']={sz:0,dist:4000,drawMin:1,drawMax:2};
+  RD['Prevenir S0']={sz:0,dist:5000,drawMin:2,drawMax:3};
+  RD['Sens S0']={sz:0,dist:5000,drawMin:2,drawMax:3};
+  // S1 radars
+  RD['Hunter S1']={sz:1,dist:8000,drawMin:2,drawMax:5};
+  RD['Ecouter S1']={sz:1,dist:8000,drawMin:2,drawMax:5};
+  RD['Fleming S1']={sz:1,dist:7000,drawMin:1,drawMax:4};
+  RD['Observer-Lite S1']={sz:1,dist:6000,drawMin:1,drawMax:3};
+  RD['Backlund S1']={sz:1,dist:7000,drawMin:1,drawMax:4};
+  RD['Capston S1']={sz:1,dist:7000,drawMin:1,drawMax:4};
+  RD['Pelerous S1']={sz:1,dist:8000,drawMin:2,drawMax:5};
+  RD['Voir S1']={sz:1,dist:7000,drawMin:1,drawMax:4};
+  RD['Epier S1']={sz:1,dist:8000,drawMin:2,drawMax:5};
+  RD['Abetti S1']={sz:1,dist:7000,drawMin:1,drawMax:4};
+  RD['Prophet S1']={sz:1,dist:8000,drawMin:2,drawMax:5};
+  // S2 radars
+  RD['V801-12 S2']={sz:2,dist:12000,drawMin:1,drawMax:6};
+  RD['Vigilance S2']={sz:2,dist:14000,drawMin:2,drawMax:8};
+  RD['Surveyor S2']={sz:2,dist:12000,drawMin:1,drawMax:5};
+  RD['Battani S2']={sz:2,dist:12000,drawMin:1,drawMax:6};
+  RD['Chernykh S2']={sz:2,dist:12000,drawMin:1,drawMax:6};
+  RD['Epier S2']={sz:2,dist:14000,drawMin:2,drawMax:8};
+  RD['Agrippa S2']={sz:2,dist:12000,drawMin:1,drawMax:6};
+  RD['BroadSpec S2']={sz:2,dist:11000,drawMin:1,drawMax:5};
+  RD['Cassandra S2']={sz:2,dist:14000,drawMin:2,drawMax:8};
+  RD['Fawad S2']={sz:2,dist:12000,drawMin:1,drawMax:6};
+  RD['FullSpec S2']={sz:2,dist:11000,drawMin:1,drawMax:5};
+  RD['Observer S2']={sz:2,dist:11000,drawMin:1,drawMax:5};
+  RD['Predator S2']={sz:2,dist:14000,drawMin:2,drawMax:8};
+  RD['Savoir S2']={sz:2,dist:14000,drawMin:2,drawMax:8};
+  // S3 radars
+  RD['SNS-R6 S3']={sz:3,dist:20000,drawMin:2,drawMax:8};
+  RD['Anysta S3']={sz:3,dist:18000,drawMin:2,drawMax:8};
+  RD['BroadSpec S3']={sz:3,dist:16000,drawMin:1,drawMax:6};
+}());
 // ═══ WEAPONS ═══
 var WEAPONS=[
   {id:"att1",name:"Attrition-1",mfr:"Hurston Dynamics",sz:1,type:"energy",dps:62,alpha:9,range:880,draw:8,heat:12,price:5240,loc:"⭐ HD Showcase Lorville ONLY"},
@@ -7825,12 +7869,24 @@ function onECompChange(sel){
 function toggleESystem(key){
   _eSysEnabled[key]=(_eSysEnabled[key]===false)?true:false;
   var on=_eSysEnabled[key]!==false;
-  var btnMap={sg:'eSgToggle',pp:'ePpToggle',cooler:'eCoolerToggle',radar:'eRadarToggle'};
+  var btnMap={sg:'eSgToggle',pp:'ePpToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'};
   var btn=document.getElementById(btnMap[key]);
   if(btn){
     btn.textContent=on?'ON':'OFF';
     btn.style.borderColor=on?'var(--green)':'var(--border)';
     btn.style.color=on?'var(--green)':'var(--t3)';
+  }
+  /* Bidirectional: turning system OFF sets its pip column to 0; turning ON restores to 3 (default) */
+  var pipMap={sg:'shields',pp:null,cooler:'cooler',radar:'radar',qd:'qd'};
+  var pipKey=pipMap[key];
+  if(pipKey&&typeof _pwrState!=='undefined'){
+    if(!on){
+      _eSysEnabled[key+'_savedPip']=_pwrState[pipKey]||3;
+      _pwrState[pipKey]=0;
+    } else {
+      _pwrState[pipKey]=_eSysEnabled[key+'_savedPip']||3;
+    }
+    if(typeof buildPowerPanel==='function')buildPowerPanel();
   }
   _eUpdateStats();
 }
@@ -7972,7 +8028,7 @@ function syncEMissiles(event,i,count){
 /* ── Stats updater ── */
 function _eUpdateStats(){
   var ship=_eShipName&&SHIP_DATA[_eShipName];if(!ship)return;
-  var totalDps=0,totalAlpha=0;
+  var totalDps=0,totalAlpha=0,totalWepDraw=0;
   (ship.slots||[]).forEach(function(sl,i){
     if(_eSlotEnabled['sl'+i]===false)return;
     var gunCount=sl.count||1;
@@ -7980,23 +8036,27 @@ function _eUpdateStats(){
       for(var gi=0;gi<gunCount;gi++){
         var wid=_eSlots['sl'+i+'_gun'+gi]||sl.default;
         var w=WEAPONS.find(function(x){return x.id===wid;});
-        if(w&&(w.type==='energy'||w.type==='ballistic')){totalDps+=w.dps;totalAlpha+=w.alpha||0;}
+        if(w&&(w.type==='energy'||w.type==='ballistic')){totalDps+=w.dps;totalAlpha+=w.alpha||0;totalWepDraw+=w.draw||0;}
       }
     } else {
       var wid=_eSlots['sl'+i]||sl.default;
       var w=WEAPONS.find(function(x){return x.id===wid;});
-      if(w&&(w.type==='energy'||w.type==='ballistic')){totalDps+=w.dps;totalAlpha+=w.alpha||0;}
+      if(w&&(w.type==='energy'||w.type==='ballistic')){totalDps+=w.dps;totalAlpha+=w.alpha||0;totalWepDraw+=w.draw||0;}
     }
   });
   function setE(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
   /* ── Power pip ratios (5 pips = 100% baseline) ── */
   var wepRatio=(_pwrState&&_pwrState.weapons!=null)?Math.max(0.1,_pwrState.weapons/5):1;
   var shRatio=(_pwrState&&_pwrState.shields!=null)?Math.max(0,_pwrState.shields/5):1;
+  var qdRatio=(_pwrState&&_pwrState.qd!=null)?Math.max(0,_pwrState.qd/5):0.6;
+  var radarRatio=(_pwrState&&_pwrState.radar!=null)?Math.max(0,_pwrState.radar/5):0.6;
+  var coolRatio=(_pwrState&&_pwrState.cooler!=null)?Math.max(0,_pwrState.cooler/5):0.6;
   /* ── FIREPOWER (scaled by weapon pip ratio) ── */
   var scaledDps=Math.round(totalDps*wepRatio);
   var scaledAlpha=Math.round(totalAlpha*wepRatio);
   setE('eFpDps',scaledDps>0?scaledDps.toLocaleString():'—');
   setE('eFpAlpha',scaledAlpha>0?scaledAlpha.toLocaleString():'—');
+  setE('eFpDraw',totalWepDraw>0?totalWepDraw+' EU':'—');
   /* ── DEFENSE (Shield — scaled by shield pip ratio) ── */
   var sgOn=_eSysEnabled['sg']!==false;
   var sgKey=_eComps['sg_0']||_eComps['sg']||ship.comps.sg;
@@ -8004,8 +8064,10 @@ function _eUpdateStats(){
   var sgCount=(ship.comps.counts&&ship.comps.counts.sg)||1;
   var shieldHP=sgOn&&sgData?Math.round(sgData.totalHP*sgCount*shRatio):0;
   var shieldRegen=sgOn&&sgData?Math.round(sgData.regen*sgCount*shRatio):0;
+  var shieldDraw=sgOn&&sgData?((sgData.drawMin||0)*sgCount):0;
   setE('eDfShield',shieldHP>0?shieldHP.toLocaleString()+' HP':'—');
   setE('eDfRegen',shieldRegen>0?'+'+shieldRegen.toLocaleString()+'/s':'—');
+  setE('eDfDraw',shieldDraw>0?shieldDraw+' EU':'—');
   var sgCard=document.getElementById('eSgCard');
   if(sgCard)sgCard.style.opacity=sgOn?'1':'0.4';
   /* ── POWER ── */
@@ -8014,24 +8076,51 @@ function _eUpdateStats(){
   var ppData=COMP_DB.pp&&COMP_DB.pp[ppKey];
   var ppCount=(ship.comps.counts&&ship.comps.counts.pp)||1;
   var ppOut=ppOn&&ppData?(parseFloat(ppData.out)||0)*ppCount:0;
+  /* Total system draw estimate */
+  var sgDrawMax=sgData?((sgData.drawMax||0)*sgCount):0;
+  var coolDrawMin=0,coolDrawMax=0;
+  var coolKey=_eComps['cooler_0']||_eComps['cooler']||ship.comps.cooler;
+  var coolData=COMP_DB.cooler&&COMP_DB.cooler[coolKey];
+  var coolCount=(ship.comps.counts&&ship.comps.counts.cooler)||1;
+  if(coolData){coolDrawMin=(coolData.drawMin||0)*coolCount;coolDrawMax=(coolData.drawMax||0)*coolCount;}
+  var qdKey=_eComps['qd']||ship.comps.qd;
+  var qdData=COMP_DB.qd&&COMP_DB.qd[qdKey];
+  var qdDraw=qdData?(qdData.drawMin||0):0;
+  var radarKey=_eComps['radar']||ship.comps.radar;
+  var radarData=COMP_DB.radar&&COMP_DB.radar[radarKey];
+  var radarDraw=radarData?(radarData.drawMin||0):0;
+  var totalSysDraw=sgDrawMax+coolDrawMax+qdDraw+radarDraw;
+  var ppUsedPct=ppOut>0?Math.min(Math.round(totalSysDraw/ppOut*100),200):0;
   setE('eSysPp',ppOut>0?ppOut.toLocaleString()+' EU':'—');
+  setE('eSysPpDraw',totalSysDraw>0?totalSysDraw+' EU draw':'—');
+  setE('eSysPpPct',ppOut>0?(ppUsedPct+'% used'):'—');
   var ppCard=document.getElementById('ePpCard');
   if(ppCard)ppCard.style.opacity=ppOn?'1':'0.4';
   /* ── COOLER ── */
   var coolOn=_eSysEnabled['cooler']!==false;
-  var coolKey=_eComps['cooler_0']||_eComps['cooler']||ship.comps.cooler;
-  var coolData=COMP_DB.cooler&&COMP_DB.cooler[coolKey];
-  var coolCount=(ship.comps.counts&&ship.comps.counts.cooler)||1;
   var coolOut=coolOn&&coolData?(parseFloat(coolData.cool)||0)*coolCount:0;
+  var coolOutScaled=Math.round(coolOut*coolRatio);
   setE('eSysCooler',coolOut>0?coolOut.toLocaleString()+'/s':'—');
+  setE('eSysCoolerDraw',coolDrawMin>0?coolDrawMin+' EU':'—');
   var coolCard=document.getElementById('eCoolerCard');
   if(coolCard)coolCard.style.opacity=coolOn?'1':'0.4';
+  /* ── QUANTUM DRIVE ── */
+  var qdOn=_eSysEnabled['qd']!==false;
+  var qdSpeed=qdOn&&qdData?(qdData.speed||0):0;
+  var qdSpeedScaled=Math.round(qdSpeed*qdRatio);
+  var qdRange=qdOn&&qdData?(qdData.range||0):0;
+  var qdSpool=qdOn&&qdData?(qdData.spool||0):0;
+  setE('eSysQdSpeed',qdSpeedScaled>0?qdSpeedScaled.toLocaleString()+' Mm/s':'—');
+  setE('eSysQdRange',qdRange>0?qdRange+' Gm':'—');
+  setE('eSysQdSpool',qdSpool>0?qdSpool+'s spool':'—');
+  var qdCard=document.getElementById('eQdCard');
+  if(qdCard)qdCard.style.opacity=qdOn?'1':'0.4';
   /* ── RADAR ── */
   var radarOn=_eSysEnabled['radar']!==false;
-  var radarKey=_eComps['radar']||ship.comps.radar;
-  var radarData=COMP_DB.radar&&COMP_DB.radar[radarKey];
-  var radarDist=radarOn&&radarData?(radarData.dist||'—'):'—';
-  setE('eSysRadar',radarDist!=='—'?radarDist+' m':'—');
+  var radarDist=radarOn&&radarData?(radarData.dist||0):0;
+  var radarDistScaled=Math.round(radarDist*radarRatio);
+  setE('eSysRadar',radarDistScaled>0?radarDistScaled.toLocaleString()+' m':'—');
+  setE('eSysRadarDraw',radarDraw>0?radarDraw+' EU':'—');
   var radarCard=document.getElementById('eRadarCard');
   if(radarCard)radarCard.style.opacity=radarOn?'1':'0.4';
   window._enemyDps=totalDps;
@@ -8259,11 +8348,15 @@ function buildEnemyLoadout(enemyName){
   /* FIREPOWER */
   statsHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
     +'<div style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono);margin-bottom:10px">FIREPOWER</div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-end">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px">'
       +'<div><div style="font-size:10px;color:var(--t3);font-family:var(--fmono);margin-bottom:2px">TOTAL DPS</div>'
         +'<div id="eFpDps" style="font-size:28px;font-weight:800;font-family:var(--fmono);color:'+RED+'">—</div></div>'
       +'<div style="text-align:right"><div style="font-size:10px;color:var(--t3);font-family:var(--fmono);margin-bottom:2px">ALPHA</div>'
         +'<div id="eFpAlpha" style="font-size:22px;font-weight:700;font-family:var(--fmono);color:#e2e8f0">—</div></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center">'
+      +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Wep Draw</span>'
+      +'<span id="eFpDraw" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#f59e0b">—</span>'
     +'</div></div>';
   /* DEFENSE */
   statsHTML+='<div id="eSgCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
@@ -8278,6 +8371,9 @@ function buildEnemyLoadout(enemyName){
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Regen/s</span>'
         +'<span id="eDfRegen" style="font-size:14px;font-weight:600;font-family:var(--fmono);color:#34d399">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Draw</span>'
+        +'<span id="eDfDraw" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#f59e0b">—</span></div>'
     +'</div></div>';
   /* POWER */
   statsHTML+='<div id="ePpCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
@@ -8289,6 +8385,12 @@ function buildEnemyLoadout(enemyName){
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Output</span>'
         +'<span id="eSysPp" style="font-size:16px;font-weight:700;font-family:var(--fmono);color:#f59e0b">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Sys Draw</span>'
+        +'<span id="eSysPpDraw" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#e2e8f0">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Load</span>'
+        +'<span id="eSysPpPct" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#22d3ee">—</span></div>'
     +'</div></div>';
   /* COOLER */
   statsHTML+='<div id="eCoolerCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
@@ -8300,6 +8402,26 @@ function buildEnemyLoadout(enemyName){
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Cool/s</span>'
         +'<span id="eSysCooler" style="font-size:16px;font-weight:700;font-family:var(--fmono);color:#22d3ee">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Draw</span>'
+        +'<span id="eSysCoolerDraw" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#f59e0b">—</span></div>'
+    +'</div></div>';
+  /* QUANTUM DRIVE */
+  statsHTML+='<div id="eQdCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
+    +'<div style="display:flex;align-items:center;margin-bottom:10px">'
+      +'<span style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono)">Q-DRIVE</span>'
+      +'<button id="eQdToggle" onclick="toggleESystem(\'qd\')" style="margin-left:auto;padding:1px 8px;font-size:9px;font-family:var(--fmono);border-radius:20px;border:1px solid var(--green);background:none;color:var(--green);cursor:pointer;letter-spacing:1px">ON</button>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Speed</span>'
+        +'<span id="eSysQdSpeed" style="font-size:14px;font-weight:700;font-family:var(--fmono);color:#a78bfa">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Range</span>'
+        +'<span id="eSysQdRange" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#c4b5fd">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Spool</span>'
+        +'<span id="eSysQdSpool" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#c4b5fd">—</span></div>'
     +'</div></div>';
   /* RADAR */
   statsHTML+='<div id="eRadarCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
@@ -8311,6 +8433,9 @@ function buildEnemyLoadout(enemyName){
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Range</span>'
         +'<span id="eSysRadar" style="font-size:16px;font-weight:700;font-family:var(--fmono);color:#34d399">—</span></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:11px;color:var(--t3);font-family:var(--fmono)">Draw</span>'
+        +'<span id="eSysRadarDraw" style="font-size:12px;font-weight:600;font-family:var(--fmono);color:#f59e0b">—</span></div>'
     +'</div></div>';
   /* VESSEL */
   statsHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
@@ -8555,7 +8680,30 @@ function buildPowerPanel(){
   panel.innerHTML=h;
   panel.style.display='block';
 }
-function sdSetPwrPip(key,val){if(val<1)return;val=Math.min(12,Math.max(1,val));_pwrState[key]=val;buildPowerPanel();if(typeof _eUpdateStats==='function')_eUpdateStats();}
+function sdSetPwrPip(key,val){
+  if(val<1)return;
+  val=Math.min(12,Math.max(1,val));
+  _pwrState[key]=val;
+  /* Bidirectional: if pip column is wired to a system toggle, sync the ON/OFF button */
+  var pipToSys={shields:'sg',cooler:'cooler',radar:'radar',qd:'qd'};
+  var sysKey=pipToSys[key];
+  if(sysKey&&typeof _eSysEnabled!=='undefined'){
+    var wasOff=_eSysEnabled[sysKey]===false;
+    var nowOff=(val===0);
+    if(wasOff!==nowOff){
+      _eSysEnabled[sysKey]=!nowOff;
+      var btnMap={sg:'eSgToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'};
+      var btn=document.getElementById(btnMap[sysKey]);
+      if(btn){
+        btn.textContent=!nowOff?'ON':'OFF';
+        btn.style.borderColor=!nowOff?'var(--green)':'var(--border)';
+        btn.style.color=!nowOff?'var(--green)':'var(--t3)';
+      }
+    }
+  }
+  buildPowerPanel();
+  if(typeof _eUpdateStats==='function')_eUpdateStats();
+}
 function sdSetPwrMode(mode){_pwrState.mode=mode;buildPowerPanel();}
 function sdResetPower(){_pwrState={mode:'scm',weapons:5,shields:5,engines:5,qd:3,radar:3,cooler:3,thrusters:5};buildPowerPanel();if(typeof _eUpdateStats==='function')_eUpdateStats();}
 window.sdSetPwrPip=sdSetPwrPip;
