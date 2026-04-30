@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.45-DEV</title>
+<title>SC-ShipForge v7.46-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.45-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.46-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -8452,25 +8452,24 @@ function buildPowerPanel(){
     +'</div>'
     +'<div class="con-bar-wrap"><div style="height:100%;width:'+pct+'%;background:'+barCol+';border-radius:2px;transition:width .3s"></div></div>';
 
-  /* SPV block chart — same visual as ship builder */
-  h+='<div class="spv-chart" style="display:flex;gap:3px;align-items:flex-end;padding:4px 0 2px;min-height:90px;margin-top:8px">';
+  /* SPV block chart — fixed height container, pips render top-to-bottom (10 at top, 1 at bottom) */
+  h+='<div style="display:flex;gap:3px;height:240px;overflow:hidden;margin-top:8px;box-sizing:border-box">';
   SYSS.forEach(function(sys){
     var val=_pwrState[sys.k]||0;
     var maxPips=10;
-    h+='<div class="spv-col" style="flex:1;display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0;gap:1px">';
-    h+='<div style="display:flex;flex-direction:column-reverse;align-items:center;gap:0">';
-    for(var p=1;p<=maxPips;p++){
+    h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">';
+    h+='<div style="display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;margin-bottom:4px">';
+    for(var p=maxPips;p>=1;p--){
       var filled=p<=val;
       var isMin=p===1;
-      var cls='spv-block'+(filled?' filled':'  empty')+(isMin?' minimum':'');
-      h+='<div class="'+cls+'" onclick="sdSetPwrPip(\''+sys.k+'\','+p+')" '
-        +'style="width:34px;height:20px;min-height:20px;max-height:20px;margin-bottom:2px;border-radius:3px;border:1px solid rgba(0,0,0,0.3);box-sizing:border-box;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:'+(isMin?'default':'pointer')+';'
-        +'background:'+(filled?'linear-gradient(180deg,rgba(252,185,60,0.95),rgba(230,145,30,0.9))':'rgba(255,255,255,0.10)')+'">'
+      h+='<div onclick="'+(isMin?'':'sdSetPwrPip(\''+sys.k+'\','+p+')'+'"')+' '
+        +'style="width:100%;height:16px;min-height:16px;max-height:16px;border-radius:3px;border:1px solid rgba(0,0,0,0.3);box-sizing:border-box;cursor:'+(isMin?'default':'pointer')+';'
+        +'background:'+(filled?sys.color:'rgba(255,255,255,0.08)')+';opacity:'+(filled?'1':'0.35')+'">'
         +'</div>';
     }
     h+='</div>';
-    h+='<div class="spv-col-foot" style="display:flex;flex-direction:column;align-items:center;margin-top:4px;width:36px">'
-      +'<span style="font-size:14px;line-height:1;display:block;margin-bottom:1px">'+sys.icon+'</span>'
+    h+='<div style="display:flex;flex-direction:column;align-items:center;width:100%">'
+      +'<span style="font-size:13px;line-height:1;display:block;margin-bottom:1px">'+sys.icon+'</span>'
       +'<span style="font-size:9px;display:block;color:var(--t2)">'+Math.round(val*10)+'%</span>'
       +'</div>';
     h+='</div>';
@@ -8979,6 +8978,9 @@ function buildCard(name){
   var crewBasic=sd.crew||'';
   card.innerHTML='<div class="eic-img-wrap loading"><img class="eic-img" alt="" style="display:none"><div class="eic-name-overlay"><div class="eic-name">'+name+'</div><div class="eic-role">'+(roleBasic?roleBasic+' · ':'')+(sizeBasic?'Size '+sizeBasic:'')+'</div></div></div><div class="eic-info"><div class="eic-row"><span class="eic-lbl">Manufacturer</span><span class="eic-val eic-manf">—</span></div><div class="eic-row"><span class="eic-lbl">Career</span><span class="eic-val eic-career">—</span></div><div class="eic-row"><span class="eic-lbl">Role</span><span class="eic-val eic-role-detail">'+(roleBasic||'—')+'</span></div><div class="eic-row"><span class="eic-lbl">Size</span><span class="eic-val eic-size">—</span></div><div class="eic-row"><span class="eic-lbl">Crew</span><span class="eic-val eic-crew">—</span></div><div class="eic-row"><span class="eic-lbl">Cargo</span><span class="eic-val eic-cargo">—</span></div><div class="eic-row"><span class="eic-lbl">Length</span><span class="eic-val eic-length">—</span></div><div class="eic-row"><span class="eic-lbl">Width</span><span class="eic-val eic-width">—</span></div><div class="eic-row"><span class="eic-lbl">Height</span><span class="eic-val eic-height">—</span></div><div class="eic-row"><span class="eic-lbl">Status</span><span class="eic-val eic-status">—</span></div><div class="eic-row"><span class="eic-lbl">Pledge</span><span class="eic-val eic-cost eic-pledge">—</span></div><div class="eic-row"><span class="eic-lbl">Warbond</span><span class="eic-val eic-warbond">—</span></div><div class="eic-buy-info"><b>In-game:</b> <span class="eic-dealer">—</span><br><b>Availability:</b> <span class="eic-avail">—</span></div></div>';
   sel.appendChild(card);Array.prototype.forEach.call(sel.children,function(c){if(c!==card&&!c.classList.contains('enemy-info-card')&&c.id!=='sdPowerPanel'){c.style.setProperty('display','none','important');}});
+  /* Ensure power panel is always last child (below ship card) */
+  var pwrPnl=document.getElementById('sdPowerPanel');
+  if(pwrPnl&&sel.lastChild!==pwrPnl) sel.appendChild(pwrPnl);
   if(window.buildPowerPanel) window.buildPowerPanel();
   fetchInfo(name).then(function(info){
     if(!card.parentNode)return;
