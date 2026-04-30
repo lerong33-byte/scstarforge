@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.79-DEV</title>
+<title>SC-ShipForge v7.80-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.79-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.80-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1039,13 +1039,13 @@ option,optgroup{background:var(--bg2)}
   </div>
       <div class="tabs">
         <button class="tab on" data-t="lo" onclick="showTab('lo',this);toggleBuilderAside(true)">SC SHIPFORGE BUILDER</button>
-        <button class="tab" data-t="ships" onclick="showTab('ships',this);toggleBuilderAside(false)">SHIPS</button>
-        <button class="tab" data-t="wp" onclick="showTab('wp',this);toggleBuilderAside(false)">WEAPONS &amp; COMPS</button>
-        <button class="tab" data-t="lc" onclick="showTab('lc',this);toggleBuilderAside(false)">BUY LOCATIONS</button>
-        <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes();toggleBuilderAside(false)">PATCH NOTES</button>
-        <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}toggleBuilderAside(false)">⬡ COMPARE</button>
-        <div class="tab" onclick="showTab('sd',this);toggleBuilderAside(false)">⚔ SHOWDOWN</div>
-        <button class="tab" data-t="ss" onclick="showTab('ss',this);if(window.selShip)renderShipStats(window.selShip);toggleBuilderAside(false)">📊 SHIP STATS</button>
+        <button class="tab" data-t="ships" onclick="showTab('ships',this)">SHIPS</button>
+        <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS &amp; COMPS</button>
+        <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
+        <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
+        <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}">⬡ COMPARE</button>
+        <div class="tab" onclick="showTab('sd',this)">⚔ SHOWDOWN</div>
+        <button class="tab" data-t="ss" onclick="showTab('ss',this);if(window.selShip)renderShipStats(window.selShip)">📊 SHIP STATS</button>
       <button class="tab" id="feedbackBtn" onclick="toggleFeedback()" style="color:var(--accent);border-left:1px solid var(--border)">&#10022; FEEDBACK</button>
         <button class="tab" id="quickSaveBtn" onclick="quickSave();showTab('sv',this)" style="color:var(--green);border-left:1px solid var(--border)">&#9672; SAVE</button>
       </div>
@@ -6656,11 +6656,11 @@ window.addEventListener('load', function() {
     return 'https://starcitizen.tools/images/thumb/'+slug+'/80px-'+slug+'.jpg';
   }
 
-  function itemHTML(name, hl, isTarget, isSd) {
+  function itemHTML(name, hl, isTarget, isSd, pickFnOverride) {
     var d = SHIP_DATA&&SHIP_DATA[name]||{};
     var sz = d.compSz||'';
     var mfr = d.mfr||'';
-    var fn = isSd ? 'ss_pick_sd' : (isTarget ? 'ss_pick_tgt' : 'ss_pick_ship');
+    var fn = pickFnOverride || (isSd ? 'ss_pick_sd' : (isTarget ? 'ss_pick_tgt' : 'ss_pick_ship'));
     var safe = name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return '<div class="ss-item" onclick="'+fn+'(\''+safe+'\')" data-nm="'+name.replace(/"/g,'&quot;')+'">'+
       '<img class="ss-thumb" src="'+imgURL(name)+'" alt="" onerror="this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\')">'+
@@ -6671,7 +6671,7 @@ window.addEventListener('load', function() {
       '</div>';
   }
 
-  function buildHTML(q, isTarget, isSd) {
+  function buildHTML(q, isTarget, isSd, pickFnOverride) {
     var all = Object.keys(SHIP_DATA||{});
     var key = isSd?'sd':(isTarget?'tgt':'ship');
     var recent = _recent[key]||[];
@@ -6679,7 +6679,7 @@ window.addEventListener('load', function() {
       var html = '';
       if(recent.length){
         html += '<div class="ss-group-lbl">Recent</div>';
-        recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget,isSd); });
+        recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget,isSd,pickFnOverride); });
       }
       var byRole = {};
       all.forEach(function(n){
@@ -6689,7 +6689,7 @@ window.addEventListener('load', function() {
       });
       Object.keys(byRole).sort().forEach(function(role){
         html += '<div class="ss-group-lbl">'+role+' ('+byRole[role].length+')</div>';
-        byRole[role].sort().forEach(function(n){ html += itemHTML(n,n,isTarget,isSd); });
+        byRole[role].sort().forEach(function(n){ html += itemHTML(n,n,isTarget,isSd,pickFnOverride); });
       });
       return html;
     }
@@ -6702,16 +6702,16 @@ window.addEventListener('load', function() {
     results = results.slice(0,12);
     if(!results.length) return '<div class="ss-empty">No ships match &ldquo;'+q.trim()+'&rdquo;</div>';
     var html = '<div class="ss-group-lbl">'+results.length+' result'+(results.length===1?'':'s')+'</div>';
-    results.forEach(function(r){ html += itemHTML(r.name,r.hl,isTarget,isSd); });
+    results.forEach(function(r){ html += itemHTML(r.name,r.hl,isTarget,isSd,pickFnOverride); });
     return html;
   }
   function open(dropId){ var d=document.getElementById(dropId); if(d) d.classList.add('open'); }
   function close(dropId){ var d=document.getElementById(dropId); if(d){ d.classList.remove('open'); } }
-  function update(dropId, q, isTarget, isSd){
+  function update(dropId, q, isTarget, isSd, pickFnOverride){
     var d=document.getElementById(dropId);
     if(!d) return;
     var inner=d.querySelector('.ss-inner');
-    if(inner) inner.innerHTML = buildHTML(q,isTarget,isSd);
+    if(inner) inner.innerHTML = buildHTML(q,isTarget,isSd,pickFnOverride);
     open(dropId);
     _hi[isSd?'sd':(isTarget?'tgt':'ship')]=-1;
   }
@@ -6723,8 +6723,8 @@ window.addEventListener('load', function() {
   window.ss_key_ship  = function(e){ ssNav(e,'ss_drop_ship','ship',false); };
   window.ss_key_tgt   = function(e){ ssNav(e,'ss_drop_tgt', 'tgt', true);  };
   /* SC ShipForge Builder search — all in this block where update()/close()/ssNav() are in scope */
-  window.ss_open_sb   = function(q){ update('ss_drop_sb',q,false,true); };
-  window.ss_type_sb   = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sb',inp.value,false,true); };
+  window.ss_open_sb   = function(q){ update('ss_drop_sb',q,false,false,'ss_pick_sb'); };
+  window.ss_type_sb   = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sb',inp.value,false,false,'ss_pick_sb'); };
   window.ss_key_sb    = function(e){ ssNav(e,'ss_drop_sb','sb',false); };
   window.ss_pick_sb   = function(name){
     close('ss_drop_sb');
