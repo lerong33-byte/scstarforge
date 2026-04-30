@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.96-DEV</title>
+<title>SC-ShipForge v6.97-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.96-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.97-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7742,6 +7742,7 @@ function getDpsForSel(sel){var w=WEAPONS.find(function(x){return x.id===sel.valu
 function updateEnemyTotal(cfg){var dps=0;cfg.querySelectorAll(".sd-slot select").forEach(function(s){var row=s.closest(".sd-slot");var btn=row?row.querySelector("button"):null;if(btn&&btn.textContent==="OFF")return;var w=WEAPONS.find(function(x){return x.id===s.value});if(w&&(w.type==="energy"||w.type==="ballistic"))dps+=w.dps;});var el=document.getElementById("sdEnemyDpsVal");if(el)el.textContent=dps.toLocaleString();}
 window.runShowdown=function(en){
 var res=document.getElementById("sdResult");if(!res||!en)return;res.innerHTML="";
+var _psd=document.getElementById("pane-sd");if(_psd)_psd.classList.add("sd-active");
 var ship=SHIP_DATA[en];if(!ship)return;
 var cfg=document.createElement("div");cfg.className="sd-config";
 var hdr=document.createElement("div");hdr.style.cssText="display:flex;justify-content:space-between;padding:6px 8px;font-size:12px;font-weight:700;border-bottom:1px solid rgba(100,116,139,.3);margin-bottom:6px;";
@@ -7959,7 +7960,7 @@ window.runShowdown(nm);
 drop.style.display="flex";}
 inp.addEventListener("focus",function(){showList(this.value.toLowerCase().trim()||null);});
 inp.addEventListener("input",function(){var q=this.value.toLowerCase().trim();clr.style.display=q?"block":"none";showList(q||null);});
-clr.addEventListener("click",function(){inp.value="";drop.style.display="none";clr.style.display="none";var res=document.getElementById("sdResult");if(res)res.innerHTML="";window._pvpShip=null;document.getElementById("sdSelectedShip").style.display="none";});
+clr.addEventListener("click",function(){inp.value="";drop.style.display="none";clr.style.display="none";var res=document.getElementById("sdResult");if(res)res.innerHTML="";window._pvpShip=null;document.getElementById("sdSelectedShip").style.display="none";var _psd2=document.getElementById("pane-sd");if(_psd2)_psd2.classList.remove("sd-active");});
 document.addEventListener("click",function(e){if(!e.target.closest("#sdSearchWrap"))drop.style.display="none";});
 })();
 window.initShowdown=function(){};
@@ -8036,7 +8037,7 @@ showList(inp.value.toLowerCase().trim()||null);
 });
 inp.addEventListener("focus",function(){showList(this.value.toLowerCase().trim()||null);});
 inp.addEventListener("input",function(){var q=this.value.toLowerCase().trim();clr.style.display=q?"block":"none";showList(q||null);});
-clr.addEventListener("click",function(){inp.value="";drop.style.display="none";clr.style.display="none";var res=document.getElementById("sdResult");if(res)res.innerHTML="";window._pvpShip=null;document.getElementById("sdSelectedShip").style.display="none";});
+clr.addEventListener("click",function(){inp.value="";drop.style.display="none";clr.style.display="none";var res=document.getElementById("sdResult");if(res)res.innerHTML="";window._pvpShip=null;document.getElementById("sdSelectedShip").style.display="none";var _psd2=document.getElementById("pane-sd");if(_psd2)_psd2.classList.remove("sd-active");});
 document.addEventListener("click",function(e){if(!e.target.closest("#sdSearchWrap"))drop.style.display="none";});
 })();
 </script>
@@ -8194,74 +8195,162 @@ aside.lp .lp-card .lp-hd,aside.lp .lp-card .card-hd,aside.lp .lp-card h3,aside.l
 
 <!-- PHASE_4_SHOWDOWN_RESKIN -->
 <style id="phase4Showdown">
-#pane-sd{padding:14px 12px 8px!important;background:transparent!important;}
-#pane-sd .sd-hero{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-left:3px solid var(--hud-cyan)!important;border-radius:6px!important;padding:10px 14px!important;margin:0 0 10px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5)!important;}
-#pane-sd .sd-hero-title{font-family:var(--fmono)!important;font-size:14px!important;font-weight:800!important;color:var(--hud-cyan)!important;letter-spacing:2px!important;text-transform:uppercase!important;text-shadow:0 0 8px rgba(63,223,255,.3)!important;margin-bottom:8px!important;}
-#pane-sd .sd-role-bar{display:flex!important;gap:4px!important;flex-wrap:wrap!important;margin-top:8px!important;}
-#pane-sd .sd-role-bar > *{font-family:var(--fmono)!important;font-size:9px!important;font-weight:700!important;letter-spacing:1.5px!important;text-transform:uppercase!important;background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line)!important;color:var(--hud-t2)!important;padding:4px 10px!important;border-radius:3px!important;cursor:pointer!important;transition:all .1s!important;}
-#pane-sd .sd-role-bar > *:hover{border-color:var(--hud-cyan-dim)!important;color:var(--hud-t1)!important;}
-#pane-sd .sd-role-bar > .active,#pane-sd .sd-role-bar > .on{border-color:var(--hud-cyan)!important;color:var(--hud-cyan)!important;background:linear-gradient(180deg,#1c2c46,#11192c)!important;}
-#pane-sd .ss-wrap input,#pane-sd #sdShipInput{background:linear-gradient(180deg,#08101e,#10192e)!important;border:1px solid var(--hud-line-bright)!important;color:var(--hud-t1)!important;font-family:var(--fmono)!important;border-radius:3px!important;padding:6px 10px!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)!important;}
-#pane-sd .ss-wrap input:focus,#pane-sd #sdShipInput:focus{outline:none!important;border-color:var(--hud-cyan)!important;}
-#pane-sd .ss-drop,#pane-sd #sdShipDrop{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-radius:3px!important;box-shadow:0 4px 10px rgba(0,0,0,.5)!important;}
-#pane-sd .ss-drop > *:hover{background:#1c2c46!important;color:var(--hud-cyan)!important;}
-#pane-sd #sdResult{display:grid!important;grid-template-columns:1fr 360px!important;gap:10px!important;align-items:start!important;}
-#pane-sd .sd-config{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-radius:6px!important;padding:10px 12px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5)!important;}
-#pane-sd .sd-config h3,#pane-sd .sd-config h4{font-family:var(--fmono)!important;font-size:9px!important;font-weight:800!important;letter-spacing:3px!important;color:var(--hud-cyan)!important;text-transform:uppercase!important;border-bottom:1px solid var(--hud-line)!important;padding-bottom:5px!important;margin:0 0 8px!important;}
-#pane-sd .sd-slot{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line)!important;border-radius:4px!important;padding:6px 10px!important;margin-bottom:4px!important;display:flex!important;flex-direction:column!important;gap:4px!important;transition:border-color .1s!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;}
-#pane-sd .sd-slot:hover{border-color:var(--hud-cyan-dim)!important;}
-#pane-sd .sd-slot > div:first-child{display:flex!important;align-items:center!important;gap:6px!important;font-family:var(--fmono)!important;font-size:11px!important;color:var(--hud-t1)!important;font-weight:700!important;}
-#pane-sd .sd-slot select.slot-sel,#pane-sd select.slot-sel{background:linear-gradient(180deg,#08101e,#10192e)!important;border:1px solid var(--hud-line-bright)!important;color:var(--hud-t1)!important;font-family:var(--fmono)!important;font-size:10px!important;padding:4px 8px!important;border-radius:3px!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)!important;}
-#pane-sd select.slot-sel:focus{outline:none!important;border-color:var(--hud-cyan)!important;}
-#pane-sd .sd-slot button{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-radius:3px!important;color:var(--hud-green)!important;padding:2px 8px!important;font-family:var(--fmono)!important;font-size:9px!important;font-weight:800!important;letter-spacing:1px!important;cursor:pointer!important;}
-#pane-sd .sd-slot button:hover{filter:brightness(1.15);}
-#pane-sd .sd-stats{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-left:3px solid var(--hud-orange)!important;border-radius:6px!important;padding:12px 14px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5)!important;font-family:var(--fmono)!important;}
-#pane-sd .sd-stats > div, #pane-sd .sd-stats > span{font-size:11px!important;color:var(--hud-t2)!important;}
-#pane-sd .sd-stats b, #pane-sd .sd-stats strong{color:var(--hud-orange)!important;font-size:14px!important;text-shadow:0 0 6px rgba(255,138,60,.4)!important;}
-#pane-sd #sdSelectedShip{background:linear-gradient(180deg,#162338,#0d1729)!important;border:1px solid var(--hud-line-bright)!important;border-left:3px solid var(--hud-cyan)!important;border-radius:6px!important;padding:8px 14px!important;margin-bottom:10px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 2px rgba(0,0,0,.5)!important;}
-#pane-sd #sdSelName{font-family:var(--fmono)!important;font-size:14px!important;font-weight:800!important;color:var(--hud-t1)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;text-shadow:0 1px 0 rgba(0,0,0,.5)!important;}
-#pane-sd #sdSelRole{font-family:var(--fmono)!important;font-size:9px!important;color:var(--hud-cyan)!important;letter-spacing:2px!important;text-transform:uppercase!important;}
-#pane-sd #sdArena{background:linear-gradient(180deg,#0b1120,#070a14)!important;border:1px solid var(--hud-line)!important;border-radius:6px!important;padding:14px!important;margin-top:10px!important;}
-@media (max-width:1100px){#pane-sd #sdResult{grid-template-columns:1fr!important;}}
+/* ── Showdown pane base ── */
+#pane-sd{
+  padding:12px 16px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  box-sizing:border-box!important;
+}
 
-/* FIGHT button — make it big, orange, obvious */
-#pane-sd .sd-config > button, #pane-sd #sdResult > button, #pane-sd button:not(.sd-slot button):not(.sd-role-bar button):not(.sd-role-btn):not(.ss-clear){background:linear-gradient(180deg,#ff8a3c,#b35a1c)!important;border:1px solid #ff8a3c!important;color:#0a0e15!important;padding:10px 24px!important;font-family:var(--fmono)!important;font-size:13px!important;font-weight:800!important;letter-spacing:3px!important;text-transform:uppercase!important;border-radius:5px!important;cursor:pointer!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 2px 6px rgba(255,138,60,.4)!important;text-shadow:0 1px 0 rgba(255,255,255,.25)!important;transition:all .1s!important;margin:8px auto 4px!important;display:block!important;width:auto!important;min-width:200px!important;}
-#pane-sd .sd-config > button:hover, #pane-sd #sdResult > button:hover, #pane-sd button:not(.sd-slot button):not(.sd-role-bar button):not(.sd-role-btn):not(.ss-clear):hover{filter:brightness(1.1)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 12px rgba(255,138,60,.6)!important;}
+/* ── Search bar + role filter ── */
+#pane-sd .sd-hero{display:block!important;}
+#pane-sd .sd-role-bar{display:flex!important;gap:4px!important;flex-wrap:wrap!important;margin-top:6px!important;}
+#pane-sd .sd-role-btn,#pane-sd .sd-role-bar button{
+  padding:3px 10px!important;font-size:9px!important;font-family:var(--fmono)!important;
+  font-weight:700!important;letter-spacing:1px!important;text-transform:uppercase!important;
+  border-radius:3px!important;border:1px solid var(--hud-line)!important;
+  background:rgba(15,23,42,.6)!important;color:var(--hud-t2)!important;cursor:pointer!important;
+}
+#pane-sd .sd-role-btn.on,#pane-sd .sd-role-bar button.on{
+  background:rgba(56,210,130,.15)!important;border-color:var(--hud-green)!important;color:var(--hud-green)!important;
+}
 
-/* Verdict on top + center loadout */
-#pane-sd #sdResult{display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important;}
-#pane-sd #sdResult > .sd-verdict{order:-1!important;width:100%!important;max-width:900px!important;text-align:center!important;font-family:var(--fmono)!important;font-size:24px!important;font-weight:800!important;letter-spacing:6px!important;text-transform:uppercase!important;padding:18px 24px!important;border-radius:8px!important;}
-#pane-sd #sdResult > .sd-verdict.sd-win{background:linear-gradient(180deg,#1a3a25,#0d2014)!important;border:1px solid #4ce0a3!important;border-left:4px solid #4ce0a3!important;color:#4ce0a3!important;text-shadow:0 0 10px rgba(76,224,163,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 16px rgba(76,224,163,.2)!important;}
-#pane-sd #sdResult > .sd-verdict.sd-loss,#pane-sd #sdResult > .sd-verdict.sd-lose{background:linear-gradient(180deg,#3a1a25,#200d14)!important;border:1px solid #ff5e6c!important;border-left:4px solid #ff5e6c!important;color:#ff5e6c!important;text-shadow:0 0 10px rgba(255,94,108,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 16px rgba(255,94,108,.2)!important;}
-#pane-sd #sdResult > .sd-config{width:100%!important;max-width:900px!important;}
-#pane-sd #sdResult > .sd-stats{width:100%!important;max-width:900px!important;}
+/* ── Slot rows ── */
+#pane-sd .sd-slot{
+  background:linear-gradient(180deg,#162338,#0d1729)!important;
+  border:1px solid var(--hud-line)!important;border-radius:4px!important;
+  padding:6px 10px!important;margin-bottom:4px!important;
+  display:flex!important;flex-direction:column!important;gap:4px!important;
+  transition:border-color .1s!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+#pane-sd .sd-slot > div:first-child{
+  display:flex!important;align-items:center!important;gap:6px!important;
+  font-family:var(--fmono)!important;font-size:11px!important;
+  color:var(--hud-t1)!important;font-weight:700!important;
+}
+#pane-sd .sd-slot select{
+  width:100%!important;padding:4px 6px!important;
+  background:rgba(15,23,42,.8)!important;border:1px solid rgba(100,116,139,.3)!important;
+  border-radius:3px!important;color:var(--hud-t1)!important;font-size:10px!important;
+}
 
-/* FIGHT button: keep visible — kill .sd-config overflow + make it the first child via CSS order */
-#pane-sd .sd-config{overflow:visible!important;max-height:none!important;display:flex!important;flex-direction:column!important;}
-/* The FIGHT button (button direct child of .sd-config) goes to the TOP of the card */
-#pane-sd .sd-config > button{order:-10!important;align-self:center!important;margin:0 auto 12px!important;position:sticky!important;top:8px!important;z-index:5!important;}
+/* ── Stats panel ── */
+#pane-sd .sd-stats{
+  background:rgba(15,23,42,.5)!important;
+  border:1px solid var(--hud-line)!important;
+  border-radius:6px!important;padding:10px!important;
+}
 
-/* === Opponent preview image: shrink + correct 16:9 aspect ratio === */
-/* The ship image is naturally 16:9 (2672x1503) but was forced into 380x400 portrait */
-#pane-sd #sdSelectedShip{max-width:640px!important;margin:8px auto!important;}
-#pane-sd .enemy-info-card{display:grid!important;grid-template-columns:1fr 200px!important;gap:10px!important;width:100%!important;height:auto!important;align-items:start!important;}
-#pane-sd .enemy-info-card img{width:100%!important;height:auto!important;aspect-ratio:16/9!important;object-fit:cover!important;object-position:50% 50%!important;border-radius:6px!important;display:block!important;}
-/* The right-side info column (manufacturer/role/crew/etc.) — keep tight */
-#pane-sd .enemy-info-card > *:not(img){font-size:10px!important;}
+/* ── FIGHT button ── */
+#pane-sd .sd-config > button{
+  background:linear-gradient(180deg,#ff8a3c,#b35a1c)!important;
+  border:1px solid #ff8a3c!important;color:#0a0e15!important;
+  padding:10px 24px!important;font-family:var(--fmono)!important;
+  font-size:13px!important;font-weight:800!important;letter-spacing:3px!important;
+  text-transform:uppercase!important;border-radius:5px!important;cursor:pointer!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 2px 6px rgba(255,138,60,.4)!important;
+  transition:all .1s!important;display:block!important;width:100%!important;margin:8px 0 4px!important;
+}
+#pane-sd .sd-config > button:hover{
+  filter:brightness(1.1)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 12px rgba(255,138,60,.6)!important;
+}
 
-/* Remove RSI Pledge Store + Wiki Page buttons from opponent preview */
-#pane-sd .enemy-info-card a[href*='robertsspaceindustries.com'],
-#pane-sd .enemy-info-card a[href*='starcitizen.tools'],
-#pane-sd .enemy-info-card a[href*='wiki']{display:none!important;}
-/* In case they're rendered as buttons not anchors */
-#pane-sd .enemy-info-card .pledge-link,
-#pane-sd .enemy-info-card .wiki-link,
-#pane-sd .enemy-info-card .ext-link,
-#pane-sd .enemy-info-card .external-link{display:none!important;}
+/* ── Enemy info card ── */
+.enemy-info-card .eic-actions{display:none!important;}
+#pane-sd #sdSelectedShip > button{display:none!important;}
+.enemy-info-card .eic-img-wrap{min-height:180px!important;max-height:220px!important;}
+.enemy-info-card .eic-name{font-size:18px!important;letter-spacing:2px!important;}
 
-/* Remove Configure Loadout button from opponent preview */
-#pane-sd .enemy-info-card .eic-configure,
-#pane-sd .enemy-info-card button.eic-configure{display:none!important;}
+/* ── Verdict ── */
+#pane-sd .sd-verdict{
+  text-align:center!important;font-family:var(--fmono)!important;
+  font-size:20px!important;font-weight:800!important;letter-spacing:5px!important;
+  text-transform:uppercase!important;padding:14px 20px!important;border-radius:6px!important;
+  margin-bottom:8px!important;
+}
+#pane-sd .sd-verdict.sd-win{
+  background:linear-gradient(180deg,#1a3a25,#0d2014)!important;
+  border:1px solid #4ce0a3!important;border-left:4px solid #4ce0a3!important;
+  color:#4ce0a3!important;text-shadow:0 0 10px rgba(76,224,163,.5)!important;
+}
+#pane-sd .sd-verdict.sd-loss,#pane-sd .sd-verdict.sd-lose{
+  background:linear-gradient(180deg,#3a1a25,#200d14)!important;
+  border:1px solid #ff5e6c!important;border-left:4px solid #ff5e6c!important;
+  color:#ff5e6c!important;text-shadow:0 0 10px rgba(255,94,108,.5)!important;
+}
+
+/* ── 3-COLUMN LAYOUT when ship is selected (sd-active class added by JS) ── */
+#pane-sd.sd-active{
+  display:grid!important;
+  grid-template-columns:280px 1fr!important;
+  grid-template-rows:auto auto 1fr!important;
+  grid-template-areas:
+    "hero hero"
+    "sel  sel"
+    "card result"!important;
+  gap:12px!important;
+  align-items:start!important;
+  height:calc(100vh - 54px)!important;
+  overflow-y:auto!important;
+}
+#pane-sd.sd-active .sd-hero{grid-area:hero!important;}
+#pane-sd.sd-active #sdSelectedShip{grid-area:sel!important;}
+#pane-sd.sd-active #sdArena{
+  grid-area:card!important;
+  position:sticky!important;top:0!important;
+  align-self:start!important;
+}
+#pane-sd.sd-active #sdResult{
+  grid-area:result!important;
+  overflow-y:auto!important;
+  max-height:calc(100vh - 120px)!important;
+}
+
+/* Ship card column: fill width, no overflow on info rows */
+#pane-sd.sd-active #sdArena .enemy-info-card{
+  width:100%!important;border-radius:8px!important;overflow:hidden!important;
+}
+#pane-sd.sd-active #sdArena .eic-info{
+  max-height:none!important;overflow:visible!important;
+}
+
+/* Result column: loadout + stats side by side */
+#pane-sd.sd-active #sdResult .sd-config{
+  max-height:none!important;overflow:visible!important;margin:0!important;
+}
+#pane-sd.sd-active #sdResult .sd-config > div[style*="grid-template-columns"]{
+  grid-template-columns:1fr 240px!important;
+  gap:10px!important;align-items:start!important;
+}
+/* Loadout panel: no height cap — show ALL weapon mounts */
+#pane-sd.sd-active #sdResult .sd-config > div[style*="grid-template-columns"] > div:first-child{
+  max-height:none!important;overflow:visible!important;
+}
+/* Stats panel: sticky */
+#pane-sd.sd-active #sdResult .sd-stats{
+  position:sticky!important;top:0!important;
+  max-height:calc(100vh - 140px)!important;overflow-y:auto!important;
+}
+
+/* Enemy Total DPS bar */
+#pane-sd.sd-active #sdResult .sd-config > div[id="sdEnemyDpsVal"],
+#pane-sd.sd-active #sdResult .sd-config > div:has(#sdEnemyDpsVal){
+  max-width:none!important;width:100%!important;
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width:900px){
+  #pane-sd.sd-active{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"hero""sel""card""result"!important;
+    height:auto!important;
+  }
+  #pane-sd.sd-active #sdArena{position:relative!important;}
+  #pane-sd.sd-active #sdResult{max-height:none!important;}
+}
 </style>
 
 <!-- FIGHT_BUTTON_FIX -->
@@ -8431,115 +8520,19 @@ tick();
 
 <!-- SHOWDOWN_TIGHTEN -->
 <style id="showdownTighten">
-/* Hide any stray buttons in the selected ship area */
-#pane-sd #sdSelectedShip > button{display:none!important;}
-/* Hide the entire actions row — no buttons remain */
-.enemy-info-card .eic-actions{display:none!important;}
-/* Showdown pane: scrollable, full height */
-#pane-sd{height:auto!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;}
-/* Slightly tighten the card image height for a cleaner look */
-.enemy-info-card .eic-img-wrap{min-height:210px!important;max-height:240px!important;}
-/* Improve name overlay typography */
-.enemy-info-card .eic-name{font-size:20px!important;letter-spacing:2px!important;}
-
-/* ── v6.96-DEV: 3-COLUMN SHOWDOWN LAYOUT (CSS only, no JS changes) ── */
-
-/* pane-sd: full-height scrollable container */
-#pane-sd{
-  display:flex!important;
-  flex-direction:column!important;
-  padding:12px 16px!important;
-  gap:10px!important;
-  height:calc(100vh - 54px)!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
+/* Minimal overrides — all layout handled by phase4Showdown above */
+#pane-sd #sdArena{
+  background:linear-gradient(180deg,#0b1120,#070a14)!important;
+  border:1px solid var(--hud-line)!important;
+  border-radius:6px!important;padding:10px!important;
 }
-
-/* Hero + search bar: full width, no shrink */
-#pane-sd .sd-hero{flex-shrink:0!important;}
-#pane-sd #sdSelectedShip{flex-shrink:0!important;}
-
-/* When a ship is selected, lay out sdArena + sdResult side by side */
-#pane-sd:has(#sdArena .enemy-info-card){
-  display:grid!important;
-  grid-template-areas:
-    "hero hero"
-    "sel  sel"
-    "card result"!important;
-  grid-template-columns:300px 1fr!important;
-  grid-template-rows:auto auto auto!important;
-  align-items:start!important;
-  gap:12px!important;
+#pane-sd #sdSelName{
+  font-family:var(--fmono)!important;font-size:13px!important;font-weight:800!important;
+  color:var(--hud-t1)!important;letter-spacing:1.5px!important;text-transform:uppercase!important;
 }
-#pane-sd .sd-hero{grid-area:hero;}
-#pane-sd #sdSelectedShip{grid-area:sel;}
-#pane-sd #sdArena{grid-area:card;position:sticky;top:0;align-self:start;}
-#pane-sd #sdResult{grid-area:result;}
-
-/* Ship card: fixed width, no overflow clipping on info rows */
-#pane-sd #sdArena .enemy-info-card{
-  width:100%!important;
-  max-width:300px!important;
-  border-radius:8px!important;
-  overflow:hidden!important;
-}
-#pane-sd #sdArena .eic-img-wrap{
-  min-height:170px!important;
-  max-height:190px!important;
-}
-#pane-sd #sdArena .eic-info{
-  max-height:none!important;
-  overflow:visible!important;
-}
-
-/* sd-config: no height cap, let it grow naturally */
-#pane-sd #sdResult .sd-config{
-  max-height:none!important;
-  overflow:visible!important;
-  margin-top:0!important;
-}
-
-/* Inner 2-col grid (loadout L + stats R): give stats a fixed 260px column */
-#pane-sd #sdResult .sd-config > div[style*="grid-template-columns"]{
-  grid-template-columns:1fr 260px!important;
-  gap:12px!important;
-  align-items:start!important;
-}
-
-/* Loadout panel (L): remove the 380px height cap so ALL weapon mounts show */
-#pane-sd #sdResult .sd-config > div[style*="grid-template-columns"] > div:first-child{
-  max-height:none!important;
-  overflow:visible!important;
-}
-
-/* Stats panel (R): sticky so it stays in view while scrolling the loadout */
-#pane-sd #sdResult .sd-stats{
-  position:sticky!important;
-  top:0!important;
-  max-height:calc(100vh - 160px)!important;
-  overflow-y:auto!important;
-}
-
-/* FIGHT button: full width */
-#pane-sd #sdResult .sd-config > button{
-  width:100%!important;
-  max-width:none!important;
-  margin:8px 0 0!important;
-}
-
-/* Enemy Total DPS bar: full width */
-#pane-sd #sdResult .sd-config > div:last-of-type{
-  max-width:none!important;
-  width:100%!important;
-}
-
-/* Fallback for browsers without :has() */
-@supports not selector(:has(*)){
-  #pane-sd{
-    display:flex!important;
-    flex-direction:column!important;
-    overflow-y:auto!important;
-  }
+#pane-sd #sdSelRole{
+  font-family:var(--fmono)!important;font-size:9px!important;
+  color:var(--hud-cyan)!important;letter-spacing:2px!important;text-transform:uppercase!important;
 }
 </style>
 </body>
