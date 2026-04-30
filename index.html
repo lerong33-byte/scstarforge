@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.36-DEV</title>
+<title>SC-ShipForge v7.37-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.36-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.37-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7894,6 +7894,18 @@ function buildEnemyLoadout(enemyName){
     var wLoc=wn?(wn.loc||''):'';
     var wType=wn?(wn.type||''):'';
     var typeCol=wType==='ballistic'?'#f59e0b':wType==='energy'?'#60a5fa':'#a78bfa';
+    var wSubtype=(function(){
+      if(!wn)return '';
+      var n=wn.name.toLowerCase(),t=wn.type;
+      if(n.includes('neutron'))return 'Neutron Repeater';
+      if(n.includes('gatling'))return 'Ballistic Gatling';
+      if(n.includes('scatter'))return 'Scatter Gun';
+      if(n.includes('cannon'))return t==='ballistic'?'Ballistic Cannon':'Laser Cannon';
+      if(n.includes('repeater'))return t==='ballistic'?'Ballistic Repeater':'Laser Repeater';
+      if(n.includes('crossbow'))return 'Ballistic Crossbow';
+      return t==='ballistic'?'Ballistic Repeater':'Laser Repeater';
+    })();
+    var subtypeCol=wSubtype.includes('Cannon')?'#f97316':wSubtype.includes('Gatling')?'#facc15':wSubtype.includes('Scatter')?'#e879f9':wSubtype.includes('Neutron')?'#34d399':wSubtype.includes('Ballistic')?'#f59e0b':'#60a5fa';
 
     wHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';margin-bottom:8px;overflow:hidden">';
     /* Header row */
@@ -7902,7 +7914,7 @@ function buildEnemyLoadout(enemyName){
       +'<span class="sz-chip sz-s'+szNum+'" style="flex-shrink:0;font-size:11px;padding:2px 7px">S'+szNum+'</span>'
       +'<span style="flex:1;min-width:0">'
         +'<span style="font-size:14px;font-weight:700;color:#f1f5f9;font-family:var(--fmono);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sumName+(gunCount>1?' <span style="color:'+RED_DIM+';font-size:11px">&times;'+gunCount+'</span>':'')+'</span>'
-        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">'+sl.lbl+(wType?' &middot; <span style="color:'+typeCol+'">'+wType+'</span>':'')+'</span>'
+        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">'+sl.lbl+(wSubtype?' &middot; <span style="background:rgba(0,0,0,.4);border:1px solid '+subtypeCol+';border-radius:20px;padding:1px 8px;font-size:11px;color:'+subtypeCol+'">'+wSubtype+'</span>':'')+'</span>'
       +'</span>'
       +(sumAlpha?'<span style="font-size:12px;font-family:var(--fmono);color:#e2e8f0;flex-shrink:0;margin-right:10px">'+sumAlpha+' <span style="font-size:10px;color:var(--t3)">α</span></span>':'')
       +(sumDps?'<span style="font-size:14px;font-weight:700;font-family:var(--fmono);color:'+RED+';flex-shrink:0">'+sumDps+' <span style="font-size:10px;color:var(--t3);font-weight:400">DPS</span></span>':'')
