@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.4-DEV</title>
+<title>SC-ShipForge v8.5-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1322,6 +1322,10 @@ option,optgroup{background:var(--bg2)}
               <div class="sv-exp-btn" onclick="exportLoadoutAs('txt')">
                 <span class="sv-exp-btn-icon">&#128203;</span>
                 <span class="sv-exp-btn-lbl">TXT</span>
+              </div>
+              <div class="sv-exp-btn" onclick="exportLoadoutAs('gsheets')" title="Open in Google Sheets">
+                <span class="sv-exp-btn-icon" style="font-size:14px;color:#34a853">&#9783;</span>
+                <span class="sv-exp-btn-lbl">SHEETS</span>
               </div>
             </div>
           </div>
@@ -6474,6 +6478,17 @@ function _doExport(lo, fmt) {
     _downloadBlob(xml, fname+'.xls', 'application/vnd.ms-excel');
   } else if (fmt === 'pdf') {
     _exportPDF(lo, rows, fname);
+  } else if (fmt === 'gsheets') {
+    /* Build CSV then open Google Sheets import dialog */
+    var csv = 'Section,Label,Value\n' + rows.map(function(r){
+      return '"'+r.section+'","'+r.label+'","'+String(r.value).replace(/"/g,'""')+'"';
+    }).join('\n');
+    /* Download CSV first, then open Sheets — user imports the file */
+    _downloadBlob(csv, fname+'.csv', 'text/csv');
+    setTimeout(function(){
+      showToast('CSV downloaded \u2193 — now opening Google Sheets to import it');
+      window.open('https://sheets.new', '_blank');
+    }, 800);
   } else {
     showToast('Unknown format: ' + fmt);
   }
