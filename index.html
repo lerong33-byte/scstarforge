@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.77-DEV</title>
+<title>SC-ShipForge v7.78-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.77-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.78-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -6722,6 +6722,39 @@ window.addEventListener('load', function() {
   window.ss_type_tgt  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_tgt', inp.value,true);  };
   window.ss_key_ship  = function(e){ ssNav(e,'ss_drop_ship','ship',false); };
   window.ss_key_tgt   = function(e){ ssNav(e,'ss_drop_tgt', 'tgt', true);  };
+  /* SC ShipForge Builder search — all in this block where update()/close()/ssNav() are in scope */
+  window.ss_open_sb   = function(q){ update('ss_drop_sb',q,false,true); };
+  window.ss_type_sb   = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sb',inp.value,false,true); };
+  window.ss_key_sb    = function(e){ ssNav(e,'ss_drop_sb','sb',false); };
+  window.ss_pick_sb   = function(name){
+    close('ss_drop_sb');
+    var inp=document.getElementById('sbShipInput');
+    if(inp){inp.value=name;inp.classList.add('has-val');}
+    var clr=document.getElementById('sbShipClear');
+    if(clr) clr.classList.add('show');
+    window._sbShip=name;
+    if(window.buildShipBuilder) window.buildShipBuilder(name);
+  };
+  window.ss_clear_sb  = function(){
+    var inp=document.getElementById('sbShipInput');
+    if(inp){inp.value='';inp.classList.remove('has-val');}
+    var clr=document.getElementById('sbShipClear');
+    if(clr) clr.classList.remove('show');
+    window._sbShip=null;
+    var res=document.getElementById('sbResult');
+    if(res) res.innerHTML='';
+    var pp=document.getElementById('sbPowerPanel');
+    if(pp){pp.style.display='none';pp.innerHTML='';}
+    setTimeout(function(){
+      var i=document.getElementById('sbShipInput');
+      if(i){i.focus();}
+      update('ss_drop_sb','',false,true);
+    },10);
+  };
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#sbSearchWrap')) close('ss_drop_sb');
+  });
+  _hi['sb'] = -1;
 
   function ssNav(e,dropId,key,isTarget){
     var d=document.getElementById(dropId);
@@ -8568,40 +8601,7 @@ function buildEnemyLoadout(enemyName,_targetId){
 }
 
 function buildPvpConfig(enemyName){buildEnemyLoadout(enemyName);}
-/* ── SC ShipForge Builder search ── */
-(function(){
-  window.ss_open_sb  = function(q){ update('ss_drop_sb',q,false,true); };
-  window.ss_type_sb  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sb',inp.value,false,true); };
-  window.ss_key_sb   = function(e){ ssNav(e,'ss_drop_sb','sb',false); };
-  window.ss_pick_sb  = function(name){
-    close('ss_drop_sb');
-    var inp=document.getElementById('sbShipInput');
-    if(inp){inp.value=name;inp.classList.add('has-val');}
-    var clr=document.getElementById('sbShipClear');
-    if(clr) clr.classList.add('show');
-    window._sbShip=name;
-    buildShipBuilder(name);
-  };
-  window.ss_clear_sb = function(){
-    var inp=document.getElementById('sbShipInput');
-    if(inp){inp.value='';inp.classList.remove('has-val');}
-    document.getElementById('sbShipClear')?.classList.remove('show');
-    window._sbShip=null;
-    var res=document.getElementById('sbResult');
-    if(res) res.innerHTML='';
-    var pp=document.getElementById('sbPowerPanel');
-    if(pp){pp.style.display='none';pp.innerHTML='';}
-    setTimeout(function(){
-      var i=document.getElementById('sbShipInput');
-      if(i){i.focus();}
-      update('ss_drop_sb','',false,true);
-    },10);
-  };
-  document.addEventListener('click',function(e){
-    if(!e.target.closest('#sbSearchWrap')) close('ss_drop_sb');
-  });
-  _hi['sb'] = -1;
-})();
+/* SC ShipForge Builder search functions moved to block 1 (where update/close/ssNav are in scope) */
 
 function buildShipBuilder(shipName){
   /* Reuse buildEnemyLoadout engine targeting sbResult */
