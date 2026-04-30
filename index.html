@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.69-DEV</title>
+<title>SC-ShipForge v7.70-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.69-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.70-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -8722,20 +8722,27 @@ function buildPowerPanel(){
     h+='<div style="width:100%;height:2px;background:rgba(255,100,0,0.4);border-radius:1px;margin-bottom:4px"></div>';
     /* Normal pips (1-10) */
     if(unitCnt>1){
-      /* Individual pips per unit — solid bars, per-unit disabled state dims that unit's pips */
+      /* 1 solid block per unit — each block = ppu pips tall, clicking sets power to that unit's pip threshold */
+      /* Block height = ppu*PIP_H + (ppu-1)*PIP_GAP to exactly match the height of ppu individual pips */
+      var blockH=ppu*PIP_H+(ppu-1)*PIP_GAP;
+      var unitSysBase=sys.k==='shields'?'sg':'cooler';
       h+='<div style="display:flex;flex-direction:column;align-items:center;gap:'+PIP_GAP+'px;width:100%;margin-bottom:4px">';
-      /* Render from top (highest pip) to bottom (pip 1) */
-      for(var p=NORM_PIPS;p>=1;p--){
-        var unitIdx=Math.floor((p-1)/ppu); /* 0 = unit 1 (pips 1..ppu), 1 = unit 2 (pips ppu+1..2*ppu) */
-        /* Check if this unit is disabled */
-        var unitSysBase=sys.k==='shields'?'sg':'cooler';
-        var unitDisabled=typeof _eSysEnabled!=='undefined'&&_eSysEnabled[unitSysBase+'_'+unitIdx]===false;
-        var filled=!navLocked&&!unitDisabled&&p<=val;
-        var pipOpacity=unitDisabled?'0.2':(filled?'1':'0.35');
-        var pipBg=filled?sysColor:(unitDisabled?'rgba(255,80,80,0.08)':'rgba(255,255,255,0.08)');
-        h+='<div onclick="'+(navLocked||unitDisabled?'':'sdSetPwrPip(\''+sys.k+'\','+p+')')+' " '
-          +'style="width:100%;height:'+PIP_H+'px;min-height:'+PIP_H+'px;border-radius:2px;border:1px solid rgba(0,0,0,0.3);box-sizing:border-box;cursor:'+(navLocked||unitDisabled?'not-allowed':'pointer')+';'
-          +'background:'+pipBg+';opacity:'+pipOpacity+'">'
+      /* Render from top unit (highest) to bottom unit (unit 0) */
+      for(var ui=unitCnt-1;ui>=0;ui--){
+        var unitDisabled=typeof _eSysEnabled!=='undefined'&&_eSysEnabled[unitSysBase+'_'+ui]===false;
+        /* Unit is "filled" if current power val covers at least 1 pip of this unit's range */
+        var uPipLo=ui*ppu+1; /* lowest pip belonging to this unit */
+        var filled=!navLocked&&!unitDisabled&&val>=uPipLo;
+        /* Clicking the block sets power to the top pip of this unit's range */
+        var uPipHi=(ui===unitCnt-1)?NORM_PIPS:(ui+1)*ppu;
+        var clickVal=filled?uPipLo-1:uPipHi; /* toggle: if filled click turns it off (set to pip below), else fills it */
+        if(clickVal<0)clickVal=0;
+        var blockOpacity=unitDisabled?'0.2':'1';
+        var blockBg=unitDisabled?'rgba(255,80,80,0.10)':(filled?sysColor:'rgba(255,255,255,0.08)');
+        var blockBorder=unitDisabled?'1px solid rgba(255,80,80,0.25)':'1px solid rgba(0,0,0,0.3)';
+        h+='<div onclick="'+(navLocked||unitDisabled?'':'sdSetPwrPip(\''+sys.k+'\','+clickVal+')')+' " '
+          +'style="width:100%;height:'+blockH+'px;min-height:'+blockH+'px;border-radius:3px;border:'+blockBorder+';box-sizing:border-box;cursor:'+(navLocked||unitDisabled?'not-allowed':'pointer')+';'
+          +'background:'+blockBg+';opacity:'+blockOpacity+'">' 
           +'</div>';
       }
       h+='</div>';
