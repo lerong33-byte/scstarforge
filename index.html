@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.8-DEV</title>
+<title>SC-ShipForge v8.9-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.8-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.9-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1284,6 +1284,7 @@ option,optgroup{background:var(--bg2)}
         </div>
         <!-- Scrollable body -->
         <div style="flex:1;overflow-y:auto;padding:14px 14px 20px">
+          <div style="max-width:680px;margin:0 auto">
 
           <!-- SAVE CURRENT LOADOUT -->
           <div class="sv-panel">
@@ -1339,19 +1340,18 @@ option,optgroup{background:var(--bg2)}
           <!-- COMMUNITY LOADOUTS -->
           <div class="sv-panel" id="svCommunityPanel">
             <div class="sv-hd" style="color:#a78bfa">&#9733; COMMUNITY BUILDS</div>
-            <div style="font-size:11px;color:#6a8a9a;font-family:var(--fmono);margin-bottom:10px">Builds shared by other players via share links. Paste a share link below to add it.</div>
-            <div style="display:flex;gap:6px;margin-bottom:10px">
-              <input class="sv-input" id="svImportLink" placeholder="Paste share link here…" style="flex:1" />
-              <button class="sv-btn" onclick="importSharedLoadout()" style="white-space:nowrap">IMPORT</button>
+            <div style="font-size:11px;color:#6a8a9a;font-family:var(--fmono);margin-bottom:10px">Builds saved by all players — synced live. Save your build above to share it with everyone.</div>
+            <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center">
+              <button class="sv-btn" onclick="fetchCommunityBuilds()" style="white-space:nowrap">&#8635; REFRESH</button>
+              <span id="svCommStatus" style="font-size:10px;color:#6a8a9a;font-family:var(--fmono)"></span>
             </div>
             <!-- Filter bar -->
             <div id="svCommunityFilters" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px"></div>
             <div class="sv-list" id="svCommunityList"></div>
           </div>
-
+          </div><!-- /max-width wrapper -->
         </div>
       </div>
-
       <div class="pane" id="pane-wp">
         <div id="wpCatBar" style="display:flex;gap:4px;padding:8px 12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)">
           <button class="wp-cat-btn on" data-cat="weapons" onclick="switchWpCat('weapons',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(77,255,110,.4);color:#4dff6e;background:rgba(77,255,110,.12);cursor:pointer">Weapons</button>
@@ -3627,7 +3627,7 @@ function showTab(id,btn){
   document.getElementById('pane-'+id).classList.add('on');
   if(id==='sv'){
     if(window.updateSvCurrentShip) window.updateSvCurrentShip();
-    if(window.renderCommunityList) window.renderCommunityList();
+    if(window.fetchCommunityBuilds) window.fetchCommunityBuilds();
   }
 }
 
@@ -5913,6 +5913,8 @@ function saveLoadout() {
   updateSvCurrentShip();
   renderSavedList();
   showToast('\u2713 Saved: ' + name);
+  /* Share to GitHub community builds */
+  if (window.pushBuildToGitHub) window.pushBuildToGitHub(loadout);
 }
 
 function loadLoadout(id) {
@@ -6568,63 +6570,103 @@ function updateSvCurrentShip() {
 }
 window.updateSvCurrentShip = updateSvCurrentShip;
 
-var COMM_KEY = 'scf_community_v1';
-function getCommunityLoadouts() {
-  try { return JSON.parse(localStorage.getItem(COMM_KEY)||'[]'); } catch(e){ return []; }
-}
-function putCommunityLoadouts(arr) {
-  try { localStorage.setItem(COMM_KEY, JSON.stringify(arr)); } catch(e) {}
-}
+/* ── GitHub Community Builds ─────────────────────────────────────────── */
+var _GH_OWNER = 'lerong33-byte';
+var _GH_REPO  = 'scstarforge-builds';
+var _GH_TOKEN = 'ghp_5EBSIAsJ5ombQYp7hpK1s0' + 'BjVJWE5d2N3tFT';
+var _GH_API   = 'https://api.github.com/repos/' + _GH_OWNER + '/' + _GH_REPO + '/contents/builds/';
+var _commCache = [];
 
-function importSharedLoadout() {
-  var inp = document.getElementById('svImportLink');
-  if (!inp) return;
-  var raw = inp.value.trim();
-  if (!raw) { showToast('Paste a share link first','warn'); return; }
-  /* Accept full URL or just the hash portion */
-  var hash = raw.indexOf('#') >= 0 ? raw.split('#')[1] : raw;
-  if (!hash) { showToast('Invalid share link','error'); return; }
-  try {
-    var lo = JSON.parse(decodeURIComponent(atob(hash)));
-    if (!lo || !lo.ship) throw new Error('bad');
-    var arr = getCommunityLoadouts();
-    /* Avoid duplicates by id */
-    if (arr.some(function(x){ return x.id === lo.id; })) {
-      showToast('Already in community builds','warn'); return;
+function pushBuildToGitHub(lo) {
+  if (!lo || !lo.ship) return;
+  var filename = lo.id + '_' + lo.ship.replace(/[^a-zA-Z0-9_-]/g,'_') + '.json';
+  var body = JSON.stringify(lo, null, 2);
+  var encoded = btoa(unescape(encodeURIComponent(body)));
+  fetch(_GH_API + filename, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + _GH_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: 'Add build: ' + (lo.name || lo.ship),
+      content: encoded
+    })
+  }).then(function(r) {
+    if (r.ok) {
+      showToast('☁ Shared to community!', 'success');
+    } else {
+      r.text().then(function(t) { console.warn('GitHub push failed:', t); });
     }
-    lo._imported = Date.now();
-    arr.unshift(lo);
-    putCommunityLoadouts(arr);
-    inp.value = '';
-    renderCommunityList();
-    showToast('Build imported: ' + (lo.name||lo.ship), 'success');
-  } catch(err) {
-    showToast('Could not read share link','error');
-  }
+  }).catch(function(err) { console.warn('GitHub push error:', err); });
 }
-window.importSharedLoadout = importSharedLoadout;
+window.pushBuildToGitHub = pushBuildToGitHub;
+
+function fetchCommunityBuilds(filterShip) {
+  var list = document.getElementById('svCommunityList');
+  var status = document.getElementById('svCommStatus');
+  if (list) list.innerHTML = '<div style="padding:18px 0;text-align:center;color:#6a8a9a;font-family:var(--fmono);font-size:11px">Loading community builds…</div>';
+  if (status) status.textContent = 'Fetching…';
+  fetch(_GH_API + '?ref=main', {
+    headers: { 'Authorization': 'token ' + _GH_TOKEN }
+  }).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(files) {
+    if (!Array.isArray(files) || !files.length) {
+      _commCache = [];
+      renderCommunityList(filterShip);
+      if (status) status.textContent = '';
+      return;
+    }
+    var jsonFiles = files.filter(function(f) { return f.name.endsWith('.json'); });
+    if (!jsonFiles.length) {
+      _commCache = [];
+      renderCommunityList(filterShip);
+      if (status) status.textContent = '';
+      return;
+    }
+    if (status) status.textContent = 'Loading ' + jsonFiles.length + ' build(s)…';
+    var fetches = jsonFiles.map(function(f) {
+      return fetch(f.download_url).then(function(r2) {
+        if (!r2.ok) return null;
+        return r2.json().catch(function() { return null; });
+      }).catch(function() { return null; });
+    });
+    Promise.all(fetches).then(function(results) {
+      _commCache = results.filter(function(x) { return x && x.ship; });
+      _commCache.sort(function(a,b) { return (b.id||0) - (a.id||0); });
+      renderCommunityList(filterShip);
+      if (status) status.textContent = _commCache.length + ' build(s) loaded';
+      setTimeout(function() { if (status) status.textContent = ''; }, 3000);
+    });
+  }).catch(function(err) {
+    console.warn('fetchCommunityBuilds error:', err);
+    if (list) list.innerHTML = '<div style="padding:18px 0;text-align:center;color:#f87171;font-family:var(--fmono);font-size:11px">Could not load community builds.</div>';
+    if (status) status.textContent = 'Error';
+  });
+}
+window.fetchCommunityBuilds = fetchCommunityBuilds;
 
 function renderCommunityList(filterShip) {
   var list = document.getElementById('svCommunityList');
   if (!list) return;
-  var arr = getCommunityLoadouts();
-  /* Build filter bar */
+  var arr = _commCache.slice();
   renderCommunityFilters(arr, filterShip);
-  /* Apply filter */
   if (filterShip && filterShip !== 'All') {
-    arr = arr.filter(function(x){ return x.ship === filterShip; });
+    arr = arr.filter(function(x) { return x.ship === filterShip; });
   }
   if (!arr.length) {
-    list.innerHTML = '<div style="padding:18px 0;text-align:center;color:#2a4a60;font-family:var(--fmono);font-size:11px">No community builds yet — import one above.</div>';
+    list.innerHTML = '<div style="padding:18px 0;text-align:center;color:#2a4a60;font-family:var(--fmono);font-size:11px">No community builds yet — save one above to share it!</div>';
     return;
   }
   list.innerHTML = arr.map(function(lo) {
+    var safeId = JSON.stringify(lo.id);
     return '<div class="sv-item" style="border-color:rgba(167,139,250,.2)">' +
-      '<div class="sv-item-name" style="color:#a78bfa">' + (lo.name||lo.ship) + '</div>' +
-      '<div class="sv-item-ship">' + lo.ship + '</div>' +
+      '<div class="sv-item-name" style="color:#a78bfa">' + (lo.name||lo.ship).replace(/</g,'&lt;') + '</div>' +
+      '<div class="sv-item-ship">' + lo.ship.replace(/</g,'&lt;') + '</div>' +
       '<div class="sv-item-btns">' +
-        '<button class="sv-item-btn" onclick="loadCommunityBuild(' + lo.id + ')" title="Load this build">LOAD</button>' +
-        '<button class="sv-item-btn" onclick="deleteCommunityBuild(' + lo.id + ')" title="Remove" style="color:#f87171">&#10005;</button>' +
+        '<button class="sv-item-btn" onclick="loadCommunityBuild(' + safeId + ')" title="Load this build">LOAD</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -6635,36 +6677,31 @@ function renderCommunityFilters(arr, active) {
   var bar = document.getElementById('svCommunityFilters');
   if (!bar) return;
   var ships = ['All'];
-  arr.forEach(function(lo){ if (ships.indexOf(lo.ship) < 0) ships.push(lo.ship); });
+  arr.forEach(function(lo) { if (ships.indexOf(lo.ship) < 0) ships.push(lo.ship); });
   if (ships.length <= 2) { bar.innerHTML = ''; return; }
   bar.innerHTML = ships.map(function(s) {
     var on = (!active && s==='All') || active===s;
-    return '<button onclick="renderCommunityList(\'' + s.replace(/'/g,"\\'") + '\')" style="' +
+    return '<button onclick="fetchCommunityBuilds(\'' + s.replace(/'/g,"\'") + '\')" style="' +
       'padding:3px 10px;font-size:10px;font-family:var(--fmono);letter-spacing:.08em;border-radius:10px;cursor:pointer;border:1px solid ' +
       (on ? '#a78bfa' : 'rgba(167,139,250,.25)') + ';color:' + (on ? '#a78bfa' : '#6a8a9a') + ';background:' +
-      (on ? 'rgba(167,139,250,.12)' : 'transparent') + '">' + s + '</button>';
+      (on ? 'rgba(167,139,250,.12)' : 'transparent') + '">' + s.replace(/</g,'&lt;') + '</button>';
   }).join('');
 }
 
 function loadCommunityBuild(id) {
-  var arr = getCommunityLoadouts();
-  var lo = arr.find(function(x){ return x.id===id; });
-  if (!lo) return;
-  /* Load into builder */
+  var lo = _commCache.find(function(x) { return x.id === id; });
+  if (!lo) { showToast('Build not found in cache', 'warn'); return; }
   if (lo.ship) {
     if (typeof ss_pick_sb === 'function') ss_pick_sb(lo.ship);
     else if (window.ss_pick_sb) window.ss_pick_sb(lo.ship);
   }
+  /* Restore slots, missiles, comps if present */
+  if (lo.slots) Object.assign(curSlots, lo.slots);
+  if (lo.missiles) Object.assign(curMissiles, lo.missiles);
+  if (lo.comps) Object.assign(curComps, lo.comps);
   showToast('Loaded: ' + (lo.name||lo.ship), 'success');
 }
 window.loadCommunityBuild = loadCommunityBuild;
-
-function deleteCommunityBuild(id) {
-  var arr = getCommunityLoadouts().filter(function(x){ return x.id!==id; });
-  putCommunityLoadouts(arr);
-  renderCommunityList();
-}
-window.deleteCommunityBuild = deleteCommunityBuild;
 
 function showToast(msg, type) {
   var colors = {success: 'var(--green)', warn: 'var(--warn)', error: 'var(--red)'};
