@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.90-DEV</title>
+<title>SC-ShipForge v7.91-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -964,7 +964,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v7.90-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v7.91-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1128,6 +1128,11 @@ option,optgroup{background:var(--bg2)}
       onmouseover="this.style.background='rgba(77,255,110,.14)';this.style.boxShadow='0 0 10px rgba(77,255,110,.2)'"
       onmouseout="this.style.background='rgba(77,255,110,.06)';this.style.boxShadow='none'"
     >&#8592; DASHBOARD</button>
+    <button id="testShowdownBtn" onclick="openShowdownWithBuild()" title="Test this build in Showdown"
+      style="display:none;align-items:center;gap:6px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.35);border-radius:3px;padding:5px 14px;font-size:10px;font-weight:700;font-family:var(--fmono);letter-spacing:1.5px;color:#f87171;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0"
+      onmouseover="this.style.background='rgba(220,38,38,.18)';this.style.boxShadow='0 0 12px rgba(220,38,38,.25)'"
+      onmouseout="this.style.background='rgba(220,38,38,.08)';this.style.boxShadow='none'"
+    >&#9876; TEST IN SHOWDOWN</button>
     <!-- Ship search -->
     <div style="flex:1;max-width:400px;position:relative">
       <div class="ss-wrap" id="sbSearchWrap" style="border:1px solid rgba(77,255,110,.25);border-radius:8px;background:rgba(20,24,22,.8)">
@@ -1298,7 +1303,28 @@ option,optgroup{background:var(--bg2)}
       </div>
       <div class="pane" id="pane-sd">
   <div class="sd-hero">
-  <div class="sd-hero-title"><span>&#9876; SHIP SHOWDOWN</span></div>
+  <div class="sd-hero-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <span>&#9876; SHIP SHOWDOWN</span>
+    <button id="sdBackToBuildBtn" onclick="goBackToBuild()" title="Return to Builder"
+      style="display:none;align-items:center;gap:6px;background:rgba(77,255,110,.06);border:1px solid rgba(77,255,110,.25);border-radius:3px;padding:5px 14px;font-size:10px;font-weight:700;font-family:var(--fmono);letter-spacing:1.5px;color:#4dff6e;cursor:pointer;white-space:nowrap;transition:all .15s"
+      onmouseover="this.style.background='rgba(77,255,110,.14)';this.style.boxShadow='0 0 10px rgba(77,255,110,.2)'"
+      onmouseout="this.style.background='rgba(77,255,110,.06)';this.style.boxShadow='none'"
+    >&#8592; BACK TO BUILD</button>
+  </div>
+
+  <!-- My Build context banner (shown when coming from Builder) -->
+  <div id="sdMyBuildBanner" style="display:none;margin-bottom:10px;padding:10px 14px;background:rgba(77,255,110,.04);border:1px solid rgba(77,255,110,.18);border-radius:6px;border-left:3px solid #4dff6e">
+    <div style="font-size:9px;letter-spacing:2px;color:#4dff6e;font-family:var(--fmono);margin-bottom:6px;text-shadow:0 0 6px rgba(77,255,110,.3)">YOUR BUILD</div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:700;font-family:var(--fmono);color:#e8f4e8" id="sdMyBuildShip">—</div>
+      <div style="display:flex;gap:12px">
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700;font-family:var(--fmono);color:#ffd54f;text-shadow:0 0 6px rgba(255,213,79,.3)" id="sdMyBuildDps">—</div><div style="font-size:8px;letter-spacing:1px;color:#6a9070;font-family:var(--fmono)">MY DPS</div></div>
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700;font-family:var(--fmono);color:#40e0ff;text-shadow:0 0 6px rgba(64,224,255,.3)" id="sdMyBuildShield">—</div><div style="font-size:8px;letter-spacing:1px;color:#6a9070;font-family:var(--fmono)">MY SHIELDS</div></div>
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700;font-family:var(--fmono);color:#4dff6e;text-shadow:0 0 6px rgba(77,255,110,.3)" id="sdMyBuildHull">—</div><div style="font-size:8px;letter-spacing:1px;color:#6a9070;font-family:var(--fmono)">MY HULL HP</div></div>
+      </div>
+      <div style="font-size:9px;color:#5a7860;font-family:var(--fmono);margin-left:auto">Select an enemy below ↓</div>
+    </div>
+  </div>
 
     <div class="ss-wrap" id="sdSearchWrap" style="margin-bottom:8px;">
       <span class="ss-icon">&#9876;</span>
@@ -6910,9 +6936,11 @@ window.addEventListener('load', function() {
     /* Hide left panel */
     var lp=document.getElementById('sbLeftPanel');
     if(lp)lp.style.display='none';
-    /* Hide Return to Dashboard button */
+    /* Hide Return to Dashboard + Test in Showdown buttons */
     var _rdb=document.getElementById('returnDashBtn');
     if(_rdb)_rdb.style.display='none';
+    var _tsb=document.getElementById('testShowdownBtn');
+    if(_tsb)_tsb.style.display='none';
     setTimeout(function(){
       var i=document.getElementById('sbShipInput');
       if(i){i.focus();}
@@ -8824,9 +8852,11 @@ function buildShipBuilder(shipName){
   if(_dash)_dash.style.display='none';
   var _res=document.getElementById('sbResult');
   if(_res)_res.style.padding='8px';
-  /* Show Return to Dashboard button */
+  /* Show Return to Dashboard + Test in Showdown buttons */
   var _rdb=document.getElementById('returnDashBtn');
   if(_rdb)_rdb.style.display='inline-flex';
+  var _tsb=document.getElementById('testShowdownBtn');
+  if(_tsb)_tsb.style.display='inline-flex';
   /* Reuse buildEnemyLoadout engine targeting sbResult */
   window._pvpShip = shipName;
   window._sbBuilderActive = true;
@@ -10073,5 +10103,57 @@ if(document.readyState==='loading'){
 } else {
   setTimeout(loadDashboardShipImages,200);
 }
+
+
+/* ══ Builder → Showdown Workflow ══ */
+function openShowdownWithBuild(){
+  if(!window.selShip){
+    alert('Select a ship in the Builder first.');
+    return;
+  }
+  /* Gather my build stats */
+  var me = window.getUserDps ? window.getUserDps() : {dps:0,shieldHP:0,hullHP:0};
+  var shipName = window.selShip;
+
+  /* Show the My Build banner */
+  var banner = document.getElementById('sdMyBuildBanner');
+  if(banner) banner.style.display = 'block';
+  var el_ship   = document.getElementById('sdMyBuildShip');
+  var el_dps    = document.getElementById('sdMyBuildDps');
+  var el_shield = document.getElementById('sdMyBuildShield');
+  var el_hull   = document.getElementById('sdMyBuildHull');
+  if(el_ship)   el_ship.textContent   = shipName.toUpperCase();
+  if(el_dps)    el_dps.textContent    = me.dps ? me.dps.toLocaleString() + ' DPS' : '—';
+  if(el_shield) el_shield.textContent = me.shieldHP ? me.shieldHP.toLocaleString() + ' HP' : '—';
+  if(el_hull){
+    var liveD = window.liveShipData && window.liveShipData[shipName];
+    var def   = window.SHIP_DATA && window.SHIP_DATA[shipName];
+    var hullHp = (liveD && liveD.health) || (def && (def.hullHP || def.hull_hp || def.hp));
+    el_hull.textContent = hullHp ? Number(hullHp).toLocaleString() + ' HP' : '—';
+  }
+
+  /* Show Back to Build button */
+  var backBtn = document.getElementById('sdBackToBuildBtn');
+  if(backBtn) backBtn.style.display = 'inline-flex';
+
+  /* Switch to Showdown tab */
+  var sdTab = document.querySelector('[data-t=sd]') || document.querySelector('.tab[onclick*="sd"]');
+  if(typeof showTab === 'function') showTab('sd', sdTab);
+
+  /* Focus enemy search */
+  setTimeout(function(){
+    var inp = document.getElementById('sdShipInput');
+    if(inp){ inp.focus(); inp.select(); }
+  }, 150);
+}
+
+function goBackToBuild(){
+  /* Switch back to Builder tab */
+  var loTab = document.querySelector('[data-t=lo]');
+  if(typeof showTab === 'function') showTab('lo', loTab);
+  if(typeof toggleBuilderAside === 'function') toggleBuilderAside(true);
+}
+window.openShowdownWithBuild = openShowdownWithBuild;
+window.goBackToBuild = goBackToBuild;
 
 </script>
