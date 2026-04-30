@@ -8448,79 +8448,103 @@ tick();
 .enemy-info-card .eic-name{font-size:20px!important;letter-spacing:2px!important;}
 
 /* ── v6.95-DEV: 3-COLUMN SHOWDOWN LAYOUT (CSS only, no JS changes) ── */
-/* Make pane-sd a flex column so the content area can grow */
-#pane-sd{display:flex!important;flex-direction:column!important;padding:12px 16px!important;gap:10px!important;}
 
-/* The search/hero area stays at top, full width */
-#pane-sd .sd-hero{flex-shrink:0;}
-#pane-sd #sdSelectedShip{flex-shrink:0;}
-
-/* Arena (ship card) + Result (loadout+stats) side by side */
-#pane-sd #sdArena,
-#pane-sd #sdResult{
-  /* will be children of a flex row wrapper below */
+/* pane-sd: full-height scrollable container */
+#pane-sd{
+  display:flex!important;
+  flex-direction:column!important;
+  padding:12px 16px!important;
+  gap:10px!important;
+  height:calc(100vh - 54px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
 }
 
-/* Wrap sdArena and sdResult in a 3-col grid via a pseudo-container */
-/* Since we can't add a wrapper div without JS, use CSS grid on pane-sd directly */
-/* and let sdArena + sdResult be grid items */
+/* Hero + search bar: full width, no shrink */
+#pane-sd .sd-hero{flex-shrink:0!important;}
+#pane-sd #sdSelectedShip{flex-shrink:0!important;}
+
+/* When a ship is selected, lay out sdArena + sdResult side by side */
 #pane-sd:has(#sdArena .enemy-info-card){
   display:grid!important;
   grid-template-areas:
-    "hero hero hero"
-    "sel sel sel"
-    "card loadout loadout"!important;
-  grid-template-columns:320px 1fr!important;
-  grid-template-rows:auto auto 1fr!important;
-  gap:12px!important;
+    "hero hero"
+    "sel  sel"
+    "card result"!important;
+  grid-template-columns:300px 1fr!important;
+  grid-template-rows:auto auto auto!important;
   align-items:start!important;
+  gap:12px!important;
 }
 #pane-sd .sd-hero{grid-area:hero;}
 #pane-sd #sdSelectedShip{grid-area:sel;}
-#pane-sd #sdArena{grid-area:card;position:sticky;top:0;}
-#pane-sd #sdResult{grid-area:loadout;}
+#pane-sd #sdArena{grid-area:card;position:sticky;top:0;align-self:start;}
+#pane-sd #sdResult{grid-area:result;}
 
-/* Enemy info card fills the left column */
+/* Ship card: fixed width, no overflow clipping on info rows */
 #pane-sd #sdArena .enemy-info-card{
   width:100%!important;
-  max-width:320px!important;
+  max-width:300px!important;
   border-radius:8px!important;
   overflow:hidden!important;
 }
-#pane-sd #sdArena .eic-img-wrap{min-height:180px!important;max-height:200px!important;}
+#pane-sd #sdArena .eic-img-wrap{
+  min-height:170px!important;
+  max-height:190px!important;
+}
+#pane-sd #sdArena .eic-info{
+  max-height:none!important;
+  overflow:visible!important;
+}
 
-/* sd-config (loadout+stats grid) fills the right area */
+/* sd-config: no height cap, let it grow naturally */
 #pane-sd #sdResult .sd-config{
   max-height:none!important;
   overflow:visible!important;
   margin-top:0!important;
 }
 
-/* The inner grid inside sd-config: make stats column wider */
+/* Inner 2-col grid (loadout L + stats R): give stats a fixed 260px column */
 #pane-sd #sdResult .sd-config > div[style*="grid-template-columns"]{
-  grid-template-columns:1fr 280px!important;
+  grid-template-columns:1fr 260px!important;
   gap:12px!important;
   align-items:start!important;
 }
 
-/* Stats panel: sticky so it stays visible while scrolling loadout */
+/* Loadout panel (L): remove the 380px height cap so ALL weapon mounts show */
+#pane-sd #sdResult .sd-config > div[style*="grid-template-columns"] > div:first-child{
+  max-height:none!important;
+  overflow:visible!important;
+}
+
+/* Stats panel (R): sticky so it stays in view while scrolling the loadout */
 #pane-sd #sdResult .sd-stats{
   position:sticky!important;
   top:0!important;
-  max-height:calc(100vh - 200px)!important;
+  max-height:calc(100vh - 160px)!important;
   overflow-y:auto!important;
 }
 
-/* FIGHT button: full width in right column */
+/* FIGHT button: full width */
 #pane-sd #sdResult .sd-config > button{
   width:100%!important;
   max-width:none!important;
   margin:8px 0 0!important;
 }
 
-/* Fallback for browsers without :has() support */
+/* Enemy Total DPS bar: full width */
+#pane-sd #sdResult .sd-config > div:last-of-type{
+  max-width:none!important;
+  width:100%!important;
+}
+
+/* Fallback for browsers without :has() */
 @supports not selector(:has(*)){
-  #pane-sd{display:flex!important;flex-direction:column!important;}
+  #pane-sd{
+    display:flex!important;
+    flex-direction:column!important;
+    overflow-y:auto!important;
+  }
 }
 </style>
 </body>
