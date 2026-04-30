@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.2-DEV</title>
+<title>SC-ShipForge v8.3-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -346,21 +346,46 @@ option,optgroup{background:var(--bg2)}
 #tgtContent .armor-row,.tgt-body .armor-row{margin:0}
 
 /* Save/load */
-.sv-panel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:13px}
-.sv-hd{font-size:10px;font-weight:500;letter-spacing:1.5px;color:var(--t2);font-family:var(--fmono);margin-bottom:8px}
+/* ── Save/Export Panel — Blue/Gold/Gray skin ── */
+.sv-panel{background:#0d1520;border:1px solid rgba(56,189,248,.18);border-radius:6px;padding:14px;margin-bottom:10px}
+.sv-panel-gold{background:#0d1520;border:1px solid rgba(251,191,36,.18);border-radius:6px;padding:14px;margin-bottom:10px}
+.sv-hd{font-size:9px;font-weight:700;letter-spacing:2.5px;color:#38bdf8;font-family:var(--fmono);margin-bottom:10px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.sv-hd-gold{font-size:9px;font-weight:700;letter-spacing:2.5px;color:#fbbf24;font-family:var(--fmono);margin-bottom:10px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.sv-hd::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(56,189,248,.3),transparent)}
+.sv-hd-gold::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(251,191,36,.3),transparent)}
 .sv-row{display:flex;gap:6px;margin-bottom:8px}
-.sv-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 10px;font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
-.sv-input:focus{border-color:var(--accent)}
-.sv-btn{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--r-sm);padding:8px 13px;font-size:12px;font-weight:500;color:var(--accent);cursor:pointer;white-space:nowrap;transition:all .15s}
-.sv-btn:hover{background:rgba(59,130,246,.2)}
-.sv-list{display:flex;flex-direction:column;gap:4px}
-.sv-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:all .12s}
-.sv-item:hover{border-color:var(--accent);background:var(--accent-bg)}
-.sv-item-name{flex:1;font-size:13px;color:var(--text)}
-.sv-item-ship{font-size:11px;color:var(--t3);font-family:var(--fmono)}
-.sv-item-share{background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:0 2px;line-height:1;transition:color .1s}.sv-item-share:hover{color:var(--accent)}.sv-item-del{background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;transition:color .1s}
-.sv-item-del:hover{color:var(--red)}
-.sv-empty{font-size:12px;color:var(--t3);text-align:center;padding:12px 0;font-style:italic}
+.sv-input{flex:1;background:#0a1220;border:1px solid rgba(56,189,248,.2);border-radius:4px;padding:8px 10px;font-size:13px;color:#d0dce8;font-family:var(--fmono);outline:none;transition:border-color .15s}
+.sv-input:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.1)}
+.sv-input::placeholder{color:#3a4a5a}
+.sv-btn{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.35);border-radius:4px;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px;color:#38bdf8;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--fmono)}
+.sv-btn:hover{background:rgba(56,189,248,.2);box-shadow:0 0 10px rgba(56,189,248,.2)}
+.sv-btn-gold{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:4px;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px;color:#fbbf24;cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--fmono)}
+.sv-btn-gold:hover{background:rgba(251,191,36,.18);box-shadow:0 0 10px rgba(251,191,36,.15)}
+.sv-list{display:flex;flex-direction:column;gap:5px}
+.sv-item{display:flex;align-items:center;gap:8px;padding:9px 11px;background:#0a1220;border:1px solid rgba(56,189,248,.12);border-radius:5px;cursor:pointer;transition:all .12s}
+.sv-item:hover{border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.06)}
+.sv-item-dot{width:6px;height:6px;border-radius:50%;background:#1e3a5a;flex-shrink:0;transition:background .12s}
+.sv-item:hover .sv-item-dot{background:#38bdf8}
+.sv-item-name{flex:1;font-size:12px;font-weight:600;color:#c8d8e8;font-family:var(--fmono)}
+.sv-item-ship{font-size:10px;color:#4a6a80;font-family:var(--fmono);white-space:nowrap}
+.sv-item-actions{display:flex;gap:2px;flex-shrink:0}
+.sv-item-share{background:none;border:none;color:#3a5a70;cursor:pointer;font-size:13px;padding:2px 4px;line-height:1;transition:color .1s;border-radius:3px}
+.sv-item-share:hover{color:#38bdf8;background:rgba(56,189,248,.1)}
+.sv-item-export{background:none;border:none;color:#3a5a70;cursor:pointer;font-size:11px;padding:2px 4px;line-height:1;transition:color .1s;border-radius:3px;font-family:var(--fmono);font-weight:700}
+.sv-item-export:hover{color:#fbbf24;background:rgba(251,191,36,.1)}
+.sv-item-del{background:none;border:none;color:#3a5a70;cursor:pointer;font-size:15px;padding:2px 4px;line-height:1;transition:color .1s;border-radius:3px}
+.sv-item-del:hover{color:#f87171;background:rgba(248,113,113,.1)}
+.sv-empty{font-size:11px;color:#3a5a70;text-align:center;padding:20px 0;font-family:var(--fmono);letter-spacing:.5px}
+/* Export format buttons */
+.sv-export-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
+.sv-exp-btn{background:#0a1220;border:1px solid rgba(56,189,248,.15);border-radius:4px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;font-family:var(--fmono)}
+.sv-exp-btn:hover{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.06)}
+.sv-exp-btn-icon{font-size:16px;display:block;margin-bottom:3px}
+.sv-exp-btn-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:#6a8a9a;display:block}
+.sv-exp-btn:hover .sv-exp-btn-lbl{color:#fbbf24}
+/* Share URL box */
+.sv-share-box{background:#060e18;border:1px solid rgba(56,189,248,.2);border-radius:4px;padding:8px 10px;font-size:10px;font-family:var(--fmono);color:#38bdf8;word-break:break-all;line-height:1.5;margin-top:6px;display:none}
+.sv-share-box.show{display:block}
 
 
 .tgt-opt{padding:6px 11px;font-size:12px;cursor:pointer;border-bottom:0.5px solid var(--border);color:var(--text)}.tgt-opt:hover{background:var(--bg3)}
@@ -1247,12 +1272,67 @@ option,optgroup{background:var(--bg2)}
 
       
 
-      <div class="pane" id="pane-sv" style="flex-direction:column">
-        <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-          <span style="font-size:10px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono)">SAVED LOADOUTS</span>
-          <span style="font-size:10px;color:var(--accent);font-family:var(--fmono)" id="svCount2"></span>
+      <div class="pane" id="pane-sv" style="flex-direction:column;background:#080f1a">
+        <!-- Header bar -->
+        <div style="padding:12px 16px;border-bottom:1px solid rgba(56,189,248,.15);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#060e18">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:9px;letter-spacing:2.5px;color:#38bdf8;font-family:var(--fmono);font-weight:700">&#9632; LOADOUT VAULT</span>
+            <span style="font-size:9px;color:#fbbf24;font-family:var(--fmono);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:1px 8px" id="svCount2"></span>
+          </div>
+          <span style="font-size:9px;color:#2a4a60;font-family:var(--fmono)">SC-SHIPFORGE</span>
         </div>
-        <div class="sv-list" id="svList2" style="flex:1;overflow-y:auto;padding:10px"></div>
+        <!-- Scrollable body -->
+        <div style="flex:1;overflow-y:auto;padding:14px 14px 20px">
+
+          <!-- SAVE CURRENT LOADOUT -->
+          <div class="sv-panel">
+            <div class="sv-hd">&#9650; SAVE LOADOUT</div>
+            <div class="sv-row">
+              <input class="sv-input" id="svName" placeholder="Name this build…" onkeydown="if(event.key==='Enter')saveLoadout()" />
+              <button class="sv-btn" onclick="saveLoadout()">SAVE</button>
+            </div>
+            <div style="font-size:10px;color:#2a4a60;font-family:var(--fmono)" id="svCurrentShip">No ship selected</div>
+          </div>
+
+          <!-- SHARE CURRENT LOADOUT -->
+          <div class="sv-panel">
+            <div class="sv-hd">&#128279; SHARE LOADOUT</div>
+            <div style="font-size:11px;color:#6a8a9a;font-family:var(--fmono);margin-bottom:8px">Generate a link others can open to see your exact build.</div>
+            <button class="sv-btn" onclick="shareCurrentLoadout()" style="width:100%">&#128279; COPY SHARE LINK</button>
+            <div class="sv-share-box" id="svShareBox"></div>
+          </div>
+
+          <!-- EXPORT CURRENT LOADOUT -->
+          <div class="sv-panel-gold">
+            <div class="sv-hd-gold">&#9660; EXPORT LOADOUT</div>
+            <div style="font-size:11px;color:#6a8a9a;font-family:var(--fmono);margin-bottom:10px">Export your current build to a file.</div>
+            <div class="sv-export-grid">
+              <div class="sv-exp-btn" onclick="exportLoadoutAs('csv')">
+                <span class="sv-exp-btn-icon">&#128196;</span>
+                <span class="sv-exp-btn-lbl">CSV</span>
+              </div>
+              <div class="sv-exp-btn" onclick="exportLoadoutAs('xlsx')">
+                <span class="sv-exp-btn-icon">&#128202;</span>
+                <span class="sv-exp-btn-lbl">XLSX</span>
+              </div>
+              <div class="sv-exp-btn" onclick="exportLoadoutAs('pdf')">
+                <span class="sv-exp-btn-icon">&#128209;</span>
+                <span class="sv-exp-btn-lbl">PDF</span>
+              </div>
+              <div class="sv-exp-btn" onclick="exportLoadoutAs('txt')">
+                <span class="sv-exp-btn-icon">&#128203;</span>
+                <span class="sv-exp-btn-lbl">TXT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MY SAVED LOADOUTS -->
+          <div class="sv-panel">
+            <div class="sv-hd">&#9776; MY BUILDS</div>
+            <div class="sv-list" id="svList2"></div>
+          </div>
+
+        </div>
       </div>
 
       <div class="pane" id="pane-wp">
@@ -3501,7 +3581,7 @@ function pick(n){
   setTag(n);generate();updatePower();if(_currentTarget)loadTargetImage(_currentTarget);var _flp=fetchLiveShipData(n);if(_flp&&_flp.then)_flp.then(function(){updatePower();if(_currentTarget)loadTargetImage(_currentTarget);if(typeof loadWeaponImages==='function')requestAnimationFrame(loadWeaponImages);});if(typeof loadWeaponImages==='function')requestAnimationFrame(loadWeaponImages);
 }
 window.pickShip=pick;
-function onSel(v){if(!v){var si=document.getElementById('sSearch');if(si)si.value='';showDashboard();return;}selShip=v;if(userPwrAdj)delete userPwrAdj[v];setTag(v);generate();if(_currentTarget)loadTargetImage(_currentTarget);fetchLiveShipData(v).then(function(){updatePower();if(_currentTarget)loadTargetImage(_currentTarget);});}
+function onSel(v){if(!v){var si=document.getElementById('sSearch');if(si)si.value='';showDashboard();return;}selShip=v;if(userPwrAdj)delete userPwrAdj[v];setTag(v);generate();if(_currentTarget)loadTargetImage(_currentTarget);fetchLiveShipData(v).then(function(){updatePower();if(_currentTarget)loadTargetImage(_currentTarget);});if(window.updateSvCurrentShip)updateSvCurrentShip();}
 function setTag(n){
   var _phEl=document.getElementById('shipPh');
   if(_phEl&&n)_phEl.style.display='none';
@@ -5840,12 +5920,17 @@ function renderSavedList() {
     if (!arr.length) { el.innerHTML = '<div class="sv-empty">No saved loadouts yet</div>'; return; }
     el.innerHTML = arr.map(function(lo) {
       var isCurrent = lo.ship === selShip;
-      return '<div class="sv-item" onclick="loadLoadout(' + lo.id + ')" style="' + (isCurrent ? 'border-color:var(--blue);' : '') + '">'
-        + '<div style="width:7px;height:7px;border-radius:50%;background:' + (isCurrent ? 'var(--blue)' : 'var(--border)') + ';flex-shrink:0"></div>'
-        + '<span class="sv-item-name">' + lo.name.replace(/</g, '&lt;') + '</span>'
-        + '<span class="sv-item-ship">' + lo.ship + '</span>'
+      return '<div class="sv-item" onclick="loadLoadout(' + lo.id + ')" style="' + (isCurrent ? 'border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.06);' : '') + '">'
+        + '<div class="sv-item-dot" style="' + (isCurrent ? 'background:#38bdf8;' : '') + '"></div>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div class="sv-item-name">' + lo.name.replace(/</g, '&lt;') + '</div>'
+        + '<div class="sv-item-ship">' + lo.ship + (isCurrent ? ' — <span style="color:#38bdf8">ACTIVE</span>' : '') + '</div>'
+        + '</div>'
+        + '<div class="sv-item-actions">'
         + '<button class="sv-item-share" onclick="shareLoadout(' + lo.id + ',event)" title="Copy share link">&#128279;</button>'
-        + '<button class="sv-item-del" onclick="deleteLoadout(' + lo.id + ',event)" title="Delete">×</button>'
+        + '<button class="sv-item-export" onclick="exportSavedLoadout(' + lo.id + ',event)" title="Export">EXP</button>'
+        + '<button class="sv-item-del" onclick="deleteLoadout(' + lo.id + ',event)" title="Delete">&times;</button>'
+        + '</div>'
         + '</div>';
     }).join('');
   });
@@ -6285,6 +6370,151 @@ function shareLoadout(id, e) {
   } else {
     prompt('Copy this link:', url);
   }
+}
+
+/* ── Share current (unsaved) loadout ── */
+function shareCurrentLoadout() {
+  if (!selShip) { showToast('Select a ship first'); return; }
+  var params = { ship: selShip };
+  Object.keys(curSlots).forEach(function(k){ params[k] = curSlots[k]; });
+  Object.keys(curMissiles).forEach(function(k){ params['m_'+k] = curMissiles[k]; });
+  Object.keys(curComps).forEach(function(k){ if(k!=='counts') params['c_'+k] = curComps[k]; });
+  var hash = Object.keys(params).map(function(k){ return encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }).join('&');
+  var url = window.location.origin + window.location.pathname + '#' + hash;
+  var box = document.getElementById('svShareBox');
+  if (box) { box.textContent = url; box.classList.add('show'); }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function(){ showToast('Share link copied! \u{1F517}'); }).catch(function(){ });
+  }
+}
+
+/* ── Build loadout data object for export ── */
+function buildExportData(lo) {
+  var rows = [];
+  var def = SHIP_DATA && SHIP_DATA[lo.ship];
+  rows.push({ section:'SHIP', label:'Name', value: lo.ship });
+  if (def) {
+    rows.push({ section:'SHIP', label:'Role', value: def.role||'' });
+    rows.push({ section:'SHIP', label:'Size', value: def.size||'' });
+    rows.push({ section:'SHIP', label:'Crew', value: def.crew||'' });
+  }
+  rows.push({ section:'SHIP', label:'Build Name', value: lo.name||lo.ship });
+  // Weapons / hardpoints
+  if (lo.slots) Object.keys(lo.slots).forEach(function(k){
+    var wid = lo.slots[k]; if (!wid) return;
+    var w = WEAPONS && WEAPONS.find(function(x){ return x.id===wid; });
+    rows.push({ section:'HARDPOINTS', label: k, value: w ? w.name + ' (' + w.dps + ' DPS)' : wid });
+  });
+  // Missiles
+  if (lo.missiles) Object.keys(lo.missiles).forEach(function(k){
+    var mid = lo.missiles[k]; if (!mid) return;
+    var m = WEAPONS && WEAPONS.find(function(x){ return x.id===mid; });
+    rows.push({ section:'MISSILES', label: k, value: m ? m.name + ' (\u03B1' + (m.alpha||0).toLocaleString() + ')' : mid });
+  });
+  // Components
+  if (lo.comps) Object.keys(lo.comps).forEach(function(k){
+    if (k==='counts') return;
+    var v = lo.comps[k]; if (!v) return;
+    rows.push({ section:'SYSTEMS', label: k, value: v });
+  });
+  return rows;
+}
+
+/* ── Export current loadout ── */
+function exportLoadoutAs(fmt) {
+  if (!selShip) { showToast('Select a ship first'); return; }
+  var lo = { name: selShip + ' Build', ship: selShip, slots: JSON.parse(JSON.stringify(curSlots)),
+    missiles: JSON.parse(JSON.stringify(curMissiles)), comps: JSON.parse(JSON.stringify(curComps)) };
+  _doExport(lo, fmt);
+}
+
+/* ── Export a saved loadout by id ── */
+function exportSavedLoadout(id, e) {
+  e.stopPropagation();
+  var arr = getSavedLoadouts();
+  var lo = arr.find(function(x){ return x.id===id; });
+  if (!lo) return;
+  var fmt = prompt('Export format: csv, xlsx, pdf, or txt', 'csv');
+  if (!fmt) return;
+  _doExport(lo, fmt.toLowerCase().trim());
+}
+
+function _doExport(lo, fmt) {
+  var rows = buildExportData(lo);
+  var fname = (lo.name || lo.ship).replace(/[^a-z0-9_\-]/gi,'_');
+  if (fmt === 'csv') {
+    var csv = 'Section,Label,Value\n' + rows.map(function(r){
+      return '"'+r.section+'","'+r.label+'","'+String(r.value).replace(/"/g,'""')+'"';
+    }).join('\n');
+    _downloadBlob(csv, fname+'.csv', 'text/csv');
+  } else if (fmt === 'txt') {
+    var txt = '=== ' + (lo.name||lo.ship) + ' ===\n\n';
+    var lastSec = '';
+    rows.forEach(function(r){
+      if (r.section !== lastSec) { txt += '\n[ ' + r.section + ' ]\n'; lastSec = r.section; }
+      txt += '  ' + r.label + ': ' + r.value + '\n';
+    });
+    _downloadBlob(txt, fname+'.txt', 'text/plain');
+  } else if (fmt === 'xlsx') {
+    // Build minimal XLSX (XML-based)
+    var xml = '<?xml version="1.0"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Loadout"><Table>';
+    xml += '<Row><Cell><Data ss:Type="String">Section</Data></Cell><Cell><Data ss:Type="String">Label</Data></Cell><Cell><Data ss:Type="String">Value</Data></Cell></Row>';
+    rows.forEach(function(r){
+      xml += '<Row><Cell><Data ss:Type="String">'+_xe(r.section)+'</Data></Cell><Cell><Data ss:Type="String">'+_xe(r.label)+'</Data></Cell><Cell><Data ss:Type="String">'+_xe(String(r.value))+'</Data></Cell></Row>';
+    });
+    xml += '</Table></Worksheet></Workbook>';
+    _downloadBlob(xml, fname+'.xls', 'application/vnd.ms-excel');
+  } else if (fmt === 'pdf') {
+    _exportPDF(lo, rows, fname);
+  } else {
+    showToast('Unknown format: ' + fmt);
+  }
+}
+
+function _xe(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function _downloadBlob(content, filename, mime) {
+  var blob = new Blob([content], { type: mime });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 100);
+  showToast('Downloading ' + filename + ' \u2193');
+}
+
+function _exportPDF(lo, rows, fname) {
+  var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + _xe(lo.name||lo.ship) + '</title>'
+    + '<style>body{font-family:monospace;background:#fff;color:#111;padding:24px;font-size:13px}'
+    + 'h1{font-size:20px;border-bottom:2px solid #333;padding-bottom:6px;margin-bottom:16px}'
+    + 'h2{font-size:13px;letter-spacing:2px;color:#555;margin:16px 0 6px;border-left:3px solid #38bdf8;padding-left:8px}'
+    + 'table{width:100%;border-collapse:collapse;margin-bottom:10px}'
+    + 'td{padding:4px 8px;border-bottom:1px solid #eee}td:first-child{color:#555;width:40%}'
+    + '</style></head><body>';
+  html += '<h1>&#9632; ' + _xe(lo.name||lo.ship) + '</h1>';
+  var lastSec = '';
+  html += '<table>';
+  rows.forEach(function(r){
+    if (r.section !== lastSec) {
+      if (lastSec) html += '</table><table>';
+      html += '<tr><td colspan="2"><h2>' + _xe(r.section) + '</h2></td></tr>';
+      lastSec = r.section;
+    }
+    html += '<tr><td>' + _xe(r.label) + '</td><td><strong>' + _xe(String(r.value)) + '</strong></td></tr>';
+  });
+  html += '</table><p style="color:#aaa;font-size:11px;margin-top:24px">Generated by SC-ShipForge &bull; scstarforge.pages.dev</p></body></html>';
+  var w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); setTimeout(function(){ w.print(); }, 400); }
+  else { _downloadBlob(html, fname+'.html', 'text/html'); }
+}
+
+/* ── Update the "current ship" label in Save panel ── */
+function updateSvCurrentShip() {
+  var el = document.getElementById('svCurrentShip');
+  if (!el) return;
+  el.textContent = selShip ? 'Current ship: ' + selShip : 'No ship selected';
+  el.style.color = selShip ? '#38bdf8' : '#2a4a60';
 }
 
 function showToast(msg, type) {
@@ -6915,6 +7145,7 @@ window.addEventListener('load', function() {
     if(clr) clr.classList.add('show');
     window._sbShip=name;
     if(window.buildShipBuilder) window.buildShipBuilder(name);
+    if(window.updateSvCurrentShip) window.updateSvCurrentShip();
   };
   window.ss_clear_sb  = function(){
     var inp=document.getElementById('sbShipInput');
@@ -6922,16 +7153,18 @@ window.addEventListener('load', function() {
     var clr=document.getElementById('sbShipClear');
     if(clr) clr.classList.remove('show');
     window._sbShip=null;
+    selShip=null;
     var res=document.getElementById('sbResult');
+    /* Save dashboard BEFORE clearing sbResult (it lives inside sbResult) */
+    var _dash=document.getElementById('sbDashboard');
+    if(_dash) _dash.parentNode.removeChild(_dash);
     if(res){res.innerHTML='';res.style.padding='0';}
     var pp=document.getElementById('sbPowerPanel');
     if(pp){pp.style.display='none';pp.innerHTML='';}
-    /* Show dashboard */
-    var _dash=document.getElementById('sbDashboard');
-    if(_dash){_dash.style.display='flex';res.appendChild(_dash);}
-    else{
-      /* Re-create dashboard if needed */
-      if(res){res.innerHTML='<div id="sbDashboard" style="display:flex;flex-direction:column;gap:12px;padding:14px 16px"><div style="color:var(--t3);font-family:var(--fmono);font-size:12px;text-align:center;padding:40px">&#9672; Select a ship to build</div></div>';}
+    /* Re-attach and show dashboard */
+    if(_dash){
+      _dash.style.display='flex';
+      res.appendChild(_dash);
     }
     /* Hide left panel */
     var lp=document.getElementById('sbLeftPanel');
