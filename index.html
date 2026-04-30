@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.93-DEV</title>
+<title>SC-ShipForge v7.94-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -964,7 +964,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v7.93-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v7.94-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -7895,8 +7895,11 @@ html+="<div class=\"sd-ttk-row\"><span>Your TTK vs "+enemyName+"</span><span>"+m
 html+="<div class=\"sd-ttk-row\"><span>"+enemyName+" TTK vs You</span><span>"+(oppTTK>9000?"N/A":oppTTK.toFixed(1)+"s")+"</span></div>";
 html+="<div class=\"sd-ttk-row\"><span>Your DPS</span><span>"+me.dps.toLocaleString()+"</span></div>";
 html+="<div class=\"sd-ttk-row\"><span>Enemy DPS</span><span>"+them.dps.toLocaleString()+"</span></div>";
+html+="<div style=\"margin-top:10px\"><button onclick=\"openShowdownModal('"+window.selShip+"','"+enemyName+"',getUserDps(),getShipDps('"+enemyName+"'),"+myTTK.toFixed(2)+","+oppTTK.toFixed(2)+",'"+verdict+"')\" style=\"width:100%;padding:8px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.35);border-radius:4px;font-size:10px;font-weight:700;font-family:var(--fmono);letter-spacing:1.5px;color:#f87171;cursor:pointer\">&#9876; VIEW FULL BREAKDOWN</button></div>";
 html+="</div>";
 resEl.innerHTML=html;
+/* Auto-open the pop-out modal */
+if(window.openShowdownModal) openShowdownModal(window.selShip,enemyName,me,them,myTTK,oppTTK,verdict);
 }
 /* ═══ ENEMY LOADOUT BUILDER v2 ═══ */
 var _eSlots={};      // 'sl0','sl0_gun1' etc
@@ -9743,7 +9746,125 @@ tick();
   font-family:var(--fmono)!important;font-size:9px!important;
   color:var(--hud-cyan)!important;letter-spacing:2px!important;text-transform:uppercase!important;
 }
+
+/* ══ Showdown Pop-out Modal ══ */
+#sdModal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(4px)}
+#sdModal.open{display:flex}
+#sdModalBox{position:relative;width:min(820px,96vw);max-height:90vh;overflow-y:auto;background:#141816;border:1px solid rgba(77,255,110,.25);border-radius:10px;box-shadow:0 0 60px rgba(0,0,0,.8),0 0 30px rgba(77,255,110,.06);display:flex;flex-direction:column}
+#sdModalBox::-webkit-scrollbar{width:4px}
+#sdModalBox::-webkit-scrollbar-thumb{background:#2e3a30;border-radius:2px}
+.sdm-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(77,255,110,.15);flex-shrink:0}
+.sdm-title{font-size:11px;letter-spacing:3px;font-family:var(--fmono);color:#4dff6e;text-shadow:0 0 8px rgba(77,255,110,.4)}
+.sdm-close{background:none;border:none;color:#4a6050;font-size:20px;cursor:pointer;padding:0;line-height:1;transition:color .15s}
+.sdm-close:hover{color:#4dff6e}
+.sdm-verdict{text-align:center;padding:18px 20px 12px;flex-shrink:0}
+.sdm-verdict-badge{display:inline-block;font-size:22px;font-weight:900;font-family:var(--fmono);letter-spacing:4px;padding:8px 28px;border-radius:6px;margin-bottom:6px}
+.sdm-verdict-badge.win{color:#4dff6e;background:rgba(77,255,110,.1);border:1px solid rgba(77,255,110,.3);text-shadow:0 0 20px rgba(77,255,110,.5);box-shadow:0 0 20px rgba(77,255,110,.1)}
+.sdm-verdict-badge.lose{color:#f87171;background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);text-shadow:0 0 20px rgba(220,38,38,.4);box-shadow:0 0 20px rgba(220,38,38,.08)}
+.sdm-verdict-badge.close{color:#ffd54f;background:rgba(255,213,79,.08);border:1px solid rgba(255,213,79,.25);text-shadow:0 0 16px rgba(255,213,79,.4)}
+.sdm-ttk-summary{font-size:11px;color:#6a9070;font-family:var(--fmono);letter-spacing:.5px}
+.sdm-ships{display:grid;grid-template-columns:1fr auto 1fr;gap:0;padding:0 20px 16px;align-items:start}
+.sdm-ship{display:flex;flex-direction:column;gap:0}
+.sdm-ship-img{height:110px;background:#0e1210;border-radius:6px;overflow:hidden;position:relative;margin-bottom:10px}
+.sdm-ship-img img{width:100%;height:100%;object-fit:cover;object-position:center}
+.sdm-ship-img-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#2e3a30;font-family:var(--fmono)}
+.sdm-ship-name{font-size:14px;font-weight:700;font-family:var(--fmono);color:#e8f4e8;margin-bottom:2px}
+.sdm-ship-role{font-size:9px;color:#5a7860;font-family:var(--fmono);letter-spacing:.5px;margin-bottom:10px}
+.sdm-stat-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px}
+.sdm-stat-lbl{font-size:9px;color:#5a7860;font-family:var(--fmono);letter-spacing:.5px;white-space:nowrap}
+.sdm-stat-val{font-size:12px;font-weight:700;font-family:var(--fmono);white-space:nowrap}
+.sdm-bar-wrap{flex:1;height:4px;background:#1e2820;border-radius:2px;overflow:hidden;min-width:40px}
+.sdm-bar{height:100%;border-radius:2px;transition:width .4s ease}
+.sdm-vs{display:flex;align-items:center;justify-content:center;padding:0 14px;padding-top:120px}
+.sdm-vs-badge{font-size:13px;font-weight:900;font-family:var(--fmono);color:#2e3a30;letter-spacing:2px}
+.sdm-divider{height:1px;background:rgba(77,255,110,.08);margin:0 20px 16px}
+.sdm-why{padding:0 20px 20px}
+.sdm-why-title{font-size:9px;letter-spacing:2px;color:#4dff6e;font-family:var(--fmono);margin-bottom:10px;text-shadow:0 0 6px rgba(77,255,110,.3)}
+.sdm-reason{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:4px;border-left:2px solid transparent}
+.sdm-reason.good{border-left-color:#4dff6e}
+.sdm-reason.bad{border-left-color:#f87171}
+.sdm-reason.neutral{border-left-color:#ffd54f}
+.sdm-reason-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+.sdm-reason-text{font-size:11px;color:#9ab89a;line-height:1.6}
+.sdm-reason-text strong{color:#e8f4e8}
+.sdm-footer{padding:12px 20px;border-top:1px solid rgba(77,255,110,.1);display:flex;gap:10px;flex-shrink:0}
+.sdm-btn{flex:1;padding:9px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--fmono);letter-spacing:1.5px;cursor:pointer;transition:all .15s;border:1px solid}
+.sdm-btn-primary{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.35);color:#f87171}
+.sdm-btn-primary:hover{background:rgba(220,38,38,.2);box-shadow:0 0 12px rgba(220,38,38,.2)}
+.sdm-btn-secondary{background:rgba(77,255,110,.06);border-color:rgba(77,255,110,.25);color:#4dff6e}
+.sdm-btn-secondary:hover{background:rgba(77,255,110,.14);box-shadow:0 0 10px rgba(77,255,110,.15)}
+
 </style>
+
+<!-- ══ Showdown Pop-out Modal ══ -->
+<div id="sdModal" onclick="if(event.target===this)closeShowdownModal()">
+  <div id="sdModalBox">
+    <div class="sdm-header">
+      <span class="sdm-title">&#9876; SHOWDOWN RESULT</span>
+      <button class="sdm-close" onclick="closeShowdownModal()" title="Close">&#10005;</button>
+    </div>
+    <div class="sdm-verdict">
+      <div class="sdm-verdict-badge" id="sdmVerdictBadge">—</div>
+      <div class="sdm-ttk-summary" id="sdmTtkSummary"></div>
+    </div>
+    <div class="sdm-ships">
+      <!-- MY SHIP -->
+      <div class="sdm-ship" id="sdmMyShip">
+        <div class="sdm-ship-img" id="sdmMyImg"><div class="sdm-ship-img-ph">&#9672;</div></div>
+        <div class="sdm-ship-name" id="sdmMyName">—</div>
+        <div class="sdm-ship-role" id="sdmMyRole">YOUR BUILD</div>
+        <div class="sdm-stat-row">
+          <span class="sdm-stat-lbl">DPS</span>
+          <div class="sdm-bar-wrap"><div class="sdm-bar" id="sdmMyDpsBar" style="background:#ffd54f;width:0%"></div></div>
+          <span class="sdm-stat-val" id="sdmMyDps" style="color:#ffd54f">—</span>
+        </div>
+        <div class="sdm-stat-row">
+          <span class="sdm-stat-lbl">SHIELDS</span>
+          <div class="sdm-bar-wrap"><div class="sdm-bar" id="sdmMyShieldBar" style="background:#40e0ff;width:0%"></div></div>
+          <span class="sdm-stat-val" id="sdmMyShield" style="color:#40e0ff">—</span>
+        </div>
+        <div class="sdm-stat-row">
+          <span class="sdm-stat-lbl">TTK</span>
+          <div class="sdm-bar-wrap"><div class="sdm-bar" id="sdmMyTtkBar" style="background:#4dff6e;width:0%"></div></div>
+          <span class="sdm-stat-val" id="sdmMyTtk" style="color:#4dff6e">—</span>
+        </div>
+      </div>
+      <!-- VS -->
+      <div class="sdm-vs"><span class="sdm-vs-badge">VS</span></div>
+      <!-- ENEMY SHIP -->
+      <div class="sdm-ship" id="sdmEnemyShip">
+        <div class="sdm-ship-img" id="sdmEnemyImg"><div class="sdm-ship-img-ph">&#9876;</div></div>
+        <div class="sdm-ship-name" id="sdmEnemyName">—</div>
+        <div class="sdm-ship-role" id="sdmEnemyRole">ENEMY</div>
+        <div class="sdm-stat-row">
+          <span class="sdm-stat-lbl">DPS</span>
+          <div class="sdm-bar-wrap"><div class="sdm-bar" id="sdmEnemyDpsBar" style="background:#f87171;width:0%"></div></div>
+          <span class="sdm-stat-val" id="sdmEnemyDps" style="color:#f87171">—</span>
+        </div>
+        <div class="sdm-stat-row">
+          <span class="sdm-stat-lbl">SHIELDS</span>
+          <div class="sdm-bar-wrap"><div class="sdm-bar" id="sdmEnemyShieldBar" style="background:#40e0ff;width:0%"></div></div>
+          <span class="sdm-stat-val" id="sdmEnemyShield" style="color:#40e0ff">—</span>
+        </div>
+        <div class="sdm-stat-row">
+          <span class="sdm-stat-lbl">TTK</span>
+          <div class="sdm-bar-wrap"><div class="sdm-bar" id="sdmEnemyTtkBar" style="background:#f87171;width:0%"></div></div>
+          <span class="sdm-stat-val" id="sdmEnemyTtk" style="color:#f87171">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="sdm-divider"></div>
+    <div class="sdm-why">
+      <div class="sdm-why-title">&#9650; ANALYSIS</div>
+      <div id="sdmReasons"></div>
+    </div>
+    <div class="sdm-footer">
+      <button class="sdm-btn sdm-btn-primary" onclick="closeShowdownModal();document.getElementById('sdShipInput').focus()">&#9876; PICK ANOTHER ENEMY</button>
+      <button class="sdm-btn sdm-btn-secondary" onclick="closeShowdownModal();goBackToBuild()">&#8592; BACK TO BUILD</button>
+    </div>
+  </div>
+</div>
+
 </body>
 <!-- deploy-force --><!-- deploy -->
 </html>
@@ -10172,5 +10293,144 @@ function goBackToBuild(){
 }
 window.openShowdownWithBuild = openShowdownWithBuild;
 window.goBackToBuild = goBackToBuild;
+
+
+/* ══ Showdown Pop-out Modal Logic ══ */
+function openShowdownModal(myShip, enemyShip, me, them, myTTK, oppTTK, verdict){
+  var modal = document.getElementById('sdModal');
+  if(!modal) return;
+
+  /* Verdict badge */
+  var badge = document.getElementById('sdmVerdictBadge');
+  var summary = document.getElementById('sdmTtkSummary');
+  if(badge){
+    badge.className = 'sdm-verdict-badge ' + (verdict==='YOU WIN'?'win':verdict==='YOU LOSE'?'lose':'close');
+    badge.textContent = verdict;
+  }
+  if(summary){
+    var faster = myTTK < oppTTK ? 'You kill the enemy ' + (oppTTK - myTTK).toFixed(1) + 's faster'
+                                 : 'Enemy kills you ' + (myTTK - oppTTK).toFixed(1) + 's faster';
+    summary.textContent = faster + (oppTTK > 9000 ? ' — enemy has no weapons' : '');
+  }
+
+  /* My ship stats */
+  var myDef = window.SHIP_DATA && window.SHIP_DATA[myShip];
+  document.getElementById('sdmMyName').textContent = myShip.toUpperCase();
+  document.getElementById('sdmMyRole').textContent = (myDef && myDef.role ? myDef.role.toUpperCase() + ' · ' : '') + 'YOUR BUILD';
+  document.getElementById('sdmMyDps').textContent   = me.dps.toLocaleString();
+  document.getElementById('sdmMyShield').textContent = me.shieldHP.toLocaleString() + ' HP';
+  document.getElementById('sdmMyTtk').textContent   = myTTK.toFixed(1) + 's';
+
+  /* Enemy ship stats */
+  var enDef = window.SHIP_DATA && window.SHIP_DATA[enemyShip];
+  document.getElementById('sdmEnemyName').textContent = enemyShip.toUpperCase();
+  document.getElementById('sdmEnemyRole').textContent = (enDef && enDef.role ? enDef.role.toUpperCase() + ' · ' : '') + 'ENEMY';
+  document.getElementById('sdmEnemyDps').textContent   = them.dps.toLocaleString();
+  document.getElementById('sdmEnemyShield').textContent = them.shieldHP.toLocaleString() + ' HP';
+  document.getElementById('sdmEnemyTtk').textContent   = oppTTK > 9000 ? 'N/A' : oppTTK.toFixed(1) + 's';
+
+  /* Stat bars — scale relative to max */
+  var maxDps    = Math.max(me.dps, them.dps, 1);
+  var maxShield = Math.max(me.shieldHP, them.shieldHP, 1);
+  var maxTtk    = Math.max(myTTK, oppTTK > 9000 ? myTTK : oppTTK, 1);
+  setTimeout(function(){
+    setBar('sdmMyDpsBar',     me.dps / maxDps * 100);
+    setBar('sdmEnemyDpsBar',  them.dps / maxDps * 100);
+    setBar('sdmMyShieldBar',  me.shieldHP / maxShield * 100);
+    setBar('sdmEnemyShieldBar', them.shieldHP / maxShield * 100);
+    /* TTK bar: lower is better — invert */
+    setBar('sdmMyTtkBar',     (1 - myTTK / maxTtk) * 100);
+    setBar('sdmEnemyTtkBar',  oppTTK > 9000 ? 0 : (1 - oppTTK / maxTtk) * 100);
+  }, 80);
+
+  /* Ship images */
+  loadModalShipImg('sdmMyImg',    myShip);
+  loadModalShipImg('sdmEnemyImg', enemyShip);
+
+  /* Analysis reasons */
+  var reasons = [];
+  /* DPS comparison */
+  if(me.dps > them.dps * 1.2){
+    reasons.push({type:'good', icon:'⚡', text:'Your <strong>DPS (' + me.dps.toLocaleString() + ')</strong> significantly outguns the enemy <strong>(' + them.dps.toLocaleString() + ')</strong> — you deal damage faster.'});
+  } else if(them.dps > me.dps * 1.2){
+    reasons.push({type:'bad', icon:'⚡', text:'Enemy <strong>DPS (' + them.dps.toLocaleString() + ')</strong> outguns yours <strong>(' + me.dps.toLocaleString() + ')</strong> — consider upgrading weapons.'});
+  } else {
+    reasons.push({type:'neutral', icon:'⚡', text:'DPS is roughly equal — <strong>' + me.dps.toLocaleString() + '</strong> vs <strong>' + them.dps.toLocaleString() + '</strong>. Positioning and skill will decide this fight.'});
+  }
+  /* Shield comparison */
+  if(me.shieldHP > them.shieldHP * 1.2){
+    reasons.push({type:'good', icon:'🛡', text:'Your <strong>shields (' + me.shieldHP.toLocaleString() + ' HP)</strong> are stronger than the enemy's <strong>(' + them.shieldHP.toLocaleString() + ' HP)</strong> — you can absorb more damage.'});
+  } else if(them.shieldHP > me.shieldHP * 1.2){
+    reasons.push({type:'bad', icon:'🛡', text:'Enemy <strong>shields (' + them.shieldHP.toLocaleString() + ' HP)</strong> are tougher than yours <strong>(' + me.shieldHP.toLocaleString() + ' HP)</strong> — it will take longer to break through.'});
+  } else {
+    reasons.push({type:'neutral', icon:'🛡', text:'Shield HP is comparable — <strong>' + me.shieldHP.toLocaleString() + '</strong> vs <strong>' + them.shieldHP.toLocaleString() + '</strong>.'});
+  }
+  /* TTK verdict reason */
+  if(verdict === 'YOU WIN'){
+    reasons.push({type:'good', icon:'🎯', text:'You kill the enemy in <strong>' + myTTK.toFixed(1) + 's</strong>' + (oppTTK < 9000 ? ', while they need <strong>' + oppTTK.toFixed(1) + 's</strong> to kill you' : '') + '. You have the advantage — stay aggressive.'});
+  } else if(verdict === 'YOU LOSE'){
+    reasons.push({type:'bad', icon:'🎯', text:'The enemy kills you in <strong>' + (oppTTK < 9000 ? oppTTK.toFixed(1) + 's' : 'N/A') + '</strong>, before you can finish them off in <strong>' + myTTK.toFixed(1) + 's</strong>. Try higher DPS weapons or better shields.'});
+  } else {
+    reasons.push({type:'neutral', icon:'🎯', text:'This is a close fight — TTK is within 43% of each other. Pilot skill, positioning, and first-shot advantage will be the deciding factor.'});
+  }
+  /* Power tip */
+  if(window._pwrState && window._pwrState.weapons < 5){
+    reasons.push({type:'bad', icon:'⚙', text:'Your weapons power is below 100% — increasing it in the power panel will boost your DPS and TTK.'});
+  }
+
+  var rHtml = '';
+  reasons.forEach(function(r){
+    rHtml += '<div class="sdm-reason ' + r.type + '"><span class="sdm-reason-icon">' + r.icon + '</span><span class="sdm-reason-text">' + r.text + '</span></div>';
+  });
+  document.getElementById('sdmReasons').innerHTML = rHtml;
+
+  /* Open modal */
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeShowdownModal(){
+  var modal = document.getElementById('sdModal');
+  if(modal) modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setBar(id, pct){
+  var el = document.getElementById(id);
+  if(el) el.style.width = Math.max(0, Math.min(100, pct)).toFixed(1) + '%';
+}
+
+function loadModalShipImg(containerId, shipName){
+  var el = document.getElementById(containerId);
+  if(!el) return;
+  /* Remove any previous img */
+  var prev = el.querySelector('img');
+  if(prev) prev.remove();
+  var cached = window._shipImgCache = window._shipImgCache || {};
+  var inject = function(src){
+    var img = document.createElement('img');
+    img.src = src;
+    img.alt = shipName;
+    img.onerror = function(){ img.style.display = 'none'; };
+    el.insertBefore(img, el.firstChild);
+  };
+  if(cached[shipName]){ inject(cached[shipName]); return; }
+  var wikiMap = window._WIKIMAP || {};
+  var title = wikiMap[shipName] || shipName.replace(/ /g,'_');
+  fetch('https://starcitizen.tools/api.php?action=query&titles=' + encodeURIComponent(title) + '&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var pages = d.query && d.query.pages;
+      if(!pages) return;
+      var p = pages[Object.keys(pages)[0]];
+      var src = p && p.thumbnail && p.thumbnail.source;
+      if(src){ cached[shipName] = src; inject(src); }
+    }).catch(function(){});
+}
+
+/* Keyboard close */
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeShowdownModal(); });
+window.openShowdownModal = openShowdownModal;
+window.closeShowdownModal = closeShowdownModal;
 
 </script>
