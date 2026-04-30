@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.43-DEV</title>
+<title>SC-ShipForge v7.44-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.43-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.44-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -6731,6 +6731,7 @@ window.addEventListener('load', function() {
     if(nmEl) nmEl.textContent=name;
     var rlEl=document.getElementById('sdSelRole');
     if(rlEl) rlEl.textContent=(SHIP_DATA&&SHIP_DATA[name]&&SHIP_DATA[name].role)||'';
+    if(window.buildPowerPanel) window.buildPowerPanel();
     if(window.runShowdown) window.runShowdown(name);
   };
   window.ss_clear_sd = function(){
@@ -6743,6 +6744,7 @@ window.addEventListener('load', function() {
     if(selEl) selEl.style.display='none';
     var res=document.getElementById('sdResult');
     if(res) res.innerHTML='';
+
   };
   // Close on outside click
   document.addEventListener('click',function(e){
@@ -8399,74 +8401,108 @@ function _pwrUsed(){return _pwrSystems.reduce(function(s,k){return s+(_pwrState[
 function buildPowerPanel(){
   var panel=document.getElementById('sdPowerPanel');
   if(!panel)return;
-  var maxEU=_pwrMaxEU();
-  var used=_pwrUsed();
-  var pct=Math.min(100,Math.round(used/maxEU*100));
-  var barCol=pct>90?'#ef4444':pct>70?'#f59e0b':'#22c55e';
-  var speed=Math.round((window._playerScm||175)*(_pwrState.engines||5)/5);
-  var mode=_pwrState.mode;
-  var h='<div style="background:#0d1117;border:1px solid rgba(239,68,68,.35);border-radius:12px;padding:12px 14px;font-family:var(--fmono)">';
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
-    +'<span style="font-size:10px;font-weight:800;letter-spacing:2px;color:#ef4444">POWER</span>'
-    +'<span style="font-size:11px;color:#f59e0b">'+used+' <span style="color:var(--t3);font-size:9px">/ '+maxEU+' EU</span></span>'
+  var shipName=window._pvpShip;
+  var def=SHIP_DATA&&SHIP_DATA[shipName];
+  if(!def){panel.style.display='none';return;}
+
+  /* Derive max EU from ship's power plant */
+  var ppKey=(def.comps&&def.comps.pp)||'';
+  var ppCnt=(def.comps&&def.comps.counts&&def.comps.counts.pp)||1;
+  var ppDb=COMP_DB&&COMP_DB.pp&&COMP_DB.pp[ppKey];
+  var maxEU=ppDb?(parseFloat(ppDb.out)||0)*ppCnt:0;
+
+  /* Compute used EU from pip allocations (each pip = maxEU/10 per system) */
+  var segTotal=maxEU;
+  var segPerPip=maxEU>0?maxEU/10:10;
+  var used=(_pwrState.weapons+_pwrState.shields+_pwrState.engines+_pwrState.qd+_pwrState.radar+_pwrState.cooler+_pwrState.thrusters)*segPerPip;
+  var pct=segTotal>0?Math.min(100,Math.round(used/segTotal*100)):0;
+  var barCol=pct>90?'var(--red)':pct>70?'var(--warn)':'var(--accent)';
+
+  /* Speed */
+  var live=liveShipData&&liveShipData[shipName];
+  var isNAV=_pwrState.mode==='nav';
+  var baseSpeed=isNAV?(live&&live.speed&&live.speed.max?live.speed.max:(def.scm||175)*4):(live&&live.speed&&live.speed.scm?live.speed.scm:(def.scm||175));
+  var engRatio=_pwrState.engines/5;
+  var speed=Math.round(baseSpeed*Math.min(engRatio,2));
+
+  /* Systems: same order/icons/colors as ship builder SPV_SYSTEMS */
+  var SYSS=[
+    {k:'weapons', icon:'⚡', color:'#ffaa00', label:'Weapons'},
+    {k:'shields',  icon:'⬡', color:'#00ee88', label:'Shield'},
+    {k:'engines',  icon:'»',  color:'#44aaff', label:'Boost'},
+    {k:'qd',       icon:'◎', color:'#cc88ff', label:'QD'},
+    {k:'radar',    icon:'📡', color:'#44ccff', label:'Radar'},
+    {k:'cooler',   icon:'❄', color:'#00ccff', label:'Cooler'},
+    {k:'thrusters',icon:'⊕', color:'#ff6622', label:'Flight'},
+  ];
+
+  var h='<div class="lp-card" style="margin-top:0">';
+  /* Header: POWER + EU totals */
+  h+='<div class="lp-card-hd">'
+    +'<span class="lp-card-title">POWER</span>'
+    +'<span class="pwr-eu" style="font-size:13px;font-weight:600;color:var(--text)">'+Math.round(used)+'</span>'
+    +'<span style="color:var(--t3);font-size:10px"> / </span>'
+    +'<span class="pwr-eu" style="color:var(--warn);font-size:13px;font-weight:600">'+(segTotal||'—')+'</span>'
+    +'<span style="color:var(--t3);font-size:9px"> EU</span>'
     +'</div>';
-  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
-    +'<span style="font-size:9px;color:var(--t3)">CONSUMPTION</span>'
-    +'<div style="flex:1;height:6px;background:#1e293b;border-radius:3px;overflow:hidden">'
-    +'<div style="height:100%;width:'+pct+'%;background:'+barCol+';border-radius:3px;transition:width .2s"></div></div>'
-    +'<span style="font-size:10px;font-weight:700;color:'+barCol+'">'+pct+'%</span>'
-    +'</div>';
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px">';
-  _pwrSystems.forEach(function(k,idx){
-    var val=_pwrState[k]||0;
-    var col=_pwrColors[idx];
-    var lbl=_pwrLabels[idx];
-    var pips='';
-    for(var p=1;p<=_pwrMax;p++){
-      var f=p<=val;
-      pips+='<div onclick="setPwrPip(\'' +k+ '\','+p+')" style="width:13px;height:13px;border-radius:2px;cursor:pointer;background:'+(f?col:'#1e293b')+';border:1px solid '+(f?col:'#334155')+';transition:background .1s"></div>';
+  /* Consumption bar */
+  h+='<div class="con-row">'
+    +'<span class="con-lbl">CONSUMPTION</span>'
+    +'<span style="font-size:10px;font-family:var(--fmono);color:'+barCol+'">'+pct+'%</span>'
+    +'</div>'
+    +'<div class="con-bar-wrap"><div style="height:100%;width:'+pct+'%;background:'+barCol+';border-radius:2px;transition:width .3s"></div></div>';
+
+  /* SPV block chart — same visual as ship builder */
+  h+='<div class="spv-chart" style="display:flex;gap:3px;align-items:flex-end;padding:4px 0 2px;min-height:90px;margin-top:8px">';
+  SYSS.forEach(function(sys){
+    var val=_pwrState[sys.k]||0;
+    var maxPips=10;
+    h+='<div class="spv-col" style="flex:1;display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0;gap:1px">';
+    h+='<div style="display:flex;flex-direction:column-reverse;align-items:center;gap:0">';
+    for(var p=1;p<=maxPips;p++){
+      var filled=p<=val;
+      var isMin=p===1;
+      var cls='spv-block'+(filled?' filled':'  empty')+(isMin?' minimum':'');
+      h+='<div class="'+cls+'" onclick="sdSetPwrPip(\''+sys.k+'\','+p+')" '
+        +'style="width:34px;height:20px;min-height:20px;max-height:20px;margin-bottom:2px;border-radius:3px;border:1px solid rgba(0,0,0,0.3);box-sizing:border-box;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:'+(isMin?'default':'pointer')+';'
+        +'background:'+(filled?'linear-gradient(180deg,rgba(252,185,60,0.95),rgba(230,145,30,0.9))':'rgba(255,255,255,0.10)')+'">'
+        +'</div>';
     }
-    h+='<div style="background:#111827;border:1px solid #1e293b;border-radius:8px;padding:5px 7px">'
-      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'
-      +'<span style="font-size:9px;color:var(--t2)">'+lbl+'</span>'
-      +'<span style="font-size:11px;font-weight:700;color:'+col+'">'+val+'</span>'
-      +'</div>'
-      +'<div style="display:flex;gap:2px;flex-wrap:wrap">'+pips+'</div>'
+    h+='</div>';
+    h+='<div class="spv-col-foot" style="display:flex;flex-direction:column;align-items:center;margin-top:4px;width:36px">'
+      +'<span style="font-size:14px;line-height:1;display:block;margin-bottom:1px">'+sys.icon+'</span>'
+      +'<span style="font-size:9px;display:block;color:var(--t2)">'+Math.round(val*10)+'%</span>'
       +'</div>';
+    h+='</div>';
   });
   h+='</div>';
-  h+='<div style="display:flex;gap:6px;margin-bottom:8px">'
-    +'<button onclick="setPwrMode(\'scm\')" style="flex:1;padding:5px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid '+(mode==='scm'?'#22c55e':'#334155')+';background:'+(mode==='scm'?'rgba(34,197,94,.15)':'transparent')+';color:'+(mode==='scm'?'#22c55e':'var(--t3)')+'">SCM MODE</button>'
-    +'<button onclick="setPwrMode(\'nav\')" style="flex:1;padding:5px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid '+(mode==='nav'?'#60a5fa':'#334155')+';background:'+(mode==='nav'?'rgba(96,165,250,.15)':'transparent')+';color:'+(mode==='nav'?'#60a5fa':'var(--t3)')+'">NAV MODE</button>'
+
+  /* SCM/NAV mode buttons */
+  var isSCM=_pwrState.mode==='scm';
+  h+='<div class="spv-modes">'
+    +'<button class="spv-mode-btn'+(isSCM?' on':'')+'" onclick="sdSetPwrMode(\'scm\')">SCM MODE</button>'
+    +'<button class="spv-mode-btn'+(!isSCM?' on':'')+'" onclick="sdSetPwrMode(\'nav\')">NAV MODE</button>'
     +'</div>';
-  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:6px 8px;background:#111827;border-radius:8px;border:1px solid #1e293b">'
-    +'<span style="font-size:10px;color:var(--t2)">SPEED</span>'
-    +'<span style="font-size:14px;font-weight:700;color:#22d3ee">'+speed+' <span style="font-size:9px;color:var(--t3)">m/s '+mode.toUpperCase()+'</span></span>'
+
+  /* Speed row */
+  h+='<div class="speed-row"><span class="sig-lbl">SPEED</span>'
+    +'<span class="sig-val" style="color:'+(isNAV?'var(--warn)':'var(--accent)')+'">'+speed+' m/s '+(isNAV?'NAV':'SCM')+'</span>'
     +'</div>';
-  h+='<button onclick="resetPower()" style="width:100%;padding:5px;background:none;border:1px solid rgba(239,68,68,.35);border-radius:8px;font-size:9px;font-weight:700;letter-spacing:1px;color:#ef4444;cursor:pointer;opacity:.7;transition:opacity .15s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.7">&#8635; RESET POWER</button>';
+
+  /* Reset button */
+  h+='<button class="reset-pwr" onclick="sdResetPower()">&#10227; RESET POWER</button>';
   h+='</div>';
   panel.innerHTML=h;
-}
-function setPwrPip(key,val){_pwrState[key]=val;buildPowerPanel();}
-function setPwrMode(mode){_pwrState.mode=mode;buildPowerPanel();}
-function resetPower(){_pwrState={mode:'scm',weapons:5,shields:5,engines:5,qd:3,radar:3,cooler:3,thrusters:5};buildPowerPanel();}
-function showPowerPanel(shipName){
-  var panel=document.getElementById('sdPowerPanel');
-  if(!panel)return;
-  var sd=SHIP_DATA&&SHIP_DATA[shipName];
-  if(sd){
-    window._playerScm=sd.scm||175;
-    window._playerPP=sd.comps&&sd.comps.pp;
-    window._playerPPCount=(sd.comps&&sd.comps.counts&&sd.comps.counts.pp)||1;
-  }
   panel.style.display='block';
-  buildPowerPanel();
 }
-window.setPwrPip=setPwrPip;
-window.setPwrMode=setPwrMode;
-window.resetPower=resetPower;
-window.showPowerPanel=showPowerPanel;
+function sdSetPwrPip(key,val){if(val===1)return;_pwrState[key]=val;buildPowerPanel();}
+function sdSetPwrMode(mode){_pwrState.mode=mode;buildPowerPanel();}
+function sdResetPower(){_pwrState={mode:'scm',weapons:5,shields:5,engines:5,qd:3,radar:3,cooler:3,thrusters:5};buildPowerPanel();}
+window.sdSetPwrPip=sdSetPwrPip;
+window.sdSetPwrMode=sdSetPwrMode;
+window.sdResetPower=sdResetPower;
 window.buildPowerPanel=buildPowerPanel;
+
 window.runShowdown=runShowdown;
 window.getUserDps=getUserDps;
 window.getShipDps=getShipDps;
@@ -8943,10 +8979,6 @@ function buildCard(name){
   var crewBasic=sd.crew||'';
   card.innerHTML='<div class="eic-img-wrap loading"><img class="eic-img" alt="" style="display:none"><div class="eic-name-overlay"><div class="eic-name">'+name+'</div><div class="eic-role">'+(roleBasic?roleBasic+' · ':'')+(sizeBasic?'Size '+sizeBasic:'')+'</div></div></div><div class="eic-info"><div class="eic-row"><span class="eic-lbl">Manufacturer</span><span class="eic-val eic-manf">—</span></div><div class="eic-row"><span class="eic-lbl">Career</span><span class="eic-val eic-career">—</span></div><div class="eic-row"><span class="eic-lbl">Role</span><span class="eic-val eic-role-detail">'+(roleBasic||'—')+'</span></div><div class="eic-row"><span class="eic-lbl">Size</span><span class="eic-val eic-size">—</span></div><div class="eic-row"><span class="eic-lbl">Crew</span><span class="eic-val eic-crew">—</span></div><div class="eic-row"><span class="eic-lbl">Cargo</span><span class="eic-val eic-cargo">—</span></div><div class="eic-row"><span class="eic-lbl">Length</span><span class="eic-val eic-length">—</span></div><div class="eic-row"><span class="eic-lbl">Width</span><span class="eic-val eic-width">—</span></div><div class="eic-row"><span class="eic-lbl">Height</span><span class="eic-val eic-height">—</span></div><div class="eic-row"><span class="eic-lbl">Status</span><span class="eic-val eic-status">—</span></div><div class="eic-row"><span class="eic-lbl">Pledge</span><span class="eic-val eic-cost eic-pledge">—</span></div><div class="eic-row"><span class="eic-lbl">Warbond</span><span class="eic-val eic-warbond">—</span></div><div class="eic-buy-info"><b>In-game:</b> <span class="eic-dealer">—</span><br><b>Availability:</b> <span class="eic-avail">—</span></div></div>';
   sel.appendChild(card);Array.prototype.forEach.call(sel.children,function(c){if(c!==card&&!c.classList.contains('enemy-info-card')){c.style.setProperty('display','none','important');}});
-  showPowerPanel(name);
-  
-
-  
   fetchInfo(name).then(function(info){
     if(!card.parentNode)return;
     function set(sel,val){var el=card.querySelector(sel);if(el)el.textContent=val||'—';}
