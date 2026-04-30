@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.96-DEV</title>
+<title>SC-ShipForge v7.97-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -964,7 +964,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v7.96-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v7.97-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -7016,7 +7016,13 @@ window.addEventListener('load', function() {
     var rlEl=document.getElementById('sdSelRole');
     if(rlEl) rlEl.textContent=(SHIP_DATA&&SHIP_DATA[name]&&SHIP_DATA[name].role)||'';
     if(window.buildPowerPanel) window.buildPowerPanel();
-    if(window.runShowdown) window.runShowdown(name);
+    /* Show a prompt to configure enemy then run comparison — do NOT auto-run */
+    var resEl = document.getElementById('sdResult');
+    if(resEl) resEl.innerHTML = '<div style="margin-top:20px;text-align:center;padding:20px;border:1px solid rgba(77,255,110,.15);border-radius:8px;background:rgba(77,255,110,.03)">' +
+      '<div style="font-size:11px;letter-spacing:2px;color:#4dff6e;margin-bottom:8px;text-shadow:0 0 8px rgba(77,255,110,.4)">&#9872; ENEMY SELECTED</div>' +
+      '<div style="font-size:12px;color:#a0b8a0;margin-bottom:16px;line-height:1.6">Configure the enemy loadout on the left, then click <strong style="color:#4dff6e">RUN COMPARISON</strong> to see the full breakdown.</div>' +
+      '<button onclick="window.runShowdown(window._pvpShip)" style="padding:10px 24px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.5);border-radius:5px;font-size:11px;font-weight:700;font-family:var(--fmono,monospace);letter-spacing:2px;color:#f87171;cursor:pointer;text-shadow:0 0 8px rgba(248,113,113,.3)">&#9876; RUN COMPARISON</button>' +
+    '</div>';
   };
   window.ss_clear_sd = function(){
     var inp=document.getElementById('sdShipInput');
@@ -7895,11 +7901,12 @@ html+="<div class=\"sd-ttk-row\"><span>Your TTK vs "+enemyName+"</span><span>"+m
 html+="<div class=\"sd-ttk-row\"><span>"+enemyName+" TTK vs You</span><span>"+(oppTTK>9000?"N/A":oppTTK.toFixed(1)+"s")+"</span></div>";
 html+="<div class=\"sd-ttk-row\"><span>Your DPS</span><span>"+me.dps.toLocaleString()+"</span></div>";
 html+="<div class=\"sd-ttk-row\"><span>Enemy DPS</span><span>"+them.dps.toLocaleString()+"</span></div>";
-html+="<div style=\"margin-top:10px\"><button onclick=\"openShowdownModal('"+window.selShip+"','"+enemyName+"',getUserDps(),getShipDps('"+enemyName+"'),"+myTTK.toFixed(2)+","+oppTTK.toFixed(2)+",'"+verdict+"')\" style=\"width:100%;padding:8px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.35);border-radius:4px;font-size:10px;font-weight:700;font-family:var(--fmono);letter-spacing:1.5px;color:#f87171;cursor:pointer\">&#9876; VIEW FULL BREAKDOWN</button></div>";
+html+='<div style="margin-top:10px"><button onclick="window.showLastShowdownModal()" style="width:100%;padding:8px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.35);border-radius:4px;font-size:10px;font-weight:700;font-family:var(--fmono);letter-spacing:1.5px;color:#f87171;cursor:pointer">&#9876; VIEW FULL BREAKDOWN</button></div>';
 html+="</div>";
+/* Store last result for the VIEW FULL BREAKDOWN button */
+window._lastShowdownResult={myShip:window.selShip||window._sbShip||'',enemyShip:enemyName,me:me,them:them,myTTK:myTTK,oppTTK:oppTTK,verdict:verdict};
 resEl.innerHTML=html;
-/* Auto-open the pop-out modal */
-if(window.openShowdownModal) openShowdownModal(window.selShip,enemyName,me,them,myTTK,oppTTK,verdict);
+/* Modal is triggered by the VIEW FULL BREAKDOWN button only — not auto-opened */
 }
 /* ═══ ENEMY LOADOUT BUILDER v2 ═══ */
 var _eSlots={};      // 'sl0','sl0_gun1' etc
@@ -10470,6 +10477,12 @@ window._loadModalShipImg = function(containerId, shipName){
       var src=p&&p.thumbnail&&p.thumbnail.source;
       if(src){cached[shipName]=src;inject(src);}
     }).catch(function(){});
+};
+
+window.showLastShowdownModal = function(){
+  var r = window._lastShowdownResult;
+  if(!r) return;
+  window.openShowdownModal(r.myShip, r.enemyShip, r.me, r.them, r.myTTK, r.oppTTK, r.verdict);
 };
 
 window.openShowdownModal = function(myShip, enemyShip, me, them, myTTK, oppTTK, verdict){
