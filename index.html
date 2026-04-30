@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.41-DEV</title>
+<title>SC-ShipForge v7.42-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.41-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.42-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7600,6 +7600,7 @@ var _eSlots={};      // 'sl0','sl0_gun1' etc
 var _eMissiles={};   // 'ms0','ms0_0' etc
 var _eRacks={};      // 'ms0' -> rack name
 var _eComps={};      // 'pp','pp_0' etc
+var _eSysEnabled={};  // 'sg','pp','cooler','radar' → true/false
 var _eSlotEnabled={};
 var _eMisEnabled={};
 var _eShipName=null;
@@ -7810,6 +7811,18 @@ function onECompChange(sel){
   }
   _eUpdateStats();
 }
+function toggleESystem(key){
+  _eSysEnabled[key]=(_eSysEnabled[key]===false)?true:false;
+  var on=_eSysEnabled[key]!==false;
+  var btnMap={sg:'eSgToggle',pp:'ePpToggle',cooler:'eCoolerToggle',radar:'eRadarToggle'};
+  var btn=document.getElementById(btnMap[key]);
+  if(btn){
+    btn.textContent=on?'ON':'OFF';
+    btn.style.borderColor=on?'var(--green)':'var(--border)';
+    btn.style.color=on?'var(--green)':'var(--t3)';
+  }
+  _eUpdateStats();
+}
 function resetEHardpoints(){
   var ship=_eShipName&&SHIP_DATA[_eShipName];if(!ship)return;
   (ship.slots||[]).forEach(function(sl,i){
@@ -7964,17 +7977,47 @@ function _eUpdateStats(){
       if(w&&(w.type==='energy'||w.type==='ballistic')){totalDps+=w.dps;totalAlpha+=w.alpha||0;}
     }
   });
-  /* Shield from first sg slot */
+  function setE(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
+  /* ── FIREPOWER ── */
+  setE('eFpDps',totalDps>0?totalDps.toLocaleString():'—');
+  setE('eFpAlpha',totalAlpha>0?totalAlpha.toLocaleString():'—');
+  /* ── DEFENSE (Shield) ── */
+  var sgOn=_eSysEnabled['sg']!==false;
   var sgKey=_eComps['sg_0']||_eComps['sg']||ship.comps.sg;
   var sgData=COMP_DB.sg&&COMP_DB.sg[sgKey];
   var sgCount=(ship.comps.counts&&ship.comps.counts.sg)||1;
-  var shieldHP=sgData?sgData.totalHP*sgCount:0;
-  var shieldRegen=sgData?sgData.regen*sgCount:0;
-  function setE(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
-  setE('eFpDps',totalDps>0?totalDps.toLocaleString():'—');
-  setE('eFpAlpha',totalAlpha>0?totalAlpha.toLocaleString():'—');
+  var shieldHP=sgOn&&sgData?sgData.totalHP*sgCount:0;
+  var shieldRegen=sgOn&&sgData?sgData.regen*sgCount:0;
   setE('eDfShield',shieldHP>0?shieldHP.toLocaleString()+' HP':'—');
   setE('eDfRegen',shieldRegen>0?'+'+shieldRegen.toLocaleString()+'/s':'—');
+  var sgCard=document.getElementById('eSgCard');
+  if(sgCard)sgCard.style.opacity=sgOn?'1':'0.4';
+  /* ── POWER ── */
+  var ppOn=_eSysEnabled['pp']!==false;
+  var ppKey=_eComps['pp_0']||_eComps['pp']||ship.comps.pp;
+  var ppData=COMP_DB.pp&&COMP_DB.pp[ppKey];
+  var ppCount=(ship.comps.counts&&ship.comps.counts.pp)||1;
+  var ppOut=ppOn&&ppData?(parseFloat(ppData.out)||0)*ppCount:0;
+  setE('eSysPp',ppOut>0?ppOut.toLocaleString()+' EU':'—');
+  var ppCard=document.getElementById('ePpCard');
+  if(ppCard)ppCard.style.opacity=ppOn?'1':'0.4';
+  /* ── COOLER ── */
+  var coolOn=_eSysEnabled['cooler']!==false;
+  var coolKey=_eComps['cooler_0']||_eComps['cooler']||ship.comps.cooler;
+  var coolData=COMP_DB.cooler&&COMP_DB.cooler[coolKey];
+  var coolCount=(ship.comps.counts&&ship.comps.counts.cooler)||1;
+  var coolOut=coolOn&&coolData?(parseFloat(coolData.cool)||0)*coolCount:0;
+  setE('eSysCooler',coolOut>0?coolOut.toLocaleString()+'/s':'—');
+  var coolCard=document.getElementById('eCoolerCard');
+  if(coolCard)coolCard.style.opacity=coolOn?'1':'0.4';
+  /* ── RADAR ── */
+  var radarOn=_eSysEnabled['radar']!==false;
+  var radarKey=_eComps['radar']||ship.comps.radar;
+  var radarData=COMP_DB.radar&&COMP_DB.radar[radarKey];
+  var radarDist=radarOn&&radarData?(radarData.dist||'—'):'—';
+  setE('eSysRadar',radarDist!=='—'?radarDist+' m':'—');
+  var radarCard=document.getElementById('eRadarCard');
+  if(radarCard)radarCard.style.opacity=radarOn?'1':'0.4';
   window._enemyDps=totalDps;
   window._enemyShieldHP=shieldHP;
 }
@@ -7986,7 +8029,7 @@ function buildEnemyLoadout(enemyName){
   if(!resEl)return;
   if(!ship){resEl.innerHTML='<div class="sd-result sd-close"><h3>NO DATA</h3><p>Ship not found.</p></div>';return;}
   _eShipName=enemyName;
-  _eSlots={};_eMissiles={};_eRacks={};_eComps={};
+  _eSlots={};_eMissiles={};_eRacks={};_eComps={};_eSysEnabled={};
   _eSlotEnabled={};_eMisEnabled={};
   var csz=ship.compSz||'S1';
   var RED='#ef4444';
@@ -8207,8 +8250,11 @@ function buildEnemyLoadout(enemyName){
         +'<div id="eFpAlpha" style="font-size:22px;font-weight:700;font-family:var(--fmono);color:#e2e8f0">—</div></div>'
     +'</div></div>';
   /* DEFENSE */
-  statsHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
-    +'<div style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono);margin-bottom:10px">DEFENSE</div>'
+  statsHTML+='<div id="eSgCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
+    +'<div style="display:flex;align-items:center;margin-bottom:10px">'
+      +'<span style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono)">DEFENSE</span>'
+      +'<button id="eSgToggle" onclick="toggleESystem(\'sg\')" style="margin-left:auto;padding:1px 8px;font-size:9px;font-family:var(--fmono);border-radius:20px;border:1px solid var(--green);background:none;color:var(--green);cursor:pointer;letter-spacing:1px">ON</button>'
+    +'</div>'
     +'<div style="display:flex;flex-direction:column;gap:6px">'
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Shield HP</span>'
@@ -8216,6 +8262,39 @@ function buildEnemyLoadout(enemyName){
       +'<div style="display:flex;justify-content:space-between;align-items:center">'
         +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Regen/s</span>'
         +'<span id="eDfRegen" style="font-size:14px;font-weight:600;font-family:var(--fmono);color:#34d399">—</span></div>'
+    +'</div></div>';
+  /* POWER */
+  statsHTML+='<div id="ePpCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
+    +'<div style="display:flex;align-items:center;margin-bottom:10px">'
+      +'<span style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono)">POWER</span>'
+      +'<button id="ePpToggle" onclick="toggleESystem(\'pp\')" style="margin-left:auto;padding:1px 8px;font-size:9px;font-family:var(--fmono);border-radius:20px;border:1px solid var(--green);background:none;color:var(--green);cursor:pointer;letter-spacing:1px">ON</button>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Output</span>'
+        +'<span id="eSysPp" style="font-size:16px;font-weight:700;font-family:var(--fmono);color:#f59e0b">—</span></div>'
+    +'</div></div>';
+  /* COOLER */
+  statsHTML+='<div id="eCoolerCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
+    +'<div style="display:flex;align-items:center;margin-bottom:10px">'
+      +'<span style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono)">COOLER</span>'
+      +'<button id="eCoolerToggle" onclick="toggleESystem(\'cooler\')" style="margin-left:auto;padding:1px 8px;font-size:9px;font-family:var(--fmono);border-radius:20px;border:1px solid var(--green);background:none;color:var(--green);cursor:pointer;letter-spacing:1px">ON</button>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Cool/s</span>'
+        +'<span id="eSysCooler" style="font-size:16px;font-weight:700;font-family:var(--fmono);color:#22d3ee">—</span></div>'
+    +'</div></div>';
+  /* RADAR */
+  statsHTML+='<div id="eRadarCard" style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
+    +'<div style="display:flex;align-items:center;margin-bottom:10px">'
+      +'<span style="font-size:10px;font-weight:800;letter-spacing:2px;color:'+RED+';font-family:var(--fmono)">RADAR</span>'
+      +'<button id="eRadarToggle" onclick="toggleESystem(\'radar\')" style="margin-left:auto;padding:1px 8px;font-size:9px;font-family:var(--fmono);border-radius:20px;border:1px solid var(--green);background:none;color:var(--green);cursor:pointer;letter-spacing:1px">ON</button>'
+    +'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">Range</span>'
+        +'<span id="eSysRadar" style="font-size:16px;font-weight:700;font-family:var(--fmono);color:#34d399">—</span></div>'
     +'</div></div>';
   /* VESSEL */
   statsHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';padding:14px 16px">'
@@ -8313,6 +8392,10 @@ window.toggleETurretTree=toggleETurretTree;
 window.syncETurretGuns=syncETurretGuns;
 window.syncEMissiles=syncEMissiles;
 window.runPvpShowdown=runPvpShowdown;
+window.toggleESystem=toggleESystem;
+window.resetEHardpoints=resetEHardpoints;
+window.resetEMissiles=resetEMissiles;
+window.resetESystems=resetESystems;
 </script>
 
 
