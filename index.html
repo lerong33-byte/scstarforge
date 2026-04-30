@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.30-DEV</title>
+<title>SC-ShipForge v7.31-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.30-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.31-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7904,7 +7904,7 @@ function buildEnemyLoadout(enemyName){
     }
   });
 
-  /* ── MISSILES ── */
+  /* ── MISSILES flat rack+child layout ── */
   var mHTML='';
   (ship.missiles||[]).forEach(function(ms,i){
     _eMisEnabled['ms'+i]=true;
@@ -7921,46 +7921,45 @@ function buildEnemyLoadout(enemyName){
       });
       if(bestRack)_eRacks['ms'+i]=bestRack;
     }
-    var mTreeId='emtree'+i;
-    var mwn=WEAPONS.find(function(x){return x.id===ms.default;});
-    var mSumName=mwn?mwn.name.split(' ').slice(0,2).join(' '):'—';
-    mHTML+='<div class="slot-row" id="emisrow'+i+'" data-on="1" style="border-color:'+RED_BORDER2+';background:'+DARK2+';margin-bottom:4px">'
-      +'<div class="slot-top">'
-      +'<div class="slot-thumb" style="background:'+DARK3+';border-right:1px solid '+RED_BORDER2+'"></div>'
-      +'<div class="slot-body">'
-      +'<div class="slot-body-top">'
-      +'<span class="sz-chip sz-s'+szNum+'">S'+szNum+'</span>'
-      +'<span class="slot-lbl">'+ms.lbl+'</span>'
-      +'<span class="slot-note"> × '+misCount+'</span>'
+    var curRackName=_eRacks['ms'+i]||ms.lbl;
+    /* Rack parent row */
+    mHTML+='<div id="emisrow'+i+'" data-on="1" style="background:'+DARK2+';border:1px solid '+RED_BORDER2+';border-radius:4px;margin-bottom:6px;overflow:hidden">'
+      /* Rack header */
+      +'<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid '+RED_BORDER2+';background:rgba(0,0,0,.25)">'
+      +'<span class="sz-chip sz-s'+szNum+'" style="flex-shrink:0">S'+szNum+'</span>'
+      +'<select class="slot-sel" data-rackidx="'+i+'" data-racksz="'+szNum+'" onchange="onERackChange(this)" style="flex:1;font-size:11px;padding:3px 6px;border-color:'+RED_BORDER2+';background:var(--bg3)">'+_eRackOpts(szNum,_eRacks['ms'+i])+'</select>'
       +'<button onclick="toggleEMis(this,'+i+')" '+toggleBtn(true)+'>ON</button>'
-      +'</div>'
-      /* Rack selector */
-      +'<div style="margin-bottom:4px">'
-      +'<div style="font-size:9px;color:var(--t3);font-family:var(--fmono);margin-bottom:2px;letter-spacing:.5px">RACK UNIT</div>'
-      +'<select class="slot-sel" data-rackidx="'+i+'" data-racksz="'+szNum+'" onchange="onERackChange(this)" style="font-size:11px;padding:3px 6px;border-color:'+RED_BORDER2+'">'+_eRackOpts(szNum,_eRacks['ms'+i])+'</select>'
-      +'</div>'
-      /* Missile tree */
-      +'<div style="border-left:2px solid var(--border);margin-left:4px;padding-left:8px;margin-top:4px">'
-      +'<div onclick="toggleETurretTree(\''+mTreeId+'\')" style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:3px 0;user-select:none">'
-      +'<span style="font-size:9px;color:var(--t3);font-family:var(--fmono)">▼</span>'
-      +'<span style="font-size:10px;color:var(--t2);font-family:var(--fmono);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+mSumName+' ×'+misCount+'</span>'
-      +'<button onclick="syncEMissiles(event,'+i+','+misCount+')" style="background:none;border:1px solid var(--border);border-radius:8px;padding:0 6px;font-size:8px;font-family:var(--fmono);color:var(--t3);cursor:pointer;line-height:16px">SYNC</button>'
-      +'</div>'
-      +'<div id="'+mTreeId+'" style="display:none;padding-top:4px">';
-    for(var mi=0;mi<misCount;mi++){
-      var mLast=(mi===misCount-1);
-      mHTML+='<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:'+(mLast?'0':'4px')+'">'
-        +'<div style="display:flex;flex-direction:column;align-items:center;padding-top:6px;flex-shrink:0">'
-        +'<span style="font-size:9px;color:var(--border);font-family:monospace">'+(mLast?'└':'├')+'</span>'
-        +'</div>'
-        +'<div style="flex:1;min-width:0">'
-        +'<select class="slot-sel" data-missidx="'+i+'" data-misgidx="'+mi+'" data-maxsz="'+szNum+'" onchange="onEMisItemChange(this)" style="font-size:11px;padding:3px 6px;border-color:'+RED_BORDER2+'">'+_eMisOpts(szNum,ms.default)+'</select>'
-        +'</div></div>';
-    }
-    mHTML+='</div></div>'
-      +'</div></div>'
-      +'<div class="slot-info" id="emi'+i+'" style="border-top:1px solid '+RED_BORDER2+'">'+_eMisInfo(ms.default)+'</div>'
       +'</div>';
+    /* Missile child rows */
+    for(var mi=0;mi<misCount;mi++){
+      var curMid=_eMissiles['ms'+i+'_'+mi]||ms.default;
+      var mw=WEAPONS.find(function(x){return x.id===curMid;});
+      var mTypeRaw=mw?mw.type:'';
+      var mTypeColor=mTypeRaw.includes('emp')?'#cc88ff':mTypeRaw.includes('cs')?'#44aaff':mTypeRaw==='torpedo'?'#ff4444':'#f59e0b';
+      var mTypeName=mTypeRaw.replace('missile-','').replace('missile','IR').toUpperCase()||'—';
+      var mAlpha=mw?mw.alpha.toLocaleString():'—';
+      var mRange=mw?mw.range.toLocaleString():'—';
+      var mSz=mw?mw.sz:szNum;
+      var isLast=(mi===misCount-1);
+      mHTML+='<div style="border-bottom:'+(isLast?'none':'1px solid rgba(239,68,68,.1)')+'">'
+        /* Top row: size + icon + select + type + alpha */
+        +'<div style="display:flex;align-items:center;gap:8px;padding:7px 10px 4px;background:'+DARK3+'">'
+        +'<span class="sz-chip sz-s'+mSz+'" style="flex-shrink:0">S'+mSz+'</span>'
+        +'<span style="font-size:13px;color:#f59e0b;flex-shrink:0">✈</span>'
+        +'<div style="flex:1;min-width:0">'
+        +'<select class="slot-sel" data-missidx="'+i+'" data-misgidx="'+mi+'" data-maxsz="'+szNum+'" onchange="onEMisItemChange(this)" style="font-size:11px;padding:3px 6px;border-color:'+RED_BORDER2+';width:100%;background:var(--bg3)">'+_eMisOpts(szNum,curMid)+'</select>'
+        +'</div>'
+        +'<span style="font-size:9px;font-family:var(--fmono);color:'+mTypeColor+';flex-shrink:0;min-width:60px;text-align:right">'+mTypeName+'</span>'
+        +'<span style="font-size:13px;font-weight:700;font-family:var(--fmono);color:#e2e8f0;flex-shrink:0;min-width:55px;text-align:right">'+mAlpha+' <span style="font-size:9px;color:var(--t3);font-weight:400">dmg</span></span>'
+        +'</div>'
+        /* Bottom row: range */
+        +'<div style="padding:2px 10px 6px;background:'+DARK3+'">'
+        +'<span style="font-size:9px;font-family:var(--fmono);color:var(--t3)">range </span>'
+        +'<span style="font-size:9px;font-family:var(--fmono);color:#f59e0b">'+mRange+' m</span>'
+        +'</div>'
+        +'</div>';
+    }
+    mHTML+='</div>';
   });
 
   /* ── SYSTEMS ── */
