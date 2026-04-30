@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.55-DEV</title>
+<title>SC-ShipForge v7.56-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.55-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.56-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -1436,6 +1436,8 @@ var COMP_DB={
     "Targa S1":{sz:1,totalHP:2400,faceHP:600,regen:228,drawMin:2,drawMax:4},
     "Veil S1":{sz:1,totalHP:2805,faceHP:701,regen:281,drawMin:1,drawMax:2},
     "WEB S1":{sz:1,totalHP:2700,faceHP:675,regen:257,drawMin:2,drawMax:4},
+    "AllWeather S1":{sz:1,totalHP:2700,faceHP:675,regen:270,drawMin:2,drawMax:4},
+    "STOP S1":{sz:1,totalHP:2700,faceHP:675,regen:257,drawMin:2,drawMax:4},
     "5MA 'Chimalli' S2":{sz:2,totalHP:12500,faceHP:3125,regen:1188,drawMin:3,drawMax:6},
     "6MA 'Kozane' S2":{sz:2,totalHP:12500,faceHP:3125,regen:1250,drawMin:3,drawMax:6},
     "7MA 'Lorica' S2":{sz:2,totalHP:12500,faceHP:3125,regen:1375,drawMin:3,drawMax:6},
@@ -1472,6 +1474,11 @@ var COMP_DB={
     "Stronghold S3":{sz:3,totalHP:90000,faceHP:22500,regen:8550,drawMin:5,drawMax:10},
     "SureStop S3":{sz:3,totalHP:132000,faceHP:33000,regen:12540,drawMin:5,drawMax:10},
     "Ward S3":{sz:3,totalHP:90000,faceHP:22500,regen:8100,drawMin:5,drawMax:10},
+    "Palisade S3":{sz:3,totalHP:90000,faceHP:22500,regen:8550,drawMin:4,drawMax:8},
+    "FR-66 S3":{sz:3,totalHP:132000,faceHP:33000,regen:14520,drawMin:5,drawMax:10},
+    "AllWeather S3":{sz:3,totalHP:90000,faceHP:22500,regen:9000,drawMin:4,drawMax:8},
+    "AllStop S3":{sz:3,totalHP:132000,faceHP:33000,regen:12540,drawMin:5,drawMax:10},
+    "Bulwark S3":{sz:3,totalHP:90000,faceHP:22500,regen:8550,drawMin:4,drawMax:8},
     "Glacis S4":{sz:4,totalHP:450000,faceHP:112500,regen:29700,drawMin:6,drawMax:12},
     "Glacis S4":{sz:4,totalHP:810000,faceHP:202500,regen:35640,drawMin:6,drawMax:12},
     "Holdstrong S4":{sz:4,totalHP:1320000,faceHP:330000,regen:58080,drawMin:6,drawMax:12},
@@ -7870,7 +7877,7 @@ function onECompChange(sel){
     var szc2={pp:'#f59e0b',sg:'#60a5fa',cooler:'#22d3ee',qd:'#a78bfa',radar:'#34d399'}[baseKey]||'#e2e8f0';
     var chip2=function(t){return '<span style="background:rgba(0,0,0,.4);border:1px solid '+szc2+';border-radius:20px;padding:1px 8px;font-size:11px;color:'+szc2+'">'+t+'</span>';};
     var sub2='';
-    if(baseKey==='pp'){var hv=parseFloat(cEntry2.heat)||0;sub2=hv?chip2(cEntry2.em?'EM '+cEntry2.em:'heat '+hv):'';
+    if(baseKey==='pp'){var hv=parseFloat(cEntry2.em)||0;sub2=hv?chip2('EM '+hv.toLocaleString()):'';
     }else if(baseKey==='sg'){var rv=cEntry2.regen||0;sub2=rv?chip2('\u21ba '+rv+'/s regen'):'';
     }else if(baseKey==='cooler'){var cv=parseFloat(cEntry2.cool)||0;sub2=cv?chip2(cv+' cool/s'):'';
     }else if(baseKey==='qd'){var qv=cEntry2.speed||0;sub2=qv?chip2((qv/1000).toFixed(0)+'k Mm/s'):'';
@@ -8324,7 +8331,7 @@ function buildEnemyLoadout(enemyName){
     if(!entry)return '';
     var sc=COMP_SZ_COL[k]||'#e2e8f0';
     var chip=function(t){return '<span style="background:rgba(0,0,0,.4);border:1px solid '+sc+';border-radius:20px;padding:1px 8px;font-size:11px;color:'+sc+'">'+t+'</span>';};
-    if(k==='pp'){var v=parseFloat(entry.heat)||0;return v?chip(entry.em?'EM '+entry.em:'heat '+v):'';}
+    if(k==='pp'){var v=parseFloat(entry.em)||0;return v?chip('EM '+v.toLocaleString()):'';}
     else if(k==='sg'){var v=entry.regen||0;return v?chip('\u21ba '+v+'/s regen'):'';}
     else if(k==='cooler'){var v=parseFloat(entry.cool)||0;return v?chip(v+' cool/s'):'';}
     else if(k==='qd'){var v=entry.speed||0;return v?chip((v/1000).toFixed(0)+'k Mm/s'):'';}
