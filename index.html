@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.3-DEV</title>
+<title>SC-ShipForge v8.2-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -964,7 +964,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4fc3f7;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(79,195,247,.4)">v8.3-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4fc3f7;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(79,195,247,.4)">v8.2-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1134,7 +1134,7 @@ option,optgroup{background:var(--bg2)}
       onmouseout="this.style.background='rgba(220,38,38,.08)';this.style.boxShadow='none'"
     >&#9876; TEST IN SHOWDOWN</button>
     <!-- Ship search -->
-    <div style="flex:1;max-width:400px;position:relative;margin-left:auto;margin-right:auto">
+    <div style="flex:1;max-width:400px;position:relative">
       <div class="ss-wrap" id="sbSearchWrap" style="border:1px solid rgba(79,195,247,.25);border-radius:8px;background:rgba(20,24,22,.8)">
         <span class="ss-icon" style="color:#4fc3f7">&#9672;</span>
         <input class="ss-input" id="sbShipInput" placeholder="Choose Ship to start loadout…" autocomplete="off"
@@ -10123,14 +10123,14 @@ tick();
   });
 })();
 
-/* ── Dashboard data population ── (uses SHIP_DATA + SHIPS globals) ── */
+/* ── Dashboard data population ── */
 function populateDashboard(){
-  if(!window.SHIP_DATA||!Object.keys(window.SHIP_DATA).length)return;
-  var shipNames=Object.keys(window.SHIP_DATA);
+  if(!window._ships||!window._ships.length)return;
+  var ships=window._ships;
   // Role counts
   var roles={fighter:0,bomber:0,freighter:0,mining:0,exploration:0,medical:0,capital:0};
-  shipNames.forEach(function(n){
-    var r=(SHIP_DATA[n].role||'').toLowerCase();
+  ships.forEach(function(s){
+    var r=(s.role||s.type||'').toLowerCase();
     if(r.includes('fighter'))roles.fighter++;
     else if(r.includes('bomb'))roles.bomber++;
     else if(r.includes('freight')||r.includes('cargo')||r.includes('hauler'))roles.freighter++;
@@ -10147,25 +10147,20 @@ function populateDashboard(){
   if(el=document.getElementById('dRoleExploration'))el.textContent=roles.exploration||'—';
   if(el=document.getElementById('dRoleMedical'))el.textContent=roles.medical||'—';
   if(el=document.getElementById('dRoleCapital'))el.textContent=roles.capital||'—';
-  if(el=document.getElementById('dRoleAll'))el.textContent=shipNames.length;
-  // Manufacturer bar chart — SHIPS is {mfr:[shipNames]}
-  var mfrArr=[];
-  if(window.SHIPS){
-    Object.keys(window.SHIPS).forEach(function(m){mfrArr.push({name:m,count:window.SHIPS[m].length});});
-  } else {
-    var mfrMap={};
-    shipNames.forEach(function(n){var m='Unknown';mfrMap[m]=(mfrMap[m]||0)+1;});
-    Object.keys(mfrMap).forEach(function(k){mfrArr.push({name:k,count:mfrMap[k]});});
-  }
+  if(el=document.getElementById('dRoleAll'))el.textContent=ships.length;
+  // Manufacturer bar chart
+  var mfrMap={};
+  ships.forEach(function(s){var m=s.manufacturer||s.mfr||'Unknown';mfrMap[m]=(mfrMap[m]||0)+1;});
+  var mfrArr=Object.keys(mfrMap).map(function(k){return{name:k,count:mfrMap[k]};});
   mfrArr.sort(function(a,b){return b.count-a.count;});
   var top=mfrArr.slice(0,7);
   var maxC=top[0]?top[0].count:1;
-  var barColors=['#4fc3f7','#ffb300','#39e055','#ff8c42','#40e0ff','#b388ff','#f87171'];
+  var barColors=['#4fc3f7','#39e055','#ffb300','#2ab844','#ff8c42','#40e0ff','#b388ff'];
   var mfrEl=document.getElementById('dMfrList');
   if(mfrEl){
     mfrEl.innerHTML=top.map(function(m,i){
       var pct=Math.round(m.count/maxC*100);
-      var glow=';box-shadow:0 0 6px '+barColors[i]+'55';
+      var glow=i<2?';box-shadow:0 0 5px '+barColors[i]+'44':'';
       return '<div class="d-mfr-row"><span class="d-mfr-name">'+m.name+'</span>'
         +'<div class="d-mfr-bar-wrap"><div class="d-mfr-bar" style="width:'+pct+'%;background:'+barColors[i]+glow+'"></div></div>'
         +'<span class="d-mfr-count">'+m.count+'</span></div>';
@@ -10176,52 +10171,64 @@ function populateDashboard(){
     }
   }
 }
-// Call after DOM ready — SHIP_DATA is synchronously available
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(populateDashboard,100);});
-} else {
-  setTimeout(populateDashboard,100);
-}
+// Call after data loads — hook into existing data-ready event or poll
+(function(){
+  var tries=0;
+  var t=setInterval(function(){
+    if(window._ships&&window._ships.length){clearInterval(t);populateDashboard();}
+    if(++tries>60)clearInterval(t);
+  },500);
+})();
 
 
 /* ── Dashboard ship card image loader ── */
 function loadDashboardShipImages(){
-  var cards=[
-    {id:'dCardImgHammerhead', name:'Hammerhead'},
-    {id:'dCardImgEclipse',    name:'Eclipse'},
-    {id:'dCardImgArrow',      name:'Arrow'},
-    {id:'dCardImgHercules',   name:'Hercules A2'},
+  var ships=[
+    {id:'dCardImgHammerhead', name:'Hammerhead', wiki:'Hammerhead_(ship)'},
+    {id:'dCardImgEclipse',    name:'Eclipse',    wiki:'Eclipse_(ship)'},
+    {id:'dCardImgArrow',      name:'Arrow',      wiki:'Arrow_(ship)'},
+    {id:'dCardImgHercules',   name:'Hercules A2',wiki:'C2_Hercules_Starlifter'},
   ];
-  function slugify(n){return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}
-  cards.forEach(function(s){
+  ships.forEach(function(s){
     var el=document.getElementById(s.id);
     if(!el)return;
-    // Remove any existing img to avoid duplicates
-    var existing=el.querySelector('img');
-    if(existing)existing.remove();
-    var slug=slugify(s.name);
-    // Try multiple size variants
-    var sizes=['600px','400px','300px','200px'];
-    var tried=0;
-    function tryNext(){
-      if(tried>=sizes.length)return;
-      var sz=sizes[tried++];
-      var src='https://starcitizen.tools/images/thumb/'+slug+'/'+sz+'-'+slug+'.jpg';
+    // Check cache first
+    var cached=window._shipImgCache=window._shipImgCache||{};
+    var inject=function(src){
       var img=document.createElement('img');
-      img.alt=s.name;
-      img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:center top;display:block;position:absolute;inset:0;transition:transform .3s';
-      img.onerror=function(){tryNext();};
       img.src=src;
+      img.alt=s.name;
+      img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s;position:absolute;inset:0';
+      img.onerror=function(){img.style.display='none';};
       el.insertBefore(img,el.firstChild);
-    }
-    tryNext();
+    };
+    if(cached[s.name]){inject(cached[s.name]);return;}
+    var url='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(s.wiki)+'&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*';
+    fetch(url).then(function(r){return r.json();}).then(function(d){
+      var pages=d.query&&d.query.pages;
+      if(!pages)return;
+      var p=pages[Object.keys(pages)[0]];
+      var src=p&&p.thumbnail&&p.thumbnail.source;
+      if(src){cached[s.name]=src;inject(src);}
+      else {
+        // fallback: try without suffix
+        var url2='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(s.name.replace(/ /g,'_'))+'&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*';
+        fetch(url2).then(function(r2){return r2.json();}).then(function(d2){
+          var p2=d2.query&&d2.query.pages;
+          if(!p2)return;
+          var pg2=p2[Object.keys(p2)[0]];
+          var src2=pg2&&pg2.thumbnail&&pg2.thumbnail.source;
+          if(src2){cached[s.name]=src2;inject(src2);}
+        }).catch(function(){});
+      }
+    }).catch(function(){});
   });
 }
-// Run after DOM ready
+// Run after DOM ready and after data loads
 if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(loadDashboardShipImages,300);});
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(loadDashboardShipImages,200);});
 } else {
-  setTimeout(loadDashboardShipImages,300);
+  setTimeout(loadDashboardShipImages,200);
 }
 
 
