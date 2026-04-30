@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.52-DEV</title>
+<title>SC-ShipForge v7.53-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.52-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.53-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7869,13 +7869,16 @@ function onECompChange(sel){
 function toggleESystem(key){
   _eSysEnabled[key]=(_eSysEnabled[key]===false)?true:false;
   var on=_eSysEnabled[key]!==false;
-  var btnMap={sg:'eSgToggle',pp:'ePpToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'};
-  var btn=document.getElementById(btnMap[key]);
-  if(btn){
-    btn.textContent=on?'ON':'OFF';
-    btn.style.borderColor=on?'var(--green)':'var(--border)';
-    btn.style.color=on?'var(--green)':'var(--t3)';
-  }
+  /* Sync all ON/OFF buttons for this system (stats panel card + component row header) */
+  var btnIds=[{sg:'eSgToggle',pp:'ePpToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'}[key],'erow_toggle_'+key];
+  btnIds.forEach(function(bid){
+    var btn=document.getElementById(bid);
+    if(btn){
+      btn.textContent=on?'ON':'OFF';
+      btn.style.borderColor=on?'var(--green)':'var(--border)';
+      btn.style.color=on?'var(--green)':'var(--t3)';
+    }
+  });
   /* Bidirectional: turning system OFF sets its pip column to 0; turning ON restores to 3 (default) */
   var pipMap={sg:'shields',pp:null,cooler:'cooler',radar:'radar',qd:'qd'};
   var pipKey=pipMap[key];
@@ -8057,9 +8060,15 @@ function _eUpdateStats(){
   setE('eFpDps',scaledDps>0?scaledDps.toLocaleString():'—');
   setE('eFpAlpha',scaledAlpha>0?scaledAlpha.toLocaleString():'—');
   setE('eFpDraw',totalWepDraw>0?totalWepDraw+' EU':'—');
+  /* ── Helper: resolve component key for any system (handles single and multi-slot) ── */
+  function resolveCompKey(k){
+    var cnt=(ship.comps.counts&&ship.comps.counts[k])||1;
+    if(cnt>1){return _eComps[k+'_0']||ship.comps[k]||'';}
+    return _eComps[k]||ship.comps[k]||'';
+  }
   /* ── DEFENSE (Shield — scaled by shield pip ratio) ── */
   var sgOn=_eSysEnabled['sg']!==false;
-  var sgKey=_eComps['sg_0']||_eComps['sg']||ship.comps.sg;
+  var sgKey=resolveCompKey('sg');
   var sgData=COMP_DB.sg&&COMP_DB.sg[sgKey];
   var sgCount=(ship.comps.counts&&ship.comps.counts.sg)||1;
   var shieldHP=sgOn&&sgData?Math.round(sgData.totalHP*sgCount*shRatio):0;
@@ -8072,21 +8081,21 @@ function _eUpdateStats(){
   if(sgCard)sgCard.style.opacity=sgOn?'1':'0.4';
   /* ── POWER ── */
   var ppOn=_eSysEnabled['pp']!==false;
-  var ppKey=_eComps['pp_0']||_eComps['pp']||ship.comps.pp;
+  var ppKey=resolveCompKey('pp');
   var ppData=COMP_DB.pp&&COMP_DB.pp[ppKey];
   var ppCount=(ship.comps.counts&&ship.comps.counts.pp)||1;
   var ppOut=ppOn&&ppData?(parseFloat(ppData.out)||0)*ppCount:0;
   /* Total system draw estimate */
   var sgDrawMax=sgData?((sgData.drawMax||0)*sgCount):0;
   var coolDrawMin=0,coolDrawMax=0;
-  var coolKey=_eComps['cooler_0']||_eComps['cooler']||ship.comps.cooler;
+  var coolKey=resolveCompKey('cooler');
   var coolData=COMP_DB.cooler&&COMP_DB.cooler[coolKey];
   var coolCount=(ship.comps.counts&&ship.comps.counts.cooler)||1;
   if(coolData){coolDrawMin=(coolData.drawMin||0)*coolCount;coolDrawMax=(coolData.drawMax||0)*coolCount;}
-  var qdKey=_eComps['qd']||ship.comps.qd;
+  var qdKey=resolveCompKey('qd');
   var qdData=COMP_DB.qd&&COMP_DB.qd[qdKey];
   var qdDraw=qdData?(qdData.drawMin||0):0;
-  var radarKey=_eComps['radar']||ship.comps.radar;
+  var radarKey=resolveCompKey('radar');
   var radarData=COMP_DB.radar&&COMP_DB.radar[radarKey];
   var radarDraw=radarData?(radarData.drawMin||0):0;
   var totalSysDraw=sgDrawMax+coolDrawMax+qdDraw+radarDraw;
@@ -8311,15 +8320,8 @@ function buildEnemyLoadout(enemyName){
       compStatRight='<span style="font-size:14px;font-weight:700;font-family:var(--fmono);color:'+compStatCol+';flex-shrink:0">'+compStatVal+' <span style="font-size:10px;color:var(--t3);font-weight:400">'+compStatUnit+'</span></span>';
     }
     cHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';margin-bottom:8px;overflow:hidden">';
-    cHTML+='<div onclick="toggleECompTree(\''+expandId+'\')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;background:'+RED_BG+'">'
-      +'<span style="font-size:10px;color:'+RED_DIM+';font-family:var(--fmono);flex-shrink:0" id="'+expandId+'_arr">&#9658;</span>'
-      +'<span style="font-size:16px;flex-shrink:0">'+ico+'</span>'
-      +'<span style="flex:1;min-width:0">'
-        +'<span id="ecname_'+k+'" style="font-size:14px;font-weight:700;color:#f1f5f9;font-family:var(--fmono);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sumText+(cnt>1?' <span style="color:'+RED_DIM+';font-size:11px">&times;'+cnt+'</span>':'')+'</span>'
-        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">'+lbl+' '+csz+'</span>'
-      +'</span>'
-      +'<span id="ecstat_'+k+'">'+compStatRight+'</span>'
-      +'</div>';
+       var onOffBtnId='erow_toggle_'+k;
+    cHTML+='<div style="display:flex;align-items:center;background:'+RED_BG+';border-bottom:0">'      +'<div onclick="toggleECompTree(\''+expandId+'\')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;flex:1;min-width:0">'        +'<span style="font-size:10px;color:'+RED_DIM+';font-family:var(--fmono);flex-shrink:0" id="'+expandId+'_arr">&#9658;</span>'        +'<span style="font-size:16px;flex-shrink:0">'+ico+'</span>'        +'<span style="flex:1;min-width:0">'          +'<span id="ecname_'+k+'" style="font-size:14px;font-weight:700;color:#f1f5f9;font-family:var(--fmono);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sumText+(cnt>1?' <span style="color:'+RED_DIM+';font-size:11px">&times;'+cnt+'</span>':'')+'</span>'          +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">'+lbl+' '+csz+'</span>'        +'</span>'        +'<span id="ecstat_'+k+'">'+compStatRight+'</span>'      +'</div>'      +'<button id="'+onOffBtnId+'" onclick="event.stopPropagation();toggleESystem(\''+k+'\')" style="flex-shrink:0;margin-right:10px;padding:2px 9px;font-size:9px;font-family:var(--fmono);border-radius:20px;border:1px solid var(--green);background:none;color:var(--green);cursor:pointer;letter-spacing:1px">ON</button>'    +'</div>';
     cHTML+='<div id="'+expandId+'" style="display:none;padding:10px 14px;background:'+DARK3+';border-top:1px solid '+RED_BORDER2+'">';
     if(cnt===1){
       cHTML+='<select class="slot-sel" data-compkey="'+k+'" onchange="onECompChange(this)" style="width:100%;font-size:12px;padding:5px 8px;border-color:'+RED_BORDER+';border-radius:8px">'+_eCompOpts(k,csz,cur)+'</select>'
@@ -8692,13 +8694,15 @@ function sdSetPwrPip(key,val){
     var nowOff=(val===0);
     if(wasOff!==nowOff){
       _eSysEnabled[sysKey]=!nowOff;
-      var btnMap={sg:'eSgToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'};
-      var btn=document.getElementById(btnMap[sysKey]);
-      if(btn){
-        btn.textContent=!nowOff?'ON':'OFF';
-        btn.style.borderColor=!nowOff?'var(--green)':'var(--border)';
-        btn.style.color=!nowOff?'var(--green)':'var(--t3)';
-      }
+      var cardBtnMap={sg:'eSgToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'};
+      [cardBtnMap[sysKey],'erow_toggle_'+sysKey].forEach(function(bid){
+        var btn=document.getElementById(bid);
+        if(btn){
+          btn.textContent=!nowOff?'ON':'OFF';
+          btn.style.borderColor=!nowOff?'var(--green)':'var(--border)';
+          btn.style.color=!nowOff?'var(--green)':'var(--t3)';
+        }
+      });
     }
   }
   buildPowerPanel();
