@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.97-DEV</title>
+<title>SC-ShipForge v6.98-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.97-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.98-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7856,6 +7856,7 @@ var dEl=document.getElementById("sdEnemyDpsVal");if(dEl)dEl.textContent=dps.toLo
 }
 window.runShowdown=function(en){
 var res=document.getElementById("sdResult");if(!res||!en)return;res.innerHTML="";
+var _psd=document.getElementById("pane-sd");if(_psd)_psd.classList.add("sd-active");
 var ship=SHIP_DATA[en];if(!ship)return;
 var cfg=document.createElement("div");cfg.className="sd-config";
 var hdr=document.createElement("div");hdr.style.cssText="text-align:center;padding:8px 16px;margin:0 auto 10px;max-width:500px;background:linear-gradient(135deg,rgba(220,38,38,.12),rgba(220,38,38,.03));border:1px solid rgba(220,38,38,.3);border-radius:8px;";
