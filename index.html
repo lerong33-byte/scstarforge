@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.56-DEV</title>
+<title>SC-ShipForge v7.57-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.56-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.57-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -6789,15 +6789,19 @@ window.addEventListener('load', function() {
   };
   window.ss_clear_sd = function(){
     var inp=document.getElementById('sdShipInput');
-    if(inp){inp.value='';inp.classList.remove('has-val');inp.focus();}
+    if(inp){inp.value='';inp.classList.remove('has-val');}
     document.getElementById('sdShipClear')?.classList.remove('show');
-    close('ss_drop_sd');
     window._pvpShip=null;
     var selEl=document.getElementById('sdSelectedShip');
     if(selEl) selEl.style.display='none';
     var res=document.getElementById('sdResult');
     if(res) res.innerHTML='';
-
+    /* Reopen dropdown with full list after clearing */
+    setTimeout(function(){
+      var i=document.getElementById('sdShipInput');
+      if(i){i.focus();}
+      update('ss_drop_sd','',false,true);
+    },10);
   };
   // Close on outside click
   document.addEventListener('click',function(e){
@@ -8634,65 +8638,50 @@ function buildPowerPanel(){
     var ck=_compCntMap[k];
     _compCnts[k]=(ck&&def.comps&&def.comps.counts&&def.comps.counts[ck])||1;
   });
-  var PIP_H=11; /* px per pip */
+  var PIP_H=10; /* px per pip */
   var PIP_GAP=2;
   var OC_PIPS=2; /* overclock pips above normal range */
   var NORM_PIPS=10;
   var TOTAL_PIPS=NORM_PIPS+OC_PIPS;
   /* Fixed height for the normal-pip area so all columns align at baseline */
-  var NORM_AREA_H=NORM_PIPS*PIP_H+(NORM_PIPS-1)*PIP_GAP; /* 128px */
-  h+='<div style="display:flex;gap:3px;margin-top:8px;box-sizing:border-box;align-items:flex-end">';
+  var NORM_AREA_H=NORM_PIPS*(PIP_H+PIP_GAP); /* 120px */
+  /* NAV mode: weapons and shields are locked OFF */
+  var navLockedSys={weapons:isNAV,shields:isNAV};
+  h+='<div style="display:flex;gap:4px;margin-top:8px;box-sizing:border-box;align-items:flex-end;width:100%">';
   SYSS.forEach(function(sys){
     var val=_pwrState[sys.k]||0;
     var unitCnt=_compCnts[sys.k]||1;
     var ppu=Math.floor(NORM_PIPS/unitCnt);
-    h+='<div style="flex:1;display:flex;flex-direction:column;align-items:center">';
+    var navLocked=navLockedSys[sys.k]||false;
+    var colColor=navLocked?'rgba(255,255,255,0.15)':sys.color;
+    h+='<div style="flex:1;min-width:0;display:flex;flex-direction:column;align-items:stretch">';
     /* Overclock pips (11-12) at top — red/orange */
-    h+='<div style="display:flex;flex-direction:column;align-items:center;gap:'+PIP_GAP+'px;width:100%;margin-bottom:4px">';
+    h+='<div style="display:flex;flex-direction:column;gap:'+PIP_GAP+'px;margin-bottom:3px">';
     for(var oc=TOTAL_PIPS;oc>=NORM_PIPS+1;oc--){
-      var ocFilled=val>=oc;
-      h+='<div onclick="sdSetPwrPip(\''+sys.k+'\','+oc+')" '
-        +'style="width:100%;height:'+PIP_H+'px;min-height:'+PIP_H+'px;border-radius:2px;border:1px solid rgba(255,80,0,0.4);box-sizing:border-box;cursor:pointer;'
-        +'background:'+(ocFilled?'linear-gradient(180deg,#ff6600,#cc3300)':'rgba(255,80,0,0.12)')+'">'
+      var ocFilled=!navLocked&&val>=oc;
+      h+='<div onclick="'+(navLocked?'':'sdSetPwrPip(\''+sys.k+'\','+oc+')')+'" '
+        +'style="width:100%;height:'+PIP_H+'px;border-radius:2px;border:1px solid rgba(255,80,0,0.35);box-sizing:border-box;cursor:'+(navLocked?'default':'pointer')+';'
+        +'background:'+(ocFilled?'linear-gradient(180deg,#ff6600,#cc3300)':'rgba(255,80,0,0.08)')+'">'
         +'</div>';
     }
     h+='</div>';
     /* Separator line between overclock and normal */
-    h+='<div style="width:100%;height:2px;background:rgba(255,100,0,0.4);border-radius:1px;margin-bottom:4px"></div>';
-    /* Normal pip area — fixed height NORM_AREA_H so all columns share the same baseline */
-    if(unitCnt>1){
-      /* Merged group blocks — scale bh so total fills NORM_AREA_H */
-      var totalGaps=(unitCnt-1)*3;
-      var totalBh=NORM_AREA_H-totalGaps;
-      var bh=Math.round(totalBh/unitCnt);
-      h+='<div style="display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;height:'+NORM_AREA_H+'px;margin-bottom:4px">';
-      for(var g=unitCnt-1;g>=0;g--){
-        var pipLo=g*ppu+1;
-        var pipHi=(g+1)*ppu;
-        var groupFilled=val>=pipHi;
-        var groupPartial=val>=pipLo&&val<pipHi;
-        var fillPct=groupFilled?100:groupPartial?Math.round((val-pipLo+1)/ppu*100):0;
-        /* All group blocks are clickable — sdSetPwrPip clamps val>=1 internally */
-        h+='<div onclick="sdSetPwrPip(\''+sys.k+'\','+pipHi+')" '
-          +'style="width:100%;height:'+bh+'px;min-height:'+bh+'px;flex-shrink:0;border-radius:3px;border:1px solid rgba(0,0,0,0.3);box-sizing:border-box;cursor:pointer;overflow:hidden;position:relative;background:rgba(255,255,255,0.08)">'
-          +'<div style="position:absolute;bottom:0;left:0;right:0;height:'+fillPct+'%;background:'+sys.color+';transition:height .2s;border-radius:2px"></div>'
-          +(g===unitCnt-1?'<span style="position:absolute;top:1px;right:2px;font-size:8px;font-weight:700;color:rgba(255,255,255,0.7);font-family:var(--fmono)">'+unitCnt+'</span>':'')
-          +'</div>';
-      }
-      h+='</div>';
-    } else {
-      /* Individual pips — fixed height NORM_AREA_H */
-      h+='<div style="display:flex;flex-direction:column;align-items:center;gap:'+PIP_GAP+'px;width:100%;height:'+NORM_AREA_H+'px;margin-bottom:4px">';
-      for(var p=NORM_PIPS;p>=1;p--){
-        var filled=p<=val;
-        /* All pips clickable — sdSetPwrPip clamps val>=1 internally */
-        h+='<div onclick="sdSetPwrPip(\''+sys.k+'\','+p+')" '
-          +'style="width:100%;height:'+PIP_H+'px;min-height:'+PIP_H+'px;flex-shrink:0;border-radius:2px;border:1px solid rgba(0,0,0,0.3);box-sizing:border-box;cursor:pointer;'
-          +'background:'+(filled?sys.color:'rgba(255,255,255,0.08)')+';opacity:'+(filled?'1':'0.35')+'">'
-          +'</div>';
-      }
-      h+='</div>';
+    h+='<div style="width:100%;height:1px;background:rgba(255,100,0,0.3);margin-bottom:3px"></div>';
+    /* Normal pip area — always 10 individual pips, grouped visually by separator */
+    h+='<div style="display:flex;flex-direction:column;gap:'+PIP_GAP+'px;margin-bottom:3px">';
+    for(var p=NORM_PIPS;p>=1;p--){
+      var filled=!navLocked&&p<=val;
+      /* Determine which group this pip belongs to (for multi-unit columns) */
+      var grp=unitCnt>1?Math.floor((p-1)/ppu):0;
+      var isGrpBoundary=unitCnt>1&&p>1&&(p-1)%ppu===0;
+      /* Group separator: slightly larger gap before first pip of each new group */
+      var extraTop=isGrpBoundary?'margin-top:4px;':''; 
+      h+='<div onclick="'+(navLocked?'':'sdSetPwrPip(\''+sys.k+'\','+p+')')+'" '
+        +'style="width:100%;height:'+PIP_H+'px;flex-shrink:0;border-radius:2px;box-sizing:border-box;cursor:'+(navLocked?'default':'pointer')+';'+extraTop
+        +'background:'+(filled?colColor:'rgba(255,255,255,0.08)')+';opacity:'+(filled?'1':(navLocked?'0.2':'0.3'))+'">'
+        +'</div>';
     }
+    h+='</div>';
        /* Icon = power toggle button: click to toggle system ON/OFF */
     var pipToSysMap={weapons:null,shields:'sg',engines:null,qd:'qd',radar:'radar',cooler:'cooler',thrusters:null};
     var sysToggleKey=pipToSysMap[sys.k];
