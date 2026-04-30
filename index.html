@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.0-DEV</title>
+<title>SC-ShipForge v8.1-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -964,7 +964,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4fc3f7;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(79,195,247,.4)">v8.0-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4fc3f7;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(79,195,247,.4)">v8.1-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1177,7 +1177,7 @@ option,optgroup{background:var(--bg2)}
       <div id="sbPowerPanel" style="flex-shrink:0"></div>
     </div>
     <!-- CENTER: loadout -->
-    <div id="sbResult" style="flex:1;min-width:0;overflow-y:auto;padding:0"><div id="sbDashboard">
+    <div id="sbDashboard" style="flex:1;min-width:0;overflow-y:auto;padding:0">
   <div class="d-welcome">
     <div class="d-wc tl"></div><div class="d-wc tr"></div>
     <div class="d-wc bl"></div><div class="d-wc br"></div>
@@ -1241,7 +1241,10 @@ option,optgroup{background:var(--bg2)}
       <div class="d-pn-item data"><span class="d-pn-badge d-badge-data">DATA</span><span class="d-pn-text">Updated weapon DPS values for <strong>CF-447 Rhino</strong>, <strong>Attrition-1</strong>, and <strong>Scorpion GT-215</strong> to PU 4.7.2 live values</span><span class="d-pn-date">Apr 24</span></div>
     </div>
   </div>
-</div></div>
+</div>
+    </div>
+    <!-- CENTER: loadout (hidden when dashboard shown) -->
+    <div id="sbResult" style="flex:1;min-width:0;overflow-y:auto;padding:0;display:none"></div>
   </div>
       </div>
 
@@ -6923,16 +6926,12 @@ window.addEventListener('load', function() {
     if(clr) clr.classList.remove('show');
     window._sbShip=null;
     var res=document.getElementById('sbResult');
-    if(res){res.innerHTML='';res.style.padding='0';}
+    if(res){res.innerHTML='';res.style.display='none';res.style.padding='0';}
     var pp=document.getElementById('sbPowerPanel');
     if(pp){pp.style.display='none';pp.innerHTML='';}
-    /* Show dashboard */
+    /* Show dashboard (sibling of sbResult — never destroyed) */
     var _dash=document.getElementById('sbDashboard');
-    if(_dash){_dash.style.display='flex';res.appendChild(_dash);}
-    else{
-      /* Re-create dashboard if needed */
-      if(res){res.innerHTML='<div id="sbDashboard" style="display:flex;flex-direction:column;gap:12px;padding:14px 16px"><div style="color:var(--t3);font-family:var(--fmono);font-size:12px;text-align:center;padding:40px">&#9672; Select a ship to build</div></div>';}
-    }
+    if(_dash)_dash.style.display='flex';
     /* Hide left panel */
     var lp=document.getElementById('sbLeftPanel');
     if(lp)lp.style.display='none';
@@ -8861,7 +8860,7 @@ function buildShipBuilder(shipName){
   var _dash=document.getElementById('sbDashboard');
   if(_dash)_dash.style.display='none';
   var _res=document.getElementById('sbResult');
-  if(_res)_res.style.padding='8px';
+  if(_res){_res.style.display='flex';_res.style.flexDirection='column';_res.style.padding='8px';}
   /* Show Return to Dashboard + Test in Showdown buttons */
   var _rdb=document.getElementById('returnDashBtn');
   if(_rdb)_rdb.style.display='inline-flex';
