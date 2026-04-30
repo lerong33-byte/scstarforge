@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.74-DEV</title>
+<title>SC-ShipForge v7.75-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.74-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.75-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -926,7 +926,7 @@ option,optgroup{background:var(--bg2)}
   <div class="body">
 
     <!-- LEFT: ship dashboard -->
-                        <aside class="lp">
+                        <aside class="lp" style="display:none">
 <div class="ship-img-wrap" style="height:155px">
         <span class="ship-img-placeholder" id="shipPh">Select a ship</span>
         <img id="rpShipImg" alt=""/>
@@ -8609,9 +8609,9 @@ function buildShipBuilder(shipName){
   }
 }
 
-function toggleBuilderAside(show){
+function toggleBuilderAside(hideIt){
   var aside=document.querySelector('aside.lp');
-  if(aside) aside.style.display=show?'none':'';
+  if(aside) aside.style.display=hideIt?'none':'';
 }
 
 function updatePvpTotal(){}
