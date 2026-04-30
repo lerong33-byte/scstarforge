@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.25-DEV</title>
+<title>SC-ShipForge v7.26-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.25-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.26-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -1144,14 +1144,17 @@ option,optgroup{background:var(--bg2)}
   <div class="sd-hero-title"><span>&#9876; SHIP SHOWDOWN</span></div>
 
     <div class="ss-wrap" id="sdSearchWrap" style="margin-bottom:8px;">
-    <span class="ss-icon">&#9876;</span>
-    <input class="ss-input" id="sdShipInput" placeholder="Select your opponent…" autocomplete="off">
-    <button class="ss-clear" id="sdShipClear" style="display:none;">×</button>
-    <div class="ss-drop" id="sdShipDrop" style="display:none;">
-      <div class="sd-role-bar" id="sdRoleBar" style="padding:4px 6px;border-bottom:1px solid rgba(100,116,139,.2);"><button class="sd-role-btn active" data-role="all">All</button><button class="sd-role-btn" data-role="Fighter">Fighter</button><button class="sd-role-btn" data-role="Bomber">Bomber</button><button class="sd-role-btn" data-role="Gunship">Gunship</button><button class="sd-role-btn" data-role="Interdiction">Interdict</button><button class="sd-role-btn" data-role="Capital">Capital</button><button class="sd-role-btn" data-role="Starter">Starter</button></div>
-      <div class="ss-inner" id="sdShipInner"></div>
+      <span class="ss-icon">&#9876;</span>
+      <input class="ss-input" id="sdShipInput" placeholder="Select your opponent…" autocomplete="off"
+        oninput="ss_type_sd(this)"
+        onfocus="ss_open_sd('')"
+        onkeydown="ss_key_sd(event)"/>
+      <button class="ss-clear" id="sdShipClear" onclick="ss_clear_sd()" title="Clear">&times;</button>
+      <div class="ss-drop" id="ss_drop_sd">
+        <div class="ss-inner"></div>
+        <div class="ss-foot"><kbd>&uarr;&darr;</kbd>navigate &nbsp;<kbd>Enter</kbd>select &nbsp;<kbd>Esc</kbd>close</div>
+      </div>
     </div>
-  </div>
     
 <div id="sd-content-row" style="display:flex;flex-direction:row;align-items:flex-start;gap:12px;width:100%;">
 <div id="sdSelectedShip" style="display:none;width:280px;min-width:280px;flex-shrink:0;box-sizing:border-box;">
@@ -6597,11 +6600,11 @@ window.addEventListener('load', function() {
     return 'https://starcitizen.tools/images/thumb/'+slug+'/80px-'+slug+'.jpg';
   }
 
-  function itemHTML(name, hl, isTarget) {
+  function itemHTML(name, hl, isTarget, isSd) {
     var d = SHIP_DATA&&SHIP_DATA[name]||{};
     var sz = d.compSz||'';
     var mfr = d.mfr||'';
-    var fn = isTarget ? 'ss_pick_tgt' : 'ss_pick_ship';
+    var fn = isSd ? 'ss_pick_sd' : (isTarget ? 'ss_pick_tgt' : 'ss_pick_ship');
     var safe = name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     return '<div class="ss-item" onclick="'+fn+'(\''+safe+'\')" data-nm="'+name.replace(/"/g,'&quot;')+'">'+
       '<img class="ss-thumb" src="'+imgURL(name)+'" alt="" onerror="this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\')">'+
@@ -6612,15 +6615,15 @@ window.addEventListener('load', function() {
       '</div>';
   }
 
-  function buildHTML(q, isTarget) {
+  function buildHTML(q, isTarget, isSd) {
     var all = Object.keys(SHIP_DATA||{});
-    var key = isTarget?'tgt':'ship';
-    var recent = _recent[key];
+    var key = isSd?'sd':(isTarget?'tgt':'ship');
+    var recent = _recent[key]||[];
     if(!q||!q.trim()){
       var html = '';
       if(recent.length){
         html += '<div class="ss-group-lbl">Recent</div>';
-        recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget); });
+        recent.slice(0,5).forEach(function(n){ html += itemHTML(n,n,isTarget,isSd); });
       }
       var byRole = {};
       all.forEach(function(n){
@@ -6630,7 +6633,7 @@ window.addEventListener('load', function() {
       });
       Object.keys(byRole).sort().forEach(function(role){
         html += '<div class="ss-group-lbl">'+role+' ('+byRole[role].length+')</div>';
-        byRole[role].sort().forEach(function(n){ html += itemHTML(n,n,isTarget); });
+        byRole[role].sort().forEach(function(n){ html += itemHTML(n,n,isTarget,isSd); });
       });
       return html;
     }
@@ -6643,19 +6646,18 @@ window.addEventListener('load', function() {
     results = results.slice(0,12);
     if(!results.length) return '<div class="ss-empty">No ships match &ldquo;'+q.trim()+'&rdquo;</div>';
     var html = '<div class="ss-group-lbl">'+results.length+' result'+(results.length===1?'':'s')+'</div>';
-    results.forEach(function(r){ html += itemHTML(r.name,r.hl,isTarget); });
+    results.forEach(function(r){ html += itemHTML(r.name,r.hl,isTarget,isSd); });
     return html;
   }
-
   function open(dropId){ var d=document.getElementById(dropId); if(d) d.classList.add('open'); }
   function close(dropId){ var d=document.getElementById(dropId); if(d){ d.classList.remove('open'); } }
-  function update(dropId, q, isTarget){
+  function update(dropId, q, isTarget, isSd){
     var d=document.getElementById(dropId);
     if(!d) return;
     var inner=d.querySelector('.ss-inner');
-    if(inner) inner.innerHTML = buildHTML(q,isTarget);
+    if(inner) inner.innerHTML = buildHTML(q,isTarget,isSd);
     open(dropId);
-    _hi[isTarget?'tgt':'ship']=-1;
+    _hi[isSd?'sd':(isTarget?'tgt':'ship')]=-1;
   }
 
   window.ss_open_ship = function(q){ update('ss_drop_ship',q,false); };
@@ -6711,12 +6713,44 @@ window.addEventListener('load', function() {
     update('ss_drop_tgt','',true);
   };
 
+   // Showdown search (sd) — same engine, picks enemy for runShowdown
+  window.ss_open_sd  = function(q){ update('ss_drop_sd',q,false,true); };
+  window.ss_type_sd  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sd',inp.value,false,true); };
+  window.ss_key_sd   = function(e){ ssNav(e,'ss_drop_sd','sd',false); };
+  window.ss_pick_sd  = function(name){
+    close('ss_drop_sd');
+    var inp=document.getElementById('sdShipInput');
+    if(inp){inp.value=name;inp.classList.add('has-val');}
+    var clr=document.getElementById('sdShipClear');
+    if(clr) clr.classList.add('show');
+    window._pvpShip=name;
+    var selEl=document.getElementById('sdSelectedShip');
+    if(selEl) selEl.style.display='block';
+    var nmEl=document.getElementById('sdSelName');
+    if(nmEl) nmEl.textContent=name;
+    var rlEl=document.getElementById('sdSelRole');
+    if(rlEl) rlEl.textContent=(SHIP_DATA&&SHIP_DATA[name]&&SHIP_DATA[name].role)||'';
+    if(window.runShowdown) window.runShowdown(name);
+  };
+  window.ss_clear_sd = function(){
+    var inp=document.getElementById('sdShipInput');
+    if(inp){inp.value='';inp.classList.remove('has-val');inp.focus();}
+    document.getElementById('sdShipClear')?.classList.remove('show');
+    close('ss_drop_sd');
+    window._pvpShip=null;
+    var selEl=document.getElementById('sdSelectedShip');
+    if(selEl) selEl.style.display='none';
+    var res=document.getElementById('sdResult');
+    if(res) res.innerHTML='';
+  };
   // Close on outside click
   document.addEventListener('click',function(e){
     if(!e.target.closest('#ss_wrap_ship')) close('ss_drop_ship');
     if(!e.target.closest('#ss_wrap_tgt'))  close('ss_drop_tgt');
+    if(!e.target.closest('#sdSearchWrap')) close('ss_drop_sd');
   });
-
+  // Extend _hi for sd navigation
+  _hi['sd'] = -1;
   window.ss_open_ship  = ss_open_ship;
   window.ss_open_tgt   = ss_open_tgt;
   window.ss_type_ship  = ss_type_ship;
@@ -7686,40 +7720,8 @@ var resEl=document.getElementById("sdResult");
 resEl.innerHTML="";
 resEl.appendChild(rd);
 }
-// Showdown ship search + role filter
-(function(){
-var activeRole="all";
-var inp=document.getElementById("sdShipInput");
-var drop=document.getElementById("sdShipDrop");
-var inner=document.getElementById("sdShipInner");
-var clr=document.getElementById("sdShipClear");
-var bar=document.getElementById("sdRoleBar");
-if(!inp)return;
-function showList(q){
-var names=Object.keys(SHIP_DATA).sort();
-if(activeRole!=="all")names=names.filter(function(n){return SHIP_DATA[n].role===activeRole;});
-if(q)names=names.filter(function(n){return n.toLowerCase().indexOf(q)>-1;});
-inner.innerHTML="";
-var hdr=document.createElement("div");hdr.style.cssText="padding:2px 8px;font-size:9px;color:#64748b;";hdr.textContent=names.length+" ships";inner.appendChild(hdr);
-names.forEach(function(nm){
-var row=document.createElement("div");row.style.cssText="padding:5px 8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:11px;";
-row.onmouseenter=function(){row.style.background="rgba(220,38,38,.15)";};
-row.onmouseleave=function(){row.style.background="";};
-row.innerHTML="<span style=color:#e2e8f0;font-weight:600>"+nm+"</span><span style=color:#64748b;font-size:10px>"+(SHIP_DATA[nm].role||"")+" "+SHIP_DATA[nm].size+"</span>";
-row.onclick=function(){window._pvpShip=nm;inp.value="";drop.style.display="none";clr.style.display="none";
-document.getElementById("sdSelectedShip").style.display="block";
-document.getElementById("sdSelName").textContent=nm;
-document.getElementById("sdSelRole").textContent=SHIP_DATA[nm].role||"";
-window.runShowdown(nm);
-};inner.appendChild(row);});
-drop.style.display="flex";}
-if(bar){bar.addEventListener("click",function(e){e.stopPropagation();var btn=e.target.closest(".sd-role-btn");if(!btn)return;bar.querySelectorAll(".sd-role-btn").forEach(function(b){b.classList.remove("active");});btn.classList.add("active");activeRole=btn.dataset.role;showList(inp.value.toLowerCase().trim()||null);});}
-inp.addEventListener("focus",function(){showList(this.value.toLowerCase().trim()||null);});
-inp.addEventListener("input",function(){var q=this.value.toLowerCase().trim();clr.style.display=q?"block":"none";showList(q||null);});
-clr.addEventListener("click",function(){inp.value="";drop.style.display="none";clr.style.display="none";var res=document.getElementById("sdResult");if(res)res.innerHTML="";window._pvpShip=null;document.getElementById("sdSelectedShip").style.display="none";});
-document.addEventListener("click",function(e){if(!e.target.closest("#sdSearchWrap"))drop.style.display="none";});
-})();
 </script>
+
 
 
 
