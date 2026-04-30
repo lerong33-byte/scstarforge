@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.21-DEV</title>
+<title>SC-ShipForge v7.22-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -912,7 +912,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.21-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.22-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -8916,14 +8916,21 @@ tick();
     var COMP=window.COMP_DB||{};
     var WEAP=window.WEAPONS||{};
 
+    // Parse weaponry if stored as string
+    var liveWeap=live.weaponry||{};
+    if(typeof liveWeap==='string'){try{liveWeap=JSON.parse(liveWeap);}catch(e){liveWeap={};}}
+
     // ── HEADER ──
     set('ssShipName', shipName.toUpperCase());
-    var sub=[ship.career||'', ship.role||'', 'SIZE '+(ship.size||'?')].filter(Boolean).join(' · ');
+    var career=live.career||ship.career||'';
+    var role=live.role||ship.role||'';
+    var sz=live.size||ship.size||'';
+    var sub=[career,role,sz?('SIZE '+sz):''].filter(Boolean).join(' · ');
     set('ssShipSub', sub);
     var thumb=el('ssThumb');
     if(thumb){
       var img=ship.img||ship.image||'';
-      if(!img&&live.media&&live.media[0])img=live.media[0].source_url||'';
+      if(!img&&live.images&&live.images[0])img=live.images[0].source_url||live.images[0].url||'';
       thumb.src=img;
       thumb.style.display=img?'block':'none';
     }
@@ -8933,27 +8940,36 @@ tick();
       var bs='';
       var scm=ship.scm||(live.speed&&live.speed.scm)||'';
       if(scm)bs+='<span style="padding:2px 7px;border-radius:2px;font-size:9px;font-family:var(--fmono);font-weight:700;background:rgba(0,170,255,0.12);color:var(--accent);border:1px solid rgba(0,170,255,0.25)">SCM '+scm+' m/s</span>';
-      if(ship.status)bs+='<span style="padding:2px 7px;border-radius:2px;font-size:9px;font-family:var(--fmono);font-weight:700;background:rgba(56,210,130,0.12);color:var(--green);border:1px solid rgba(56,210,130,0.25)">'+ship.status+'</span>';
+      var status=live.production_status||ship.status||'';
+      if(status)bs+='<span style="padding:2px 7px;border-radius:2px;font-size:9px;font-family:var(--fmono);font-weight:700;background:rgba(56,210,130,0.12);color:var(--green);border:1px solid rgba(56,210,130,0.25)">'+status+'</span>';
       badges.innerHTML=bs;
     }
 
     // ── ABOUT ──
     var desc=el('ssDesc');
-    if(desc)desc.textContent=ship.description||ship.lore||'';
-    set('ssMfr', ship.mfr||ship.manufacturer||'—');
-    set('ssRole', ship.role||'—');
-    set('ssSize', ship.size||'—');
-    set('ssCrew', ship.crew||(ship.mincrew&&ship.maxcrew?(ship.mincrew+' – '+ship.maxcrew):null)||'—');
-    set('ssCargo', ship.cargo?(ship.cargo+' SCU'):'—');
-    set('ssPledge', ship.pledge?('$'+ship.pledge):'—');
-    set('ssWarbond', ship.warbond?('$'+ship.warbond):'—');
+    if(desc)desc.textContent=live.description||ship.description||ship.lore||'';
+    var mfrName=(live.manufacturer&&live.manufacturer.name)||live.manufacturer||ship.mfr||ship.manufacturer||'—';
+    set('ssMfr', mfrName);
+    set('ssRole', live.role||ship.role||'—');
+    set('ssSize', live.size||ship.size||'—');
+    var crewMin=live.crew&&live.crew.min, crewMax=live.crew&&live.crew.max;
+    var crewStr=crewMin!=null?(crewMin===crewMax?crewMin:crewMin+' – '+crewMax):(ship.crew||'—');
+    set('ssCrew', crewStr);
+    var cargo=live.cargo_capacity||ship.cargo;
+    set('ssCargo', cargo!=null?(cargo+' SCU'):'—');
+    var msrp=live.msrp||ship.pledge;
+    set('ssPledge', msrp?('$'+msrp):'—');
+    var warbond=live.skus&&live.skus[0]&&live.skus[0].price||ship.warbond;
+    set('ssWarbond', warbond?('$'+warbond):'—');
     set('ssIngame', ship.ingame?(fmt(ship.ingame)+' aUEC'):'—');
-    set('ssStatus', ship.status||'—');
+    set('ssStatus', live.production_status||ship.status||'—');
 
     // ── HULL ──
-    var l=ship.length||'?', w=ship.width||ship.beam||'?', h=ship.height||'?';
+    var dim=live.dimension||{};
+    var l=dim.length||ship.length||'?', w=dim.width||ship.width||ship.beam||'?', h=dim.height||ship.height||'?';
     set('ssDims', l+'L × '+w+'W × '+h+'H m');
-    set('ssMass', ship.mass?(fmt(ship.mass)+' kg'):'—');
+    var massVal=live.mass||ship.mass;
+    set('ssMass', massVal?(fmt(massVal)+' kg'):'—');
     var hullHP=live.health?fmt(live.health):(ship.hullHP?fmt(ship.hullHP):null);
     set('ssTotalHP', hullHP||'—');
     set('ssHullHP', hullHP||'—');
@@ -8968,62 +8984,83 @@ tick();
     set('ssCSSide', cs.side?fmt(cs.side):'—');
     set('ssCSTop', cs.top?fmt(cs.top):'—');
 
-    // ── WEAPONRY ──
-    // Calculate DPS from hardpoints
-    var totalDPS=0, totalAlpha=0, totalBurst=0;
+    // ── WEAPONRY from liveWeap ──
+    var pilotDPS=liveWeap.pilot_dps||0;
+    var pilotAlpha=liveWeap.pilot_alpha||0;
+    var pilotSustained=liveWeap.pilot_sustained_dps||0;
+    var missileAlpha=liveWeap.missile_alpha||0;
+    if(pilotDPS){set('ssPilotDPS',fmt(pilotDPS,0));set('ssBurstDPS',fmt(pilotDPS,0));set('ssAlpha',fmt(pilotAlpha,1));}
+    if(pilotSustained)set('ssPilotDPS',fmt(pilotSustained,0)+' <span style="color:var(--t3);font-size:9px">sustained</span> / '+fmt(pilotDPS,0)+' <span style="color:var(--t3);font-size:9px">burst</span>');
+    if(missileAlpha)set('ssMissileAlpha',fmt(missileAlpha));
+
+    // Hardpoints from liveWeap.fixed_weapons.weapons
     var hpHtml='';
-    var guns=ship.hardpoints||ship.guns||[];
-    guns.forEach(function(hp){
-      var wname=hp.default||hp.weapon||hp.name||'';
-      var w=WEAP[wname]||COMP[wname]||{};
-      var dps=w.dps||hp.dps||0;
-      var alpha=w.alpha||hp.alpha||0;
-      var burst=w.burst||hp.burst||dps;
-      var count=hp.count||1;
-      totalDPS+=dps*count;
-      totalAlpha+=alpha*count;
-      totalBurst+=burst*count;
+    var fwList=(liveWeap.fixed_weapons&&liveWeap.fixed_weapons.weapons)||[];
+    fwList.forEach(function(wp){
       hpHtml+='<div class="ss-wp-row"><div style="display:flex;justify-content:space-between"><span class="ss-wp-name">';
-      if(hp.slot)hpHtml+='<span style="font-size:9px;background:rgba(0,170,255,0.2);color:var(--accent);padding:1px 4px;border-radius:1px;font-family:var(--fmono);margin-right:4px">'+hp.slot+'</span>';
-      hpHtml+=(wname||hp.label||'Unknown')+'</span>';
-      if(dps)hpHtml+='<span style="font-family:var(--fmono);font-size:10px;color:var(--warn)">'+fmt(dps*count,1)+' DPS</span>';
-      hpHtml+='</div>';
-      if(hp.count>1)hpHtml+='<div class="ss-wp-meta"><span class="ss-wp-tag">×<span>'+hp.count+'</span></span></div>';
-      hpHtml+='</div>';
+      if(wp.size)hpHtml+='<span style="font-size:9px;background:rgba(0,170,255,0.2);color:var(--accent);padding:1px 4px;border-radius:1px;font-family:var(--fmono);margin-right:4px">S'+wp.size+'</span>';
+      hpHtml+=(wp.name||'Unknown')+'</span>';
+      if(wp.dps)hpHtml+='<span style="font-family:var(--fmono);font-size:10px;color:var(--warn)">'+fmt(wp.dps,1)+' DPS</span>';
+      hpHtml+='</div></div>';
     });
+    // Fallback to SHIP_DATA hardpoints
+    if(!hpHtml){
+      var guns=ship.hardpoints||ship.guns||ship.slots||[];
+      guns.forEach(function(hp){
+        var wname=hp.default||hp.weapon||hp.name||'';
+        var ww=WEAP[wname]||COMP[wname]||{};
+        var dps=ww.dps||hp.dps||0;
+        hpHtml+='<div class="ss-wp-row"><div style="display:flex;justify-content:space-between"><span class="ss-wp-name">';
+        if(hp.slot||hp.size)hpHtml+='<span style="font-size:9px;background:rgba(0,170,255,0.2);color:var(--accent);padding:1px 4px;border-radius:1px;font-family:var(--fmono);margin-right:4px">'+(hp.slot||'S'+hp.size)+'</span>';
+        hpHtml+=(wname||hp.label||'Slot')+'</span>';
+        if(dps)hpHtml+='<span style="font-family:var(--fmono);font-size:10px;color:var(--warn)">'+fmt(dps,1)+' DPS</span>';
+        hpHtml+='</div></div>';
+      });
+    }
     if(el('ssHardpoints'))el('ssHardpoints').innerHTML=hpHtml||'<div style="color:var(--t3);font-size:10px">No hardpoints data</div>';
-    if(totalDPS>0){set('ssPilotDPS',fmt(totalDPS,0));set('ssBurstDPS',fmt(totalBurst,0));set('ssAlpha',fmt(totalAlpha,1));}
 
-    // Missiles
-    var missiles=ship.missiles||[];
-    var missHtml='', missAlpha=0;
-    missiles.forEach(function(m){
-      var mname=m.default||m.name||'';
-      var mc=COMP[mname]||{};
-      var dmg=mc.damage||m.damage||0;
-      var cnt=m.count||1;
-      missAlpha+=dmg*cnt;
-      missHtml+='<div class="ss-wp-row" style="border-color:rgba(255,68,85,0.2);background:rgba(255,68,85,0.03)">';
-      missHtml+='<div style="display:flex;justify-content:space-between"><span class="ss-wp-name">';
-      if(m.slot)missHtml+='<span style="font-size:9px;background:rgba(255,68,85,0.2);color:var(--red);padding:1px 4px;border-radius:1px;font-family:var(--fmono);margin-right:4px">'+m.slot+'</span>';
-      missHtml+=(mname||'Missile Rack')+'</span>';
-      if(dmg)missHtml+='<span style="font-family:var(--fmono);font-size:10px;color:var(--red)">'+fmt(dmg*cnt)+' dmg</span>';
-      missHtml+='</div>';
-      if(cnt>1)missHtml+='<div class="ss-wp-meta"><span class="ss-wp-tag">×<span>'+cnt+'</span></span></div>';
-      missHtml+='</div>';
-    });
+    // Missiles from liveWeap.missiles or SHIP_DATA
+    var missHtml='';
+    var liveMiss=(liveWeap.missiles&&liveWeap.missiles.weapons)||[];
+    if(liveMiss.length){
+      liveMiss.forEach(function(m){
+        missHtml+='<div class="ss-wp-row" style="border-color:rgba(255,68,85,0.2);background:rgba(255,68,85,0.03)">';
+        missHtml+='<div style="display:flex;justify-content:space-between"><span class="ss-wp-name">';
+        if(m.size)missHtml+='<span style="font-size:9px;background:rgba(255,68,85,0.2);color:var(--red);padding:1px 4px;border-radius:1px;font-family:var(--fmono);margin-right:4px">S'+m.size+'</span>';
+        missHtml+=(m.name||'Missile')+'</span>';
+        if(m.damage)missHtml+='<span style="font-family:var(--fmono);font-size:10px;color:var(--red)">'+fmt(m.damage)+' dmg</span>';
+        missHtml+='</div></div>';
+      });
+    } else {
+      var missiles=ship.missiles||[];
+      missiles.forEach(function(m){
+        var mname=m.default||m.name||'';
+        var mc2=COMP[mname]||{};
+        var dmg=mc2.damage||m.damage||0;
+        var cnt=m.count||1;
+        missHtml+='<div class="ss-wp-row" style="border-color:rgba(255,68,85,0.2);background:rgba(255,68,85,0.03)">';
+        missHtml+='<div style="display:flex;justify-content:space-between"><span class="ss-wp-name">';
+        if(m.slot)missHtml+='<span style="font-size:9px;background:rgba(255,68,85,0.2);color:var(--red);padding:1px 4px;border-radius:1px;font-family:var(--fmono);margin-right:4px">'+m.slot+'</span>';
+        missHtml+=(mname||'Missile Rack')+'</span>';
+        if(dmg)missHtml+='<span style="font-family:var(--fmono);font-size:10px;color:var(--red)">'+fmt(dmg*cnt)+' dmg</span>';
+        missHtml+='</div></div>';
+      });
+    }
     var mc=el('ssMissileCard');
-    if(mc)mc.style.display=missiles.length?'block':'none';
+    if(mc)mc.style.display=(liveMiss.length||ship.missiles&&ship.missiles.length)?'block':'none';
     if(el('ssMissiles'))el('ssMissiles').innerHTML=missHtml;
-    if(missAlpha>0)set('ssMissileAlpha',fmt(missAlpha));
 
-    // Shield from COMP_DB
-    var sgName=(ship.comps&&ship.comps.sg)||'';
-    var sg=COMP[sgName]||{};
-    var shHP=(sg.shieldHP||sg.hp||0)*(ship.sgCount||1);
-    var faceHP=shHP/4;
-    var shRegen=sg.regen||0;
-    if(shHP){set('ssShieldHP',fmt(shHP));set('ssFaceHP',fmt(faceHP));set('ssShRegen',fmt(shRegen)+'/s');}
+    // Shield from liveShipData
+    var shHP=live.shield_hp||0;
+    var shFace=live.shield&&live.shield.face_hp||shHP/4;
+    var shRegen=live.shield&&live.shield.regen_rate||0;
+    if(shHP){set('ssShieldHP',fmt(shHP));set('ssFaceHP',fmt(shFace));set('ssShRegen',fmt(shRegen,1)+'/s');}
+    else{
+      var sgName=(ship.comps&&ship.comps.sg)||'';
+      var sg=COMP[sgName]||{};
+      var shHP2=(sg.shieldHP||sg.hp||0)*(ship.sgCount||1);
+      if(shHP2){set('ssShieldHP',fmt(shHP2));set('ssFaceHP',fmt(shHP2/4));set('ssShRegen',fmt(sg.regen||0)+'/s');}
+    }
 
     // ── FLIGHT ──
     var spd=live.speed||{};
@@ -9039,18 +9076,27 @@ tick();
     if(p||y||r)set('ssPYR',[p,y,r].map(function(v){return v?fmt(v,1):'—';}).join(' / ')+' °/s');
     if(pb||yb||rb)set('ssPYRB',[pb,yb,rb].map(function(v){return v?fmt(v,1):'—';}).join(' / ')+' °/s');
 
-    // Accelerations
-    var acc=live.acceleration||{};
+    // Accelerations from agility.acceleration
+    var acc=(ag.acceleration)||live.acceleration||{};
     if(acc.main)set('ssAccMain',fmt(acc.main,1)+' G');
     if(acc.retro)set('ssAccRetro',fmt(acc.retro,1)+' G');
     if(acc.up)set('ssAccUp',fmt(acc.up,1)+' G');
     if(acc.down)set('ssAccDown',fmt(acc.down,1)+' G');
-    if(acc.strafe)set('ssAccStrafe',fmt(acc.strafe,1)+' G');
+    if(acc.strafe||acc.lateral)set('ssAccStrafe',fmt(acc.strafe||acc.lateral,1)+' G');
 
     // ── FUEL ──
-    set('ssH2', ship.h2?(fmt(ship.h2)+' units'):'—');
-    set('ssQT', ship.qt?(fmt(ship.qt)+' units'):'—');
-    set('ssQDRange', ship.qdRange||'—');
+    var fuelH2=live.fuel&&live.fuel.capacity;
+    var fuelQT=live.quantum&&live.quantum.quantum_fuel_capacity;
+    var qdRange=live.quantum&&live.quantum.quantum_range;
+    set('ssH2', fuelH2!=null?(fuelH2+' SCU'):(ship.h2?(fmt(ship.h2)+' units'):'—'));
+    set('ssQT', fuelQT!=null?(fuelQT+' SCU'):(ship.qt?(fmt(ship.qt)+' units'):'—'));
+    set('ssQDRange', qdRange?fmt(Math.round(qdRange/1e6))+' Mm':(ship.qdRange||'—'));
+
+    // ── INSURANCE ──
+    var ins=live.insurance||{};
+    if(ins.claim_time)set('ssInsClaim',fmt(ins.claim_time,2)+' min');
+    if(ins.expedite_time)set('ssInsExpedite',fmt(ins.expedite_time,2)+' min');
+    if(ins.expedite_cost)set('ssInsExpCost',fmt(ins.expedite_cost)+' aUEC');
 
     // ── SYSTEMS ──
     var sysHtml='';
