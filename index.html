@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v6.95-DEV</title>
+<title>SC-ShipForge v6.96-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -944,7 +944,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.95-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v6.96-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -3529,12 +3529,7 @@ function generate(){
     +(def.missiles&&def.missiles.length?'<div class="lo-section-hd">MISSILES</div><div>'+mHTML+'</div>':'')
     +'<div class="lo-section-hd">SYSTEMS</div><div>'+cHTML+'</div>'
     +'<div class="tip-box"><ul>'+tips+'</ul></div>'
-    +'<div class="lo-foot"><span>Verify:</span>'
-    +'<a href="https://www.erkul.games/live/calculator" target="_blank">erkul.games</a>'
-    +'<a href="https://hardpoint.io" target="_blank">hardpoint.io</a>'
-    +'<a href="https://starcitizen.tools" target="_blank">starcitizen.tools</a>'
-    +'<a href="https://starsquad-theblueprint.manus.space" target="_blank">StarSquad</a>'
-    +'</div></div>';
+    +'</div>';
 
   document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});
   document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on');});
@@ -8447,7 +8442,7 @@ tick();
 /* Improve name overlay typography */
 .enemy-info-card .eic-name{font-size:20px!important;letter-spacing:2px!important;}
 
-/* ── v6.95-DEV: 3-COLUMN SHOWDOWN LAYOUT (CSS only, no JS changes) ── */
+/* ── v6.96-DEV: 3-COLUMN SHOWDOWN LAYOUT (CSS only, no JS changes) ── */
 
 /* pane-sd: full-height scrollable container */
 #pane-sd{
