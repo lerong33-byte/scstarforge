@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v7.54-DEV</title>
+<title>SC-ShipForge v7.55-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -895,7 +895,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.54-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#38d282;font-family:var(--fmono);font-weight:400;letter-spacing:1px">v7.55-DEV</span></div>
     <div class="ss-wrap" id="ss_wrap_ship">
       <span class="ss-icon">⚡</span>
       <input id="honfocus="ss_ohpen_ship(this.value)"    onfocus="ss_open_ship('')"" class="ss-input" type="text" placeholder="Search ships…" autocomplete="off"
@@ -7864,6 +7864,20 @@ function onECompChange(sel){
     else if(baseKey==='radar'){sv=(cEntry2.dist||'');su='m';sc='#34d399';}
     statEl.innerHTML=sv?'<span style="font-size:14px;font-weight:700;font-family:var(--fmono);color:'+sc+'">'+sv+' <span style="font-size:10px;color:var(--t3);font-weight:400">'+su+'</span></span>':'';
   }
+  /* Update subtitle chip (ecsub_baseKey) */
+  var subEl=document.getElementById('ecsub_'+baseKey);
+  if(subEl&&cEntry2){
+    var szc2={pp:'#f59e0b',sg:'#60a5fa',cooler:'#22d3ee',qd:'#a78bfa',radar:'#34d399'}[baseKey]||'#e2e8f0';
+    var chip2=function(t){return '<span style="background:rgba(0,0,0,.4);border:1px solid '+szc2+';border-radius:20px;padding:1px 8px;font-size:11px;color:'+szc2+'">'+t+'</span>';};
+    var sub2='';
+    if(baseKey==='pp'){var hv=parseFloat(cEntry2.heat)||0;sub2=hv?chip2(cEntry2.em?'EM '+cEntry2.em:'heat '+hv):'';
+    }else if(baseKey==='sg'){var rv=cEntry2.regen||0;sub2=rv?chip2('\u21ba '+rv+'/s regen'):'';
+    }else if(baseKey==='cooler'){var cv=parseFloat(cEntry2.cool)||0;sub2=cv?chip2(cv+' cool/s'):'';
+    }else if(baseKey==='qd'){var qv=cEntry2.speed||0;sub2=qv?chip2((qv/1000).toFixed(0)+'k Mm/s'):'';
+    }else if(baseKey==='radar'){var dv=cEntry2.dist||0;sub2=dv?chip2(dv+' m'):'';
+    }
+    subEl.innerHTML=sub2;
+  }
   _eUpdateStats();
 }
 function toggleESystem(key){
@@ -8294,36 +8308,53 @@ function buildEnemyLoadout(enemyName){
 
   /* ── SYSTEMS ── */
   var cHTML='';
-  var COMP_ICONS={pp:'&#9889;',sg:'&#11041;',cooler:'&#10052;',qd:'&#9678;',radar:'&#128225;'};
   var COMP_LABELS={pp:'Power Plant',sg:'Shield Generator',cooler:'Cooler',qd:'Quantum Drive',radar:'Radar'};
+  var COMP_SZ_COL={pp:'#f59e0b',sg:'#60a5fa',cooler:'#22d3ee',qd:'#a78bfa',radar:'#34d399'};
+  function _cStatSpan(k,entry,cnt){
+    if(!entry)return '';
+    var sv='',su='',sc=COMP_SZ_COL[k]||'#e2e8f0';
+    if(k==='pp'){var v=parseFloat(entry.out)||0;sv=v?(v*cnt).toLocaleString():'';su='EU';}
+    else if(k==='sg'){var v=entry.totalHP||0;sv=v?(v*cnt).toLocaleString():'';su='HP';}
+    else if(k==='cooler'){var v=parseFloat(entry.cool)||0;sv=v?(v*cnt).toLocaleString():'';su='cool';}
+    else if(k==='qd'){sv=(entry.range||'');su='Gm';}
+    else if(k==='radar'){sv=(entry.dist||'');su='m';}
+    return sv?'<span style="font-size:14px;font-weight:700;font-family:var(--fmono);color:'+sc+'">'+sv+' <span style="font-size:10px;color:var(--t3);font-weight:400">'+su+'</span></span>':'';
+  }
+  function _cSubChip(k,entry){
+    if(!entry)return '';
+    var sc=COMP_SZ_COL[k]||'#e2e8f0';
+    var chip=function(t){return '<span style="background:rgba(0,0,0,.4);border:1px solid '+sc+';border-radius:20px;padding:1px 8px;font-size:11px;color:'+sc+'">'+t+'</span>';};
+    if(k==='pp'){var v=parseFloat(entry.heat)||0;return v?chip(entry.em?'EM '+entry.em:'heat '+v):'';}
+    else if(k==='sg'){var v=entry.regen||0;return v?chip('\u21ba '+v+'/s regen'):'';}
+    else if(k==='cooler'){var v=parseFloat(entry.cool)||0;return v?chip(v+' cool/s'):'';}
+    else if(k==='qd'){var v=entry.speed||0;return v?chip((v/1000).toFixed(0)+'k Mm/s'):'';}
+    else if(k==='radar'){var v=entry.dist||0;return v?chip(v+' m'):'';}
+    return '';
+  }
   ['pp','sg','cooler','qd','radar'].forEach(function(k){
     var cnt=(ship.comps.counts&&ship.comps.counts[k])||1;
-    var ico=COMP_ICONS[k]||'&#9672;';
     var lbl=COMP_LABELS[k]||k;
+    var szCol=COMP_SZ_COL[k]||'#e2e8f0';
     var expandId='ecompexp_'+k;
     var cur=ship.comps[k]||'';
     if(cnt===1){_eComps[k]=cur;}
     else{for(var si=0;si<cnt;si++){_eComps[k+'_'+si]=cur;}}
-    var cEntry=null;
-    if(COMP_DB&&COMP_DB[k]){cEntry=COMP_DB[k][cur]||null;}
-    var sumText=cEntry?(cEntry.name||cur.split('|')[0].trim()):(cur.split('|')[0].trim()||'—');
-    /* key stat for header */
-    var compStatRight='';
-    var compStatCol='#e2e8f0';
-    var compStatVal='';var compStatUnit='';
-    if(cEntry){
-      if(k==='pp'){var ppRaw=parseFloat(cEntry.out)||0;compStatVal=ppRaw?(ppRaw*cnt).toLocaleString():'—';compStatUnit='EU';compStatCol='#f59e0b';}
-      else if(k==='sg'){var sgRaw=cEntry.totalHP||0;compStatVal=sgRaw?(sgRaw*cnt).toLocaleString():'—';compStatUnit='HP';compStatCol='#60a5fa';}
-      else if(k==='cooler'){var coolRaw=parseFloat(cEntry.cool)||0;compStatVal=coolRaw?(coolRaw*cnt).toLocaleString():'—';compStatUnit='cool';compStatCol='#22d3ee';}
-      else if(k==='qd'){compStatVal=(cEntry.range||'—');compStatUnit='Gm';compStatCol='#a78bfa';}
-      else if(k==='radar'){compStatVal=(cEntry.dist||'—');compStatUnit='m';compStatCol='#34d399';}
-    }
-    if(compStatVal){
-      compStatRight='<span style="font-size:14px;font-weight:700;font-family:var(--fmono);color:'+compStatCol+';flex-shrink:0">'+compStatVal+' <span style="font-size:10px;color:var(--t3);font-weight:400">'+compStatUnit+'</span></span>';
-    }
+    var cEntry=COMP_DB&&COMP_DB[k]?COMP_DB[k][cur]||null:null;
+    var sumName=cEntry?(cEntry.name||cur.split(' S')[0]||cur):(cur.split(' S')[0]||cur||'\u2014');
+    var statSpan=_cStatSpan(k,cEntry,cnt);
+    var subChip=_cSubChip(k,cEntry);
+    var onOffBtnId='erow_toggle_'+k;
     cHTML+='<div style="background:'+DARK2+';border:1px solid '+RED_BORDER+';border-radius:'+PILL_R+';margin-bottom:8px;overflow:hidden">';
-       var onOffBtnId='erow_toggle_'+k;
-    cHTML+='<div style="display:flex;align-items:center;background:'+RED_BG+';border-bottom:0">'      +'<div onclick="toggleECompTree(\''+expandId+'\')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;flex:1;min-width:0">'        +'<span style="font-size:10px;color:'+RED_DIM+';font-family:var(--fmono);flex-shrink:0" id="'+expandId+'_arr">&#9658;</span>'        +'<span style="font-size:16px;flex-shrink:0">'+ico+'</span>'        +'<span style="flex:1;min-width:0">'          +'<span id="ecname_'+k+'" style="font-size:14px;font-weight:700;color:#f1f5f9;font-family:var(--fmono);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sumText+(cnt>1?' <span style="color:'+RED_DIM+';font-size:11px">&times;'+cnt+'</span>':'')+'</span>'          +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">'+lbl+' '+csz+'</span>'        +'</span>'        +'<span id="ecstat_'+k+'">'+compStatRight+'</span>'      +'</div>'      +'<button id="'+onOffBtnId+'" onclick="event.stopPropagation();toggleESystem(\''+k+'\')" style="flex-shrink:0;margin-right:10px;padding:3px 10px;font-size:9px;font-weight:700;font-family:var(--fmono);border-radius:4px;border:1px solid #22c55e;background:#22c55e;color:#000;cursor:pointer;letter-spacing:1px;transition:all .15s">ON</button>'    +'</div>';
+    cHTML+='<div onclick="toggleECompTree(\''+expandId+'\')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none;background:'+RED_BG+'">'
+      +'<span style="font-size:10px;color:'+RED_DIM+';font-family:var(--fmono);flex-shrink:0;transition:transform .2s" id="'+expandId+'_arr">&#9658;</span>'
+      +'<span style="flex-shrink:0;font-size:11px;padding:2px 7px;background:rgba(0,0,0,.4);border:1px solid '+szCol+';border-radius:20px;color:'+szCol+';font-family:var(--fmono);font-weight:700">'+csz+'</span>'
+      +'<span style="flex:1;min-width:0">'
+        +'<span id="ecname_'+k+'" style="font-size:14px;font-weight:700;color:#f1f5f9;font-family:var(--fmono);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sumName+(cnt>1?' <span style="color:'+RED_DIM+';font-size:11px">&times;'+cnt+'</span>':'')+'</span>'
+        +'<span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">'+lbl+' &middot; <span id="ecsub_'+k+'">'+subChip+'</span></span>'
+      +'</span>'
+      +'<span id="ecstat_'+k+'" style="flex-shrink:0;margin-right:8px">'+statSpan+'</span>'
+      +'<button id="'+onOffBtnId+'" onclick="event.stopPropagation();toggleESystem(\''+k+'\')" style="flex-shrink:0;padding:3px 10px;font-size:9px;font-weight:700;font-family:var(--fmono);border-radius:4px;border:1px solid #22c55e;background:#22c55e;color:#000;cursor:pointer;letter-spacing:1px;transition:all .15s">ON</button>'
+      +'</div>';
     cHTML+='<div id="'+expandId+'" style="display:none;padding:10px 14px;background:'+DARK3+';border-top:1px solid '+RED_BORDER2+'">';
     if(cnt===1){
       cHTML+='<select class="slot-sel" data-compkey="'+k+'" onchange="onECompChange(this)" style="width:100%;font-size:12px;padding:5px 8px;border-color:'+RED_BORDER+';border-radius:8px">'+_eCompOpts(k,csz,cur)+'</select>'
@@ -8340,9 +8371,7 @@ function buildEnemyLoadout(enemyName){
           +'</div></div>';
       }
     }
-    /* buy loc from mfr note if available */
-    var compLoc='';
-    if(cEntry&&cEntry.mfr){compLoc=cEntry.mfr;}
+    var compLoc=cEntry&&cEntry.mfr?cEntry.mfr:'';
     cHTML+=buyPill(compLoc);
     cHTML+='</div></div>';
   });
@@ -8657,11 +8686,19 @@ function buildPowerPanel(){
       }
       h+='</div>';
     }
-    /* Icon + % label */
-    h+='<div style="display:flex;flex-direction:column;align-items:center;width:100%">'
-      +'<span style="font-size:12px;line-height:1;display:block;margin-bottom:1px">'+sys.icon+'</span>'
-      +'<span style="font-size:8px;display:block;color:var(--t2)">'+Math.round(val*10)+'%</span>'
-      +'</div>';
+       /* Icon = power toggle button: click to toggle system ON/OFF */
+    var pipToSysMap={weapons:null,shields:'sg',engines:null,qd:'qd',radar:'radar',cooler:'cooler',thrusters:null};
+    var sysToggleKey=pipToSysMap[sys.k];
+    var isOff=sysToggleKey&&_eSysEnabled[sysToggleKey]===false;
+    var iconBg=isOff?'rgba(127,29,29,0.5)':'transparent';
+    var iconBorder=isOff?'1px solid #7f1d1d':'1px solid transparent';
+    var iconCol=isOff?'#f87171':sys.color;
+    var pctTxt=Math.round(val*10)+'%';
+    if(sysToggleKey){
+      h+='<div style="display:flex;flex-direction:column;align-items:center;width:100%">'        +'<button onclick="toggleESystem(\''+sysToggleKey+'\')" title="Toggle '+sysToggleKey+' ON/OFF" style="background:'+iconBg+';border:'+iconBorder+';border-radius:4px;padding:2px 3px;cursor:pointer;font-size:12px;line-height:1;display:block;margin-bottom:1px;color:'+iconCol+';transition:all .15s">'+sys.icon+'</button>'        +'<span style="font-size:8px;display:block;color:'+(isOff?'#f87171':'var(--t2)')+'">'+pctTxt+'</span>'        +'</div>';
+    } else {
+      h+='<div style="display:flex;flex-direction:column;align-items:center;width:100%">'        +'<span style="font-size:12px;line-height:1;display:block;margin-bottom:1px;color:'+sys.color+'">'+sys.icon+'</span>'        +'<span style="font-size:8px;display:block;color:var(--t2)">'+pctTxt+'</span>'        +'</div>';
+    }
     h+='</div>';
   });
   h+='</div>';
