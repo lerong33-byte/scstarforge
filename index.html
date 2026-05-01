@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.81</title>
+<title>SC-ShipForge v8.82</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1092,6 +1092,7 @@ option,optgroup{background:var(--bg2)}
 .fleet-card-img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .fleet-card:hover .fleet-card-img{transform:scale(1.05)}
 .fleet-card-no-img{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#252d3a;font-family:var(--fmono);font-size:32px;font-weight:700}
+.fleet-card-img-name{position:absolute;bottom:0;left:0;right:0;padding:5px 8px;background:linear-gradient(transparent,rgba(0,0,0,.82));font-size:11px;font-weight:700;font-family:var(--fmono);color:#fff;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .fleet-card-body{padding:8px 12px 10px}
 .fleet-card-name{font-family:var(--rajdhani,'Rajdhani',sans-serif);font-size:14px;font-weight:700;color:var(--t1);margin:0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fleet-card-mfr{font-family:var(--fmono);font-size:10px;color:var(--t3);margin-bottom:8px}
@@ -7959,8 +7960,13 @@ function renderShips() {
     var placeholder = document.createElement('div');
     placeholder.className = 'ship-card-no-img';
     placeholder.textContent = size;
+    // Name overlay on image
+    var nameOverlay = document.createElement('div');
+    nameOverlay.className = 'fleet-card-img-name';
+    nameOverlay.textContent = name;
     imgWrap.appendChild(placeholder);
     imgWrap.appendChild(img);
+    imgWrap.appendChild(nameOverlay);
     // Fast-path: use pre-built image map if available
     var _prebuilt = window.COMPLETE_SHIP_IMAGE_MAP && window.COMPLETE_SHIP_IMAGE_MAP[name];
     if (_prebuilt) {
@@ -11637,8 +11643,13 @@ function renderFleetTab() {
         if (pg && pg.thumbnail) { img.src = pg.thumbnail.source; }
       }).catch(function(){});
     }
+    // Name overlay on image
+    var nameOverlay = document.createElement('div');
+    nameOverlay.className = 'fleet-card-img-name';
+    nameOverlay.textContent = name;
     imgWrap.appendChild(placeholder);
     imgWrap.appendChild(img);
+    imgWrap.appendChild(nameOverlay);
 
     // Body
     var body = document.createElement('div');
