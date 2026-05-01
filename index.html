@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.53-DEV</title>
+<title>SC-ShipForge v8.54-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.53-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.54-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -9638,7 +9638,10 @@ function buildPowerPanel(){
         var blockOpacity=unitDisabled?'0.2':'1';
         var blockBg=unitDisabled?'rgba(255,80,80,0.10)':(filled?sysColor:'rgba(255,255,255,0.08)');
         var blockBorder=unitDisabled?'1px solid rgba(255,80,80,0.25)':'1px solid rgba(0,0,0,0.3)';
-        var blockClick=isPPCol?'toggleESystem(\'pp\')':((navLocked||unitDisabled)?'':'sdSetPwrPip(\''+sys.k+'\','+clickVal+')');
+        /* Multi-unit cols (cooler, shields): each block directly toggles that unit */
+        var isMultiUnit=unitCnt>1&&(sys.k==='cooler'||sys.k==='shields');
+        var unitToggleKey=sys.k==='shields'?'sg_'+ui:'cooler_'+ui;
+        var blockClick=isPPCol?'toggleESystem(\'pp\')':isMultiUnit?(navLocked?'':('toggleESystem(\''+unitToggleKey+'\')')):(navLocked||unitDisabled?'':('sdSetPwrPip(\''+sys.k+'\','+clickVal+')'));
         h+='<div onclick="'+blockClick+'" '
           +'style="width:100%;height:'+blockH+'px;min-height:'+blockH+'px;border-radius:3px;border:'+blockBorder+';box-sizing:border-box;cursor:'+(navLocked||unitDisabled?'not-allowed':'pointer')+';'
           +'background:'+blockBg+';opacity:'+blockOpacity+'">' 
