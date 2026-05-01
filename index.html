@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.74</title>
+<title>SC-ShipForge v8.75</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1089,7 +1089,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.74</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.75</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -8083,16 +8083,107 @@ function buildCompGrid(cat) {
 }
 
 
+window.WEAPON_IMGS = {
+  '9-Series Longsword Cannon':'https://media.starcitizen.tools/thumb/3/34/Longsword.png/600px-Longsword.png.webp',
+  'Tarantula GT-870 Mark 1 Cannon':'https://media.starcitizen.tools/thumb/a/a4/Tarantula_GT-870_Mark_1_-_Shop_Display_Cutout.png/600px-Tarantula_GT-870_Mark_1_-_Shop_Display_Cutout.png.webp',
+  'YellowJacket GT-210 Gatling':'https://media.starcitizen.tools/thumb/d/d8/GT-210_-_Shop_display.png/600px-GT-210_-_Shop_display.png.webp',
+  'Havoc Scattergun':'https://media.starcitizen.tools/thumb/3/34/Havoc_Scattergun_-_Shop_Display_Cutout.jpg/600px-Havoc_Scattergun_-_Shop_Display_Cutout.jpg.webp',
+  'Havoc Scattergun Sharkmouth Edition':'https://media.starcitizen.tools/0/05/Havoc_Scattergun_Sharkmouth_Edition_01.jpg',
+  'Suckerpunch Cannon':'https://media.starcitizen.tools/thumb/f/f0/JOKR_DISTORTIONCANNON_SIZE1-3_AA01.png/600px-JOKR_DISTORTIONCANNON_SIZE1-3_AA01.png.webp',
+  'DR Model-XJ1 Repeater':'https://media.starcitizen.tools/thumb/c/c0/DR_Model-XJ_Series_Sizes_1-3_-_Cutout.jpg/600px-DR_Model-XJ_Series_Sizes_1-3_-_Cutout.jpg.webp',
+  'FL-11 Cannon':'https://media.starcitizen.tools/thumb/8/88/00_KRONEG_S1_S3.png/600px-00_KRONEG_S1_S3.png.webp',
+  'Lightstrike I Cannon':'https://media.starcitizen.tools/thumb/3/3c/Lightstrike_III_PU_%3D_Cutout.jpg/600px-Lightstrike_III_PU_%3D_Cutout.jpg.webp',
+  'M3A Cannon':'https://media.starcitizen.tools/thumb/f/f6/M3A.png/600px-M3A.png.webp',
+  'M3A Cannon Defense Division':'https://media.starcitizen.tools/thumb/b/b3/M3A_Cannon_Defense_Division.jpg/600px-M3A_Cannon_Defense_Division.jpg.webp',
+  'Omnisky III Cannon':'https://media.starcitizen.tools/thumb/4/4a/Omnisky_Size_1-3_-_Cutout_Left.jpg/600px-Omnisky_Size_1-3_-_Cutout_Left.jpg.webp',
+  'Attrition-1 Repeater':'https://media.starcitizen.tools/thumb/a/a6/Attrition_Repeater_-_Cutout_Sizes_1-3.jpg/600px-Attrition_Repeater_-_Cutout_Sizes_1-3.jpg.webp',
+  'CF-117 Bulldog Repeater':'https://media.starcitizen.tools/thumb/d/df/CF-117_Bulldog_Repeater_cutout_stripe_BG_SCT_logo.png/600px-CF-117_Bulldog_Repeater_cutout_stripe_BG_SCT_logo.png.webp',
+  'Dominance-1 Scattergun':'https://media.starcitizen.tools/thumb/3/37/Dominance-2_-_PU_Cutout.jpg/600px-Dominance-2_-_PU_Cutout.jpg.webp',
+  'Sledge I Mass Driver Cannon':'https://media.starcitizen.tools/thumb/8/8e/Sledge_Mass_Driver_Cannon_-_Sizes_1-3.jpg/600px-Sledge_Mass_Driver_Cannon_-_Sizes_1-3.jpg.webp',
+  'NN-13 Cannon':'https://media.starcitizen.tools/thumb/0/0b/NN-13_Cannon_S1_-_4.4.0_-_SCT_logo_stripe_BG.jpg/600px-NN-13_Cannon_S1_-_4.4.0_-_SCT_logo_stripe_BG.jpg.webp',
+  'NDB-26 Repeater':'https://media.starcitizen.tools/thumb/c/c0/NDB-Series_Repeater_Sizes_1-3_-_Cutout_Left.jpg/600px-NDB-Series_Repeater_Sizes_1-3_-_Cutout_Left.jpg.webp',
+  '10-Series Greatsword Cannon':'https://media.starcitizen.tools/thumb/9/9a/10-Series_Greatsword_-_Shop_Display_Cutout.png/600px-10-Series_Greatsword_-_Shop_Display_Cutout.png.webp',
+  'CVSA Cannon':'https://media.starcitizen.tools/thumb/a/a6/CVSA_Cannon_-_Cutout_Shop_Terminal.jpg/600px-CVSA_Cannon_-_Cutout_Shop_Terminal.jpg.webp',
+  'Tarantula GT-870 Mark 2 Cannon':'https://media.starcitizen.tools/thumb/e/ec/TarantulaMk2.jpg/600px-TarantulaMk2.jpg.webp',
+  'Scorpion GT-215 Gatling':'https://media.starcitizen.tools/thumb/b/bd/GT-215_-_Shop_display.png/600px-GT-215_-_Shop_display.png.webp',
+  'Tigerstrike T-19P':'https://media.starcitizen.tools/thumb/6/6a/Tigerstrike_T-19P_-_Above_P-52_Highlited.jpg/600px-Tigerstrike_T-19P_-_Above_P-52_Highlited.jpg.webp',
+  'BRVS Repeater':'https://media.starcitizen.tools/thumb/7/75/BRVS_Repeater_-_Cutout_Shop_Terminal.jpg/600px-BRVS_Repeater_-_Cutout_Shop_Terminal.jpg.webp',
+  'Hellion Scattergun':'https://media.starcitizen.tools/thumb/3/34/Havoc_Scattergun_-_Shop_Display_Cutout.jpg/600px-Havoc_Scattergun_-_Shop_Display_Cutout.jpg.webp',
+  'EVSD Cannon':'https://media.starcitizen.tools/thumb/4/43/EVSD_Cannon_-_Cutout_Shop_Terminal.jpg/600px-EVSD_Cannon_-_Cutout_Shop_Terminal.jpg.webp',
+  'Suckerpunch-L Cannon':'https://media.starcitizen.tools/thumb/f/f0/JOKR_DISTORTIONCANNON_SIZE1-3_AA01.png/600px-JOKR_DISTORTIONCANNON_SIZE1-3_AA01.png.webp',
+  'ATVS Repeater':'https://media.starcitizen.tools/thumb/c/cf/ATVS_Repeater_-_Cutout_Shop_Terminal.jpg/600px-ATVS_Repeater_-_Cutout_Shop_Terminal.jpg.webp',
+  'DR Model-XJ2 Repeater':'https://media.starcitizen.tools/thumb/c/c0/DR_Model-XJ_Series_Sizes_1-3_-_Cutout.jpg/600px-DR_Model-XJ_Series_Sizes_1-3_-_Cutout.jpg.webp',
+  'FL-22 Cannon':'https://media.starcitizen.tools/thumb/8/88/00_KRONEG_S1_S3.png/600px-00_KRONEG_S1_S3.png.webp',
+  'Lightstrike II Cannon':'https://media.starcitizen.tools/thumb/3/3c/Lightstrike_III_PU_%3D_Cutout.jpg/600px-Lightstrike_III_PU_%3D_Cutout.jpg.webp',
+  'M4A Cannon':'https://media.starcitizen.tools/thumb/d/d9/M4A.png/600px-M4A.png.webp',
+  'MVSA Cannon':'https://media.starcitizen.tools/thumb/e/e1/MVSA_Cannons_-_3.10_Vanguard_CloseUp_Highlighted.jpg/600px-MVSA_Cannons_-_3.10_Vanguard_CloseUp_Highlighted.jpg.webp',
+  'Omnisky VI Cannon':'https://media.starcitizen.tools/thumb/4/4a/Omnisky_Size_1-3_-_Cutout_Left.jpg/600px-Omnisky_Size_1-3_-_Cutout_Left.jpg.webp',
+  '\'WASP\' Repeater':'https://media.starcitizen.tools/thumb/0/0a/Star_Citizen_8_17_2024_11_05_13_PM.png/600px-Star_Citizen_8_17_2024_11_05_13_PM.png.webp',
+  'Ardor-2 Salvaged Repeater':'https://media.starcitizen.tools/thumb/4/4c/Ardor_2_salvaged_repeater.png/600px-Ardor_2_salvaged_repeater.png.webp',
+  'Attrition-2 Repeater':'https://media.starcitizen.tools/thumb/a/a6/Attrition_Repeater_-_Cutout_Sizes_1-3.jpg/600px-Attrition_Repeater_-_Cutout_Sizes_1-3.jpg.webp',
+  'CF-227 Badger Repeater':'https://media.starcitizen.tools/thumb/f/fd/CF-227_Badger_Repeater_cutout_stripe_BG_SCT_logo.png/600px-CF-227_Badger_Repeater_cutout_stripe_BG_SCT_logo.png.webp',
+  'GVSR Repeater':'https://media.starcitizen.tools/thumb/e/e4/GVSR_Repeater_-_Cutout_Shop_Terminal.jpg/600px-GVSR_Repeater_-_Cutout_Shop_Terminal.jpg.webp',
+  'Dominance-2 Scattergun':'https://media.starcitizen.tools/thumb/3/37/Dominance-2_-_PU_Cutout.jpg/600px-Dominance-2_-_PU_Cutout.jpg.webp',
+  'Sledge II Mass Driver Cannon':'https://media.starcitizen.tools/thumb/8/8e/Sledge_Mass_Driver_Cannon_-_Sizes_1-3.jpg/600px-Sledge_Mass_Driver_Cannon_-_Sizes_1-3.jpg.webp',
+  'Strife Mass Driver Cannon':'https://media.starcitizen.tools/thumb/a/a3/AA_Strife_Mass_Driver.jpg/600px-AA_Strife_Mass_Driver.jpg.webp',
+  'NN-14 Cannon':'https://media.starcitizen.tools/thumb/c/c1/NN-14_Cannon_S2_-_4.4.0_-_SCT_logo_stripe_BG.jpg/600px-NN-14_Cannon_S2_-_4.4.0_-_SCT_logo_stripe_BG.jpg.webp',
+  'NDB-28 Repeater':'https://media.starcitizen.tools/thumb/c/c0/NDB-Series_Repeater_Sizes_1-3_-_Cutout_Left.jpg/600px-NDB-Series_Repeater_Sizes_1-3_-_Cutout_Left.jpg.webp',
+  '11-Series Broadsword Cannon':'https://media.starcitizen.tools/thumb/8/87/Broadsword.png/600px-Broadsword.png.webp',
+  'Tarantula GT-870 Mark 3 Cannon':'https://media.starcitizen.tools/thumb/7/70/TarantulaMk3.jpg/600px-TarantulaMk3.jpg.webp',
+  'Mantis GT-220 Gatling':'https://media.starcitizen.tools/thumb/c/c1/GATS_GT-220_Mantis.png/600px-GATS_GT-220_Mantis.png.webp',
+  'Predator Scattergun':'https://media.starcitizen.tools/thumb/3/34/Havoc_Scattergun_-_Shop_Display_Cutout.jpg/600px-Havoc_Scattergun_-_Shop_Display_Cutout.jpg.webp',
+  'Suckerpunch-XL Cannon':'https://media.starcitizen.tools/thumb/f/f0/JOKR_DISTORTIONCANNON_SIZE1-3_AA01.png/600px-JOKR_DISTORTIONCANNON_SIZE1-3_AA01.png.webp',
+  'DR Model-XJ3 Repeater':'https://media.starcitizen.tools/thumb/c/c0/DR_Model-XJ_Series_Sizes_1-3_-_Cutout.jpg/600px-DR_Model-XJ_Series_Sizes_1-3_-_Cutout.jpg.webp',
+  'FL-33 Cannon':'https://media.starcitizen.tools/thumb/4/4c/FL-33-HUR-L4-3.9.jpg/600px-FL-33-HUR-L4-3.9.jpg.webp',
+  'M5A Cannon':'https://media.starcitizen.tools/thumb/0/02/M5A.png/600px-M5A.png.webp',
+  'Omnisky IX Cannon':'https://media.starcitizen.tools/thumb/4/4a/Omnisky_Size_1-3_-_Cutout_Left.jpg/600px-Omnisky_Size_1-3_-_Cutout_Left.jpg.webp',
+  'Quarreler Cannon':'https://media.starcitizen.tools/thumb/6/61/Quarreler_Cannon_-_Shop_Display_Cutout.png/600px-Quarreler_Cannon_-_Shop_Display_Cutout.png.webp',
+  'Ardor-3 Salvaged Repeater':'https://media.starcitizen.tools/thumb/5/50/Ardor_3_salvaged_repeater.png/600px-Ardor_3_salvaged_repeater.png.webp',
+  'Attrition-3 Repeater':'https://media.starcitizen.tools/thumb/a/a6/Attrition_Repeater_-_Cutout_Sizes_1-3.jpg/600px-Attrition_Repeater_-_Cutout_Sizes_1-3.jpg.webp',
+  'CF-337 Panther Repeater':'https://media.starcitizen.tools/thumb/a/ac/CF-337_Panther_Repeater_cutout_stripe_BG_SCT_logo.png/600px-CF-337_Panther_Repeater_cutout_stripe_BG_SCT_logo.png.webp',
+  'Yeng\'tu Repeater':'https://media.starcitizen.tools/thumb/b/bd/Yeng%E2%80%99tu_Repeater_concept_-_Mesh_BG.png/600px-Yeng%E2%80%99tu_Repeater_concept_-_Mesh_BG.png.webp',
+  'Dominance-3 Scattergun':'https://media.starcitizen.tools/thumb/3/37/Dominance-2_-_PU_Cutout.jpg/600px-Dominance-2_-_PU_Cutout.jpg.webp',
+  'Sledge III Mass Driver Cannon':'https://media.starcitizen.tools/thumb/8/8e/Sledge_Mass_Driver_Cannon_-_Sizes_1-3.jpg/600px-Sledge_Mass_Driver_Cannon_-_Sizes_1-3.jpg.webp',
+  'NN-15 Cannon':'https://media.starcitizen.tools/thumb/d/d0/NN-15_Cannon_-_4.4.0_-_SCT_logo_stripe_BG.jpg/600px-NN-15_Cannon_-_4.4.0_-_SCT_logo_stripe_BG.jpg.webp',
+  'NDB-30 Repeater':'https://media.starcitizen.tools/thumb/c/c0/NDB-Series_Repeater_Sizes_1-3_-_Cutout_Left.jpg/600px-NDB-Series_Repeater_Sizes_1-3_-_Cutout_Left.jpg.webp',
+  'PyroBurst Scattergun':'https://media.starcitizen.tools/thumb/8/89/Pyroburst.png/600px-Pyroburst.png.webp',
+  '\'WARLORD\' Cannon':'https://media.starcitizen.tools/thumb/4/46/Star_Citizen_8_17_2024_11_05_28_PM.png/600px-Star_Citizen_8_17_2024_11_05_28_PM.png.webp',
+  'C-788 Cannon':'https://media.starcitizen.tools/thumb/4/49/C-788_Cannon_-_Shop_Display_Cutout.jpg/600px-C-788_Cannon_-_Shop_Display_Cutout.jpg.webp',
+  'Deadbolt IV Cannon':'https://media.starcitizen.tools/thumb/0/0f/Deadbolt_IV_PU_-_Cutout.jpg/600px-Deadbolt_IV_PU_-_Cutout.jpg.webp',
+  'Relentless L-21 Gatling':'https://media.starcitizen.tools/thumb/d/d8/Relentless_L-21_Gatling_on_L-21_Wolf_-_cropped.png/600px-Relentless_L-21_Gatling_on_L-21_Wolf_-_cropped.png.webp',
+  'Revenant Gatling':'https://media.starcitizen.tools/thumb/5/59/Revenant.jpg/600px-Revenant.jpg.webp',
+  'Salvation Distortion Scattergun':'https://media.starcitizen.tools/thumb/9/92/PRAR-Distortion-Scattergun-S4-6.jpg/600px-PRAR-Distortion-Scattergun-S4-6.jpg.webp',
+  'M6A Cannon':'https://media.starcitizen.tools/thumb/e/eb/M6A.png/600px-M6A.png.webp',
+  'Omnisky XII Cannon':'https://media.starcitizen.tools/thumb/4/42/Omnisky_Size_4-6_-_Cutout_Left.jpg/600px-Omnisky_Size_4-6_-_Cutout_Left.jpg.webp',
+  'Attrition-4 Repeater':'https://media.starcitizen.tools/thumb/f/fd/Attrition_Repeater_-_Cutout_Sizes_4-6.jpg/600px-Attrition_Repeater_-_Cutout_Sizes_4-6.jpg.webp',
+  'Axiom L-22 Repeater':'https://media.starcitizen.tools/thumb/6/68/Axiom_L-22_Repeater_on_L-22_Alpha_Wolf_-_cropped.png/600px-Axiom_L-22_Repeater_on_L-22_Alpha_Wolf_-_cropped.png.webp',
+  'CF-447 Rhino Repeater':'https://media.starcitizen.tools/thumb/9/93/CF-447_Rhino_Repeater_-_Shop_Display_Cutout.png/600px-CF-447_Rhino_Repeater_-_Shop_Display_Cutout.png.webp',
+  'Slayer Cannon':'https://media.starcitizen.tools/thumb/a/aa/Nova_Tank_Cannon_grassland.jpg/600px-Nova_Tank_Cannon_grassland.jpg.webp',
+  'Absolution Distortion Scattergun':'https://media.starcitizen.tools/thumb/9/92/PRAR-Distortion-Scattergun-S4-6.jpg/600px-PRAR-Distortion-Scattergun-S4-6.jpg.webp',
+  'M7A Cannon':'https://media.starcitizen.tools/thumb/d/dd/M7A.png/600px-M7A.png.webp',
+  'Omnisky XV Cannon':'https://media.starcitizen.tools/thumb/4/42/Omnisky_Size_4-6_-_Cutout_Left.jpg/600px-Omnisky_Size_4-6_-_Cutout_Left.jpg.webp',
+  'Attrition-5 Repeater':'https://media.starcitizen.tools/thumb/f/fd/Attrition_Repeater_-_Cutout_Sizes_4-6.jpg/600px-Attrition_Repeater_-_Cutout_Sizes_4-6.jpg.webp',
+  'CF-557 Galdereen Repeater':'https://media.starcitizen.tools/thumb/e/e7/CF-Series_Repeater_Size_4-6_-_Cutout_Left.jpg/600px-CF-Series_Repeater_Size_4-6_-_Cutout_Left.jpg.webp',
+  '\'WAR\' Cannon':'https://media.starcitizen.tools/thumb/e/e7/WAR_Cannon_on_Scythe_in-game_cropped.png/600px-WAR_Cannon_on_Scythe_in-game_cropped.png.webp',
+  'Condemnation Distortion Scattergun':'https://media.starcitizen.tools/thumb/9/92/PRAR-Distortion-Scattergun-S4-6.jpg/600px-PRAR-Distortion-Scattergun-S4-6.jpg.webp',
+  'Omnisky XVIII Cannon':'https://media.starcitizen.tools/thumb/4/42/Omnisky_Size_4-6_-_Cutout_Left.jpg/600px-Omnisky_Size_4-6_-_Cutout_Left.jpg.webp',
+  'Attrition-6 Repeater':'https://media.starcitizen.tools/thumb/f/fd/Attrition_Repeater_-_Cutout_Sizes_4-6.jpg/600px-Attrition_Repeater_-_Cutout_Sizes_4-6.jpg.webp',
+  'CF-667 Mammoth Repeater':'https://media.starcitizen.tools/thumb/e/e7/CF-Series_Repeater_Size_4-6_-_Cutout_Left.jpg/600px-CF-Series_Repeater_Size_4-6_-_Cutout_Left.jpg.webp',
+  'SF7B Gatling':'https://media.starcitizen.tools/thumb/6/6b/Behring-SF7B_Ballistic_Gatling_Gun.png/600px-Behring-SF7B_Ballistic_Gatling_Gun.png.webp',
+  'SF7E Cannon':'https://media.starcitizen.tools/thumb/c/c4/Behring-SF7E_Laser_Cannon.png/600px-Behring-SF7E_Laser_Cannon.png.webp'
+};
 window._openWpRow = function(el) {
   var wid = el.getAttribute('data-wid');
   var w = WEAPONS.find(function(x){ return x.id === wid; });
   if (!w) return;
+  var imgUrl = (window.WEAPON_IMGS && window.WEAPON_IMGS[w.name]) || '';
   openWpModal('weapon', w.name, {
     sz: w.sz,
     mfr: w.mfr,
     badgeType: w.type,
     badgeLabel: w.type,
     loc: w.loc || '',
+    imgUrl: imgUrl,
     stats: [
       {label:'DPS',   value: String(w.dps)},
       {label:'ALPHA', value: String(w.alpha)},
