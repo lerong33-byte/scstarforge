@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.57-DEV</title>
+<title>SC-ShipForge v8.58-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -31,6 +31,8 @@
 <meta name="twitter:description" content="Build and compare Star Citizen ship loadouts with live game data."/>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230c0e12'/><text x='16' y='22' text-anchor='middle' font-size='20' fill='%237ab0e8'>⚡</text></svg>"/>
 <link rel="sitemap" type="application/xml" href="/sitemap.xml"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
 <style>
 html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}
@@ -180,7 +182,7 @@ option,optgroup{background:var(--bg2)}
 .tab{padding:14px 16px;font-size:13px;font-weight:500;color:var(--t2);border:none;border-bottom:2px solid transparent;background:transparent;cursor:pointer;transition:all .15s;font-family:var(--fhud);outline:none}
 .tab:hover{color:var(--text)}
 .tab.on{color:var(--accent);border-bottom-color:var(--accent)}
-.pane{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden}
+.pane{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;contain:strict}
 .pane.on{display:flex;flex:1;flex-direction:column;min-height:0;overflow:hidden}
 #loContent{flex:1;overflow-y:auto;padding:16px}
 
@@ -547,7 +549,7 @@ option,optgroup{background:var(--bg2)}
 .ss-icon{position:absolute;left:11px;color:#3a4a5a;font-size:13px;pointer-events:none}
 .ss-clear{position:absolute;right:9px;background:none;border:none;color:#3a4a5a;cursor:pointer;font-size:15px;line-height:1;padding:0;display:none}
 .ss-clear.show{display:block}
-.ss-drop{position:absolute;top:calc(100% + 6px);left:0;min-width:300px;background:#141820;border:1px solid #252d3a;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.7);z-index:9999;display:none;flex-direction:column;overflow:hidden}
+.ss-drop{position:absolute;top:calc(100% + 6px);left:0;min-width:300px;background:#141820;border:1px solid #252d3a;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.7);z-index:9999;display:none;flex-direction:column;overflow:hidden;contain:layout style}
 .ss-drop.open{display:flex}
 .ss-inner{height:auto;max-height:80vh;overflow-y:auto;overflow-y:scroll;max-height:100vh;overflow-y:auto}
 .ss-inner::-webkit-scrollbar{width:3px}
@@ -667,8 +669,8 @@ option,optgroup{background:var(--bg2)}
 #pane-ships .ships-filter-btn{padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;border-radius:20px;border:1px solid rgba(255,255,255,0.08);color:#8a94a3;background:transparent;cursor:pointer;transition:all .2s;text-transform:uppercase}
 #pane-ships .ships-filter-btn:hover{border-color:rgba(56,189,248,0.3);color:#c0cee0}
 #pane-ships .ships-filter-btn.on{background:rgba(79,195,247,0.12);border-color:rgba(77,255,110,0.4);color:#4dff6e}
-#pane-ships .ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding-bottom:20px}
-#pane-ships .ship-card{position:relative;background:#1a1f28;border:1px solid rgba(79,195,247,0.08);border-radius:10px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+#pane-ships .ships-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding-bottom:20px;content-visibility:auto}
+#pane-ships .ship-card{position:relative;background:#1a1f28;border:1px solid rgba(79,195,247,0.08);border-radius:10px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;will-change:transform;contain:layout style}
 #pane-ships .ship-card:hover{transform:translateY(-3px);border-color:rgba(77,255,110,0.3);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 #pane-ships .ship-card-img-wrap{position:relative;width:100%;height:170px;overflow:hidden;background:#0e1117;border-radius:10px 10px 0 0}
 #pane-ships .ship-card-img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
@@ -989,7 +991,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.57-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.58-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -3633,7 +3635,7 @@ function pick(n){
   var si=document.getElementById('sSearch');if(si)si.value=n;var _clr=document.getElementById('sSearchClear');if(_clr)_clr.style.display='block';
   var sb=document.getElementById('srbox');if(sb)sb.style.display='none';
   var ss=document.getElementById('sSel');if(ss){ss.value=n;}
-  setTag(n);generate();updatePower();if(_currentTarget)loadTargetImage(_currentTarget);var _flp=fetchLiveShipData(n);if(_flp&&_flp.then)_flp.then(function(){updatePower();if(_currentTarget)loadTargetImage(_currentTarget);if(typeof loadWeaponImages==='function')requestAnimationFrame(loadWeaponImages);});if(typeof loadWeaponImages==='function')requestAnimationFrame(loadWeaponImages);
+  setTag(n);generate();updatePower();if(_currentTarget)loadTargetImage(_currentTarget);if(typeof loadWeaponImages==='function')requestAnimationFrame(loadWeaponImages);var _flp=fetchLiveShipData(n);if(_flp&&_flp.then)_flp.then(function(){updatePower();if(_currentTarget)loadTargetImage(_currentTarget);});
 }
 window.pickShip=pick;
 function onSel(v){if(!v){var si=document.getElementById('sSearch');if(si)si.value='';showDashboard();return;}selShip=v;if(userPwrAdj)delete userPwrAdj[v];setTag(v);generate();if(_currentTarget)loadTargetImage(_currentTarget);fetchLiveShipData(v).then(function(){updatePower();if(_currentTarget)loadTargetImage(_currentTarget);});if(window.updateSvCurrentShip)updateSvCurrentShip();}
@@ -3946,7 +3948,7 @@ generate = function() {
   updateTargetAnalysis();
   renderSavedList();
   if (_currentTarget) loadTargetImage(_currentTarget);
-  setTimeout(loadWeaponImages, 100);
+  if(typeof loadWeaponImages==='function') requestAnimationFrame(loadWeaponImages);
 };
 
 function getCompStatHTML(key,val){
@@ -6371,22 +6373,32 @@ function hideDashboard() {
 window.addEventListener('load',function(){renderDashboard();});
 
 
+var _shipCardsCache = null;
+var _filterShipsTimer = null;
 function filterShips() {
-  var q = (document.getElementById('shipsSearchInput').value || '').toLowerCase();
-  var role = window._shipsActiveRole || 'All';
-  var cards = document.querySelectorAll('#pane-ships .ship-card');
-  var shown = 0;
-  cards.forEach(function(c) {
-    var sName = (c.getAttribute('data-ship') || '').toLowerCase();
-    var sRole = (c.getAttribute('data-role') || '').toLowerCase();
-    var sMfr = (c.getAttribute('data-mfr') || '').toLowerCase();
-    var matchRole = (role === 'All') || sRole === role.toLowerCase();
-    var matchQ = !q || sName.indexOf(q) > -1 || sRole.indexOf(q) > -1 || sMfr.indexOf(q) > -1;
-    if (matchRole && matchQ) { c.style.display = ''; shown++; }
-    else { c.style.display = 'none'; }
-  });
-  var el = document.getElementById('shipsCount');
-  if (el) el.textContent = shown + ' of ' + cards.length + ' ships';
+  clearTimeout(_filterShipsTimer);
+  _filterShipsTimer = setTimeout(function() {
+    var q = (document.getElementById('shipsSearchInput').value || '').toLowerCase();
+    var role = window._shipsActiveRole || 'All';
+    if (!_shipCardsCache || !_shipCardsCache.length) {
+      _shipCardsCache = Array.prototype.slice.call(document.querySelectorAll('#pane-ships .ship-card'));
+    }
+    var cards = _shipCardsCache;
+    var shown = 0;
+    var rl = role.toLowerCase();
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      var sName = (c.getAttribute('data-ship') || '').toLowerCase();
+      var sRole = (c.getAttribute('data-role') || '').toLowerCase();
+      var sMfr = (c.getAttribute('data-mfr') || '').toLowerCase();
+      var matchRole = (role === 'All') || sRole === rl;
+      var matchQ = !q || sName.indexOf(q) > -1 || sRole.indexOf(q) > -1 || sMfr.indexOf(q) > -1;
+      c.style.display = (matchRole && matchQ) ? '' : 'none';
+      if (matchRole && matchQ) shown++;
+    }
+    var el = document.getElementById('shipsCount');
+    if (el) el.textContent = shown + ' of ' + cards.length + ' ships';
+  }, 60);
 }
 
 
@@ -7257,6 +7269,12 @@ window.addEventListener('load', function() {
 // ══════════════════════════════════
 (function(){
   var _recent = {ship:[], tgt:[]};
+  // ── debounce utility ──
+  var _dTimers = {};
+  function debounce(key, fn, ms) {
+    clearTimeout(_dTimers[key]);
+    _dTimers[key] = setTimeout(fn, ms);
+  }
   try{ _recent.ship = JSON.parse(localStorage.getItem('ss_r_ship')||'[]'); }catch(e){}
   try{ _recent.tgt  = JSON.parse(localStorage.getItem('ss_r_tgt')||'[]');  }catch(e){}
   var _hi = {ship:-1, tgt:-1};
@@ -7364,13 +7382,13 @@ window.addEventListener('load', function() {
 
   window.ss_open_ship = function(q){ update('ss_drop_ship',q,false); };
   window.ss_open_tgt  = function(q){ update('ss_drop_tgt', q,true);  };
-  window.ss_type_ship = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_ship',inp.value,false); };
-  window.ss_type_tgt  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_tgt', inp.value,true);  };
+  window.ss_type_ship = function(inp){ inp.classList.toggle('has-val',inp.value!==''); var v=inp.value; debounce('ship',function(){ update('ss_drop_ship',v,false); },80); };
+  window.ss_type_tgt  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); var v=inp.value; debounce('tgt',function(){ update('ss_drop_tgt',v,true); },80); };
   window.ss_key_ship  = function(e){ ssNav(e,'ss_drop_ship','ship',false); };
   window.ss_key_tgt   = function(e){ ssNav(e,'ss_drop_tgt', 'tgt', true);  };
   /* SC ShipForge Builder search — all in this block where update()/close()/ssNav() are in scope */
   window.ss_open_sb   = function(q){ update('ss_drop_sb',q,false,false,'ss_pick_sb'); };
-  window.ss_type_sb   = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sb',inp.value,false,false,'ss_pick_sb'); };
+  window.ss_type_sb   = function(inp){ inp.classList.toggle('has-val',inp.value!==''); var v=inp.value; debounce('sb',function(){ update('ss_drop_sb',v,false,false,'ss_pick_sb'); },80); };
   window.ss_key_sb    = function(e){ ssNav(e,'ss_drop_sb','sb',false); };
   window.ss_pick_sb   = function(name){
     close('ss_drop_sb');
@@ -7467,7 +7485,7 @@ window.addEventListener('load', function() {
 
    // Showdown search (sd) — same engine, picks enemy for runShowdown
   window.ss_open_sd  = function(q){ update('ss_drop_sd',q,false,true); };
-  window.ss_type_sd  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); update('ss_drop_sd',inp.value,false,true); };
+  window.ss_type_sd  = function(inp){ inp.classList.toggle('has-val',inp.value!==''); var v=inp.value; debounce('sd',function(){ update('ss_drop_sd',v,false,true); },80); };
   window.ss_key_sd   = function(e){ ssNav(e,'ss_drop_sd','sd',false); };
   window.ss_pick_sd  = function(name){
     close('ss_drop_sd');
@@ -8082,9 +8100,11 @@ function attachWcardClicks() {
 var _origSwitch2 = switchWpCat;
 switchWpCat = function(cat, btn) {
   _origSwitch2(cat, btn);
-  setTimeout(attachWcardClicks, 100);
-};
-setTimeout(attachWcardClicks, 1000);
+   if(typeof requestIdleCallback==='function') requestIdleCallback(attachWcardClicks);
+  else setTimeout(attachWcardClicks, 100);
+}
+if(typeof requestIdleCallback==='function') requestIdleCallback(attachWcardClicks,{timeout:1500});
+else setTimeout(attachWcardClicks, 1000);
 
 function closeShipModal(){document.getElementById('shipModal').classList.remove('open')}
 function openShipModal(name) {
@@ -8213,8 +8233,12 @@ function fixShipImages() {
       .catch(function(){});
   });
 }
-// Run image fixer after a delay to let initial render complete
-setTimeout(fixShipImages, 3000);
+// Run image fixer after initial render — use idle callback to avoid blocking
+if (typeof requestIdleCallback === 'function') {
+  requestIdleCallback(fixShipImages, {timeout: 4000});
+} else {
+  setTimeout(fixShipImages, 3000);
+}
 // Also run when switching to ships tab
 var _origShowTab = showTab;
 showTab = function(id, btn) {
@@ -8223,7 +8247,10 @@ showTab = function(id, btn) {
 };
 
 // Ensure ships render on load
-if(typeof renderShips==="function")setTimeout(renderShips,500);
+if(typeof renderShips==="function"){
+  if(typeof requestIdleCallback==='function') requestIdleCallback(renderShips,{timeout:1000});
+  else setTimeout(renderShips,500);
+}
 </script>
 
 
