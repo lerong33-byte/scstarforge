@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.34-DEV</title>
+<title>SC-ShipForge v8.35-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.34-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.35-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -10663,44 +10663,23 @@ function populateDashboard(){
 /* ── Dashboard ship card image loader ── */
 function loadDashboardShipImages(){
   var ships=[
-    {id:'dCardImgHammerhead', name:'Hammerhead', wiki:'Hammerhead_(ship)'},
-    {id:'dCardImgEclipse',    name:'Eclipse',    wiki:'Eclipse_(ship)'},
-    {id:'dCardImgArrow',      name:'Arrow',      wiki:'Arrow_(ship)'},
-    {id:'dCardImgHercules',   name:'Hercules A2',wiki:'C2_Hercules_Starlifter'},
+    {id:'dCardImgHammerhead', name:'Hammerhead'},
+    {id:'dCardImgEclipse',    name:'Eclipse'},
+    {id:'dCardImgArrow',      name:'Arrow'},
+    {id:'dCardImgHercules',   name:'Hercules A2'},
   ];
+  var map=window.COMPLETE_SHIP_IMAGE_MAP||{};
   ships.forEach(function(s){
     var el=document.getElementById(s.id);
     if(!el)return;
-    // Check cache first
-    var cached=window._shipImgCache=window._shipImgCache||{};
-    var inject=function(src){
-      var img=document.createElement('img');
-      img.src=src;
-      img.alt=s.name;
-      img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s;position:absolute;inset:0';
-      img.onerror=function(){img.style.display='none';};
-      el.insertBefore(img,el.firstChild);
-    };
-    if(cached[s.name]){inject(cached[s.name]);return;}
-    var url='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(s.wiki)+'&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*';
-    fetch(url).then(function(r){return r.json();}).then(function(d){
-      var pages=d.query&&d.query.pages;
-      if(!pages)return;
-      var p=pages[Object.keys(pages)[0]];
-      var src=p&&p.thumbnail&&p.thumbnail.source;
-      if(src){cached[s.name]=src;inject(src);}
-      else {
-        // fallback: try without suffix
-        var url2='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(s.name.replace(/ /g,'_'))+'&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*';
-        fetch(url2).then(function(r2){return r2.json();}).then(function(d2){
-          var p2=d2.query&&d2.query.pages;
-          if(!p2)return;
-          var pg2=p2[Object.keys(p2)[0]];
-          var src2=pg2&&pg2.thumbnail&&pg2.thumbnail.source;
-          if(src2){cached[s.name]=src2;inject(src2);}
-        }).catch(function(){});
-      }
-    }).catch(function(){});
+    var src=map[s.name];
+    if(!src)return;
+    var img=document.createElement('img');
+    img.src=src;
+    img.alt=s.name;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s;position:absolute;inset:0';
+    img.onerror=function(){img.style.display='none';};
+    el.insertBefore(img,el.firstChild);
   });
 }
 // Run after DOM ready and after data loads
