@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.61-DEV</title>
+<title>SC-ShipForge v8.60-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -260,63 +260,21 @@ option,optgroup{background:var(--bg2)}
 .lo-foot{padding-top:4px}
 
 /* Weapons DB */
-#pane-wp{overflow:hidden;display:flex;flex-direction:column}
-/* Top bar: category tabs + search */
-#wpTopBar{display:flex;align-items:center;gap:8px;padding:8px 12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06);flex-wrap:wrap}
-#wpSearchWrap{flex:1;min-width:160px;position:relative}
-#wpSearchInput{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 10px 5px 28px;font-size:12px;color:var(--text);outline:none;font-family:var(--fmono);box-sizing:border-box;transition:border-color .15s}
-#wpSearchInput:focus{border-color:var(--accent)}
-#wpSearchIcon{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:12px;pointer-events:none}
-/* Filter bar (size + type pills) */
-.wf{padding:8px 12px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;align-items:center}
-.wfbtn,.wfb{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 11px;font-size:11px;color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--fmono);letter-spacing:.04em}
-.wfbtn:hover,.wfbtn.on,.wfb:hover,.wfb.on{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
-/* Scrollable list area */
-.wgrid{flex:1;overflow-y:auto;padding:10px 14px 14px;display:flex;flex-direction:column;gap:0;align-content:start}
-/* Size section header */
-.wsz-section{margin-bottom:6px}
-.wsz-hdr{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;user-select:none;transition:background .15s}
-.wsz-hdr:hover{background:rgba(255,255,255,0.05)}
-.wsz-hdr-badge{font-family:var(--fmono);font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:20px;padding:2px 9px;min-width:32px;text-align:center}
-.wsz-hdr-label{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--t2);text-transform:uppercase;flex:1}
-.wsz-hdr-count{font-family:var(--fmono);font-size:10px;color:var(--t3)}
-.wsz-hdr-arrow{font-size:10px;color:var(--t3);transition:transform .2s}
-.wsz-hdr.collapsed .wsz-hdr-arrow{transform:rotate(-90deg)}
-/* Column header row */
-.wlist-cols{display:grid;padding:4px 10px;font-family:var(--fmono);font-size:9px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.04);cursor:default;user-select:none}
-.wlist-cols.wep-cols{grid-template-columns:minmax(140px,2fr) 90px 60px 60px 60px 60px 60px minmax(100px,1.5fr)}
-.wlist-cols.comp-cols-pp{grid-template-columns:minmax(140px,2fr) 90px 70px 70px 70px}
-.wlist-cols.comp-cols-sg{grid-template-columns:minmax(140px,2fr) 90px 80px 80px 70px}
-.wlist-cols.comp-cols-cooler{grid-template-columns:minmax(140px,2fr) 90px 80px 80px 70px}
-.wlist-cols.comp-cols-qd{grid-template-columns:minmax(140px,2fr) 90px 80px 80px 70px}
-.wlist-col-hdr{cursor:pointer;display:flex;align-items:center;gap:3px;padding:2px 4px;border-radius:3px;transition:color .15s}
-.wlist-col-hdr:hover{color:var(--accent)}
-.wlist-col-hdr.sort-asc::after{content:'▲';font-size:8px;color:var(--accent)}
-.wlist-col-hdr.sort-desc::after{content:'▼';font-size:8px;color:var(--accent)}
-/* Weapon/comp list rows */
-.wlist-body{display:flex;flex-direction:column}
-.wlist-row{display:grid;padding:5px 10px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background .12s;align-items:center}
-.wlist-row:hover{background:rgba(255,255,255,0.04)}
-.wlist-row.wep-row{grid-template-columns:minmax(140px,2fr) 90px 60px 60px 60px 60px 60px minmax(100px,1.5fr)}
-.wlist-row.comp-row-pp{grid-template-columns:minmax(140px,2fr) 90px 70px 70px 70px}
-.wlist-row.comp-row-sg{grid-template-columns:minmax(140px,2fr) 90px 80px 80px 70px}
-.wlist-row.comp-row-cooler{grid-template-columns:minmax(140px,2fr) 90px 80px 80px 70px}
-.wlist-row.comp-row-qd{grid-template-columns:minmax(140px,2fr) 90px 80px 80px 70px}
-.wlist-row:last-child{border-bottom:none}
-/* Row cell styles */
-.wlr-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
-.wlr-mfr{font-family:var(--fmono);font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wlr-val{font-family:var(--fmono);font-size:11px;color:var(--text);font-weight:500;text-align:right;padding-right:6px}
-.wlr-val.hi{color:var(--green)}
-.wlr-val.mid{color:#f59e0b}
-.wlr-loc{font-family:var(--fmono);font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wlr-loc.excl{color:var(--green)}
-.wlr-badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;font-family:var(--fmono);letter-spacing:.04em}
-.wlr-badge.ball{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
-.wlr-badge.ener{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
-.wlr-badge.new{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
-/* Legacy card styles kept for modal compatibility */
-.wcard{display:none}
+#pane-wp{overflow:hidden}
+.wf{padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
+.wfbtn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--t2);cursor:pointer;transition:all .15s}
+.wfbtn:hover,.wfbtn.on{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
+.wgrid{flex:1;overflow-y:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;align-content:start}
+.wcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:visible;cursor:pointer;transition:border-color .15s}
+.wcard:hover{border-color:var(--accent)}
+.wc-top{height:58px;background:var(--bg3);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border)}
+.wc-name{font-size:13px;font-weight:500;color:var(--text);padding:9px 10px 4px}
+.wc-mfr{font-size:11px;color:var(--t3);padding:0 10px 4px}
+.wc-sz{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;margin:0 10px 8px;background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border);font-family:var(--fmono)}
+.wc-stats{padding:6px 10px 10px;display:flex;flex-direction:column;gap:3px}
+.wcs{display:flex;justify-content:space-between;font-size:11px}
+.wcs-k{color:var(--t3);font-family:var(--fmono)}
+.wcs-v{color:var(--text);font-weight:500;font-family:var(--fmono)}
 .wc-new{font-size:10px;background:var(--green-bg);color:var(--green);padding:1px 6px;border-radius:20px;margin:0 10px 6px;display:inline-block;border:1px solid var(--green-border)}
 
 /* AI Pane */
@@ -1033,7 +991,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.61-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.60-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1398,16 +1356,16 @@ option,optgroup{background:var(--bg2)}
         </div>
       </div>
       <div class="pane" id="pane-wp">
-        <div id="wpTopBar">
-          <button class="wp-cat-btn on" data-cat="weapons" onclick="switchWpCat('weapons',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(77,255,110,.4);color:#4dff6e;background:rgba(77,255,110,.12);cursor:pointer;flex-shrink:0">Weapons</button>
-          <button class="wp-cat-btn" data-cat="pp" onclick="switchWpCat('pp',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer;flex-shrink:0">Power Plants</button>
-          <button class="wp-cat-btn" data-cat="sg" onclick="switchWpCat('sg',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer;flex-shrink:0">Shields</button>
-          <button class="wp-cat-btn" data-cat="cooler" onclick="switchWpCat('cooler',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer;flex-shrink:0">Coolers</button>
-          <button class="wp-cat-btn" data-cat="qd" onclick="switchWpCat('qd',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer;flex-shrink:0">Quantum Drives</button>
-          <div id="wpSearchWrap"><span id="wpSearchIcon">&#9906;</span><input id="wpSearchInput" type="text" placeholder="Search…" oninput="wpFilterSearch(this.value)"></div>
+        <div id="wpCatBar" style="display:flex;gap:4px;padding:8px 12px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <button class="wp-cat-btn on" data-cat="weapons" onclick="switchWpCat('weapons',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(77,255,110,.4);color:#4dff6e;background:rgba(77,255,110,.12);cursor:pointer">Weapons</button>
+          <button class="wp-cat-btn" data-cat="pp" onclick="switchWpCat('pp',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Power Plants</button>
+          <button class="wp-cat-btn" data-cat="sg" onclick="switchWpCat('sg',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Shields</button>
+          <button class="wp-cat-btn" data-cat="cooler" onclick="switchWpCat('cooler',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Coolers</button>
+          <button class="wp-cat-btn" data-cat="qd" onclick="switchWpCat('qd',this)" style="padding:5px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;border:1px solid rgba(255,255,255,.08);color:#8a94a3;background:transparent;cursor:pointer">Quantum Drives</button>
         </div>
         <div class="wf" id="wfiltBar"></div>
         <div class="wgrid" id="wgrid"></div>
+      
         <div id="compGrid" class="wgrid" style="display:none"></div>
       </div>
 
@@ -5143,158 +5101,44 @@ function sendAI(){
 var _aii=document.getElementById('aiInput');if(_aii)_aii.addEventListener('keydown',function(e){if(e.key==='Enter')sendAI();});
 
 // ═══ WEAPONS DB ═══
-// Sort state
-var _wpSortKey = 'dps';
-var _wpSortDir = -1; // -1 = desc, 1 = asc
-var _wpSearchQ = '';
-var _wpCollapsed = {}; // track collapsed size sections
-
-function wpFilterSearch(q) {
-  _wpSearchQ = (q || '').toLowerCase();
-  var cat = (document.querySelector('.wp-cat-btn.on') || {}).dataset && document.querySelector('.wp-cat-btn.on').dataset.cat;
-  if (!cat || cat === 'weapons') {
-    buildWeaponsDB(
-      document.querySelector('[data-sz].on') ? document.querySelector('[data-sz].on').dataset.sz : 'all',
-      document.querySelector('[data-ty].on') ? document.querySelector('[data-ty].on').dataset.ty : 'all'
-    );
-  } else {
-    buildCompGrid(cat);
-  }
-}
-
-function buildWeaponsDB(szF, tyF) {
-  szF = szF || 'all'; tyF = tyF || 'all';
-  var ws = WEAPONS.filter(function(w){ return !w.type.includes('missile') && w.type !== 'torpedo'; });
-  if (szF !== 'all') ws = ws.filter(function(w){ return w.sz === parseInt(szF); });
-  if (tyF !== 'all') ws = ws.filter(function(w){ return w.type === tyF; });
-  if (_wpSearchQ) ws = ws.filter(function(w){
-    return w.name.toLowerCase().indexOf(_wpSearchQ) > -1 || (w.mfr||'').toLowerCase().indexOf(_wpSearchQ) > -1 || (w.loc||'').toLowerCase().indexOf(_wpSearchQ) > -1;
-  });
-
-  // Build filter bar once
-  var fb = document.getElementById('wfiltBar');
-  if (fb && !fb.children.length) {
+function buildWeaponsDB(szF,tyF){
+  var ws=WEAPONS.filter(function(w){return !w.type.includes('missile')&&w.type!=='torpedo';});
+  if(szF!=='all')ws=ws.filter(function(w){return w.sz===parseInt(szF);});
+  if(tyF!=='all')ws=ws.filter(function(w){return w.type===tyF;});
+  ws.sort(function(a,b){return b.dps-a.dps;});
+  var fb=document.getElementById('wfiltBar');
+  if(fb && !fb.children.length){
     [['all','ALL'],['1','S1'],['2','S2'],['3','S3'],['4','S4'],['5','S5+']].forEach(function(sz){
-      var b = document.createElement('button'); b.className = 'wfb' + (szF === sz[0] ? ' on' : ''); b.textContent = sz[1]; b.dataset.sz = sz[0];
-      b.onclick = function(){ document.querySelectorAll('[data-sz]').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on'); buildWeaponsDB(sz[0], document.querySelector('[data-ty].on') ? document.querySelector('[data-ty].on').dataset.ty : 'all'); };
+      var b=document.createElement('button');b.className='wfb'+(szF===sz[0]?' on':'');b.textContent=sz[1];b.dataset.sz=sz[0];
+      b.onclick=function(){document.querySelectorAll('[data-sz]').forEach(function(x){x.classList.remove('on');});b.classList.add('on');buildWeaponsDB(sz[0],document.querySelector('[data-ty].on')&&document.querySelector('[data-ty].on').dataset.ty||'all');};
       fb.appendChild(b);
     });
-    var sep = document.createElement('span'); sep.style.cssText = 'width:1px;background:var(--border);display:inline-block;height:14px;margin:0 5px;'; fb.appendChild(sep);
+    var sep=document.createElement('span');sep.style.cssText='width:1px;background:var(--border);display:inline-block;height:14px;margin:0 5px;';fb.appendChild(sep);
     [['all','ALL TYPES'],['ballistic','BALLISTIC'],['energy','ENERGY']].forEach(function(ty){
-      var b = document.createElement('button'); b.className = 'wfb' + (tyF === ty[0] ? ' on' : ''); b.textContent = ty[1]; b.dataset.ty = ty[0];
-      b.onclick = function(){ document.querySelectorAll('[data-ty]').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on'); buildWeaponsDB(document.querySelector('[data-sz].on') ? document.querySelector('[data-sz].on').dataset.sz : 'all', ty[0]); };
+      var b=document.createElement('button');b.className='wfb'+(tyF===ty[0]?' on':'');b.textContent=ty[1];b.dataset.ty=ty[0];
+      b.onclick=function(){document.querySelectorAll('[data-ty]').forEach(function(x){x.classList.remove('on');});b.classList.add('on');buildWeaponsDB(document.querySelector('[data-sz].on')&&document.querySelector('[data-sz].on').dataset.sz||'all',ty[0]);};
       fb.appendChild(b);
     });
-  } else if (fb) {
-    document.querySelectorAll('[data-sz]').forEach(function(b){ b.classList.toggle('on', b.dataset.sz === szF); });
-    document.querySelectorAll('[data-ty]').forEach(function(b){ b.classList.toggle('on', b.dataset.ty === tyF); });
+  }else{
+    document.querySelectorAll('[data-sz]').forEach(function(b){b.classList.toggle('on',b.dataset.sz===szF);});
+    document.querySelectorAll('[data-ty]').forEach(function(b){b.classList.toggle('on',b.dataset.ty===tyF);});
   }
-
-  // Sort
-  ws.sort(function(a, b){
-    var av = a[_wpSortKey] || 0, bv = b[_wpSortKey] || 0;
-    if (typeof av === 'string') return _wpSortDir * av.localeCompare(bv);
-    return _wpSortDir * (bv - av);
-  });
-
-  // Group by size
-  var sizes = [];
-  var bySz = {};
-  ws.forEach(function(w){
-    var k = 'S' + w.sz;
-    if (!bySz[k]) { bySz[k] = []; sizes.push(k); }
-    bySz[k].push(w);
-  });
-  // Sort sizes descending (S8 first)
-  sizes.sort(function(a, b){ return parseInt(b.slice(1)) - parseInt(a.slice(1)); });
-
-  var wg = document.getElementById('wgrid');
-  if (!wg) return;
-  wg.innerHTML = '';
-
-  var cols = ['NAME','MFR','TYPE','DPS','ALPHA','RANGE','DRAW','LOCATION'];
-  var colKeys = ['name','mfr','type','dps','alpha','range','draw','loc'];
-
-  sizes.forEach(function(sz){
-    var items = bySz[sz];
-    var section = document.createElement('div');
-    section.className = 'wsz-section';
-    section.dataset.sz = sz;
-
-    // Section header
-    var hdr = document.createElement('div');
-    hdr.className = 'wsz-hdr' + (_wpCollapsed[sz] ? ' collapsed' : '');
-    hdr.innerHTML = '<span class="wsz-hdr-badge">' + sz + '</span><span class="wsz-hdr-label">Weapons</span><span class="wsz-hdr-count">' + items.length + ' items</span><span class="wsz-hdr-arrow">&#9660;</span>';
-    hdr.onclick = function(){
-      _wpCollapsed[sz] = !_wpCollapsed[sz];
-      hdr.classList.toggle('collapsed', !!_wpCollapsed[sz]);
-      body.style.display = _wpCollapsed[sz] ? 'none' : '';
-    };
-    section.appendChild(hdr);
-
-    if (_wpCollapsed[sz]) { wg.appendChild(section); return; }
-
-    // Column headers
-    var colHdr = document.createElement('div');
-    colHdr.className = 'wlist-cols wep-cols';
-    cols.forEach(function(c, i){
-      var span = document.createElement('span');
-      span.className = 'wlist-col-hdr' + (_wpSortKey === colKeys[i] ? (_wpSortDir < 0 ? ' sort-desc' : ' sort-asc') : '');
-      span.textContent = c;
-      var ck = colKeys[i];
-      span.onclick = function(){
-        if (_wpSortKey === ck) _wpSortDir *= -1; else { _wpSortKey = ck; _wpSortDir = (ck === 'name' || ck === 'mfr' || ck === 'type' || ck === 'loc') ? 1 : -1; }
-        buildWeaponsDB(szF, tyF);
-      };
-      colHdr.appendChild(span);
-    });
-    section.appendChild(colHdr);
-
-    // Rows
-    var body = document.createElement('div');
-    body.className = 'wlist-body';
-    items.forEach(function(w){
-      var row = document.createElement('div');
-      row.className = 'wlist-row wep-row';
-      row.dataset.wid = w.id;
-      var isExcl = (w.loc || '').indexOf('⭐') > -1;
-      var locText = (w.loc || '').replace('⭐ ', '').replace('⭐', '');
-      row.innerHTML =
-        '<span class="wlr-name">' + w.name + (w.new ? ' <span class="wlr-badge new">NEW</span>' : '') + '</span>' +
-        '<span class="wlr-mfr">' + (w.mfr || '') + '</span>' +
-        '<span class="wlr-val"><span class="wlr-badge ' + (w.type === 'ballistic' ? 'ball' : 'ener') + '">' + w.type + '</span></span>' +
-        '<span class="wlr-val hi">' + w.dps + '</span>' +
-        '<span class="wlr-val mid">' + w.alpha + '</span>' +
-        '<span class="wlr-val">' + w.range + 'm</span>' +
-        '<span class="wlr-val">' + w.draw + 'EU</span>' +
-        '<span class="wlr-loc' + (isExcl ? ' excl' : '') + '">' + (isExcl ? '⭐ ' : '') + locText + '</span>';
-      row.onclick = function(){
-        openWpModal('weapon', w.name, {
-          sub: (w.mfr || '') + ' · Size ' + w.sz + ' · ' + w.type,
-          sz: String(w.sz),
-          stats: [
-            {label:'DPS', value: w.dps},
-            {label:'Alpha', value: w.alpha},
-            {label:'Range', value: w.range + 'm'},
-            {label:'Draw', value: w.draw + 'EU'},
-            {label:'Heat', value: w.heat + '/s'}
-          ]
-        });
-      };
-      body.appendChild(row);
-    });
-    section.appendChild(body);
-    wg.appendChild(section);
-  });
-
-  if (ws.length === 0) {
-    wg.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t3);font-family:var(--fmono);font-size:12px">No weapons match your filters</div>';
-  }
+  var _wg=document.getElementById('wgrid');if(_wg)_wg.innerHTML=ws.map(function(w){
+    var tc=w.type==='ballistic'?'wc-b':'wc-e';
+    return '<div class="wcard"><div class="wc-top"><span class="wc-name">'+w.name+'</span><span class="wc-sz">S'+w.sz+'</span></div>'
+      +'<div class="wc-mfr">'+w.mfr+' <span class="'+tc+'">'+w.type+'</span>'+(w.new?'&nbsp;<span class="wc-new">4.7 NEW</span>':'')+'</div>'
+      +'<div class="wc-stats">'
+      +'<span class="wcs"><span class="wcs-k">DPS</span><span class="wcs-v">'+w.dps+'</span></span>'
+      +'<span class="wcs"><span class="wcs-k">ALPHA</span><span class="wcs-v">'+w.alpha+'</span></span>'
+      +'<span class="wcs"><span class="wcs-k">RANGE</span><span class="wcs-v">'+w.range+'m</span></span>'
+      +'<span class="wcs"><span class="wcs-k">DRAW</span><span class="wcs-v">'+w.draw+'EU</span></span>'
+      +'<span class="wcs"><span class="wcs-k">HEAT</span><span class="wcs-v">'+w.heat+'/s</span></span>'
+      +'</div><div class="wc-loc">'+(w.loc.startsWith('⭐')?'<span style="color:var(--green)">⭐ </span>':'')+w.loc.replace('⭐ ','')+'</div></div>';
+  }).join('');
 }
 
 // ═══ LOCATIONS ═══
 function buildLocations(){
-
   var _lg=document.getElementById('locGrid');if(_lg)_lg.innerHTML=LOCATIONS.map(function(l){
     var tags=l.tags.map(function(t){return '<span class="ltag '+(t==='weapons'?'ltag-w':t==='components'?'ltag-c':'ltag-o')+'">'+t+'</span>';}).join('');
     return '<div class="lcard"><div class="lcard-n">'+l.name+'</div><div class="lcard-s">'+l.sys+'</div>'
@@ -8065,21 +7909,17 @@ function switchWpCat(cat, btn) {
   btn.style.color = '#38bdf8';
   btn.style.background = 'rgba(56,189,248,0.12)';
   btn.classList.add('on');
-  // Clear search
-  var si = document.getElementById('wpSearchInput');
-  if (si) { si.value = ''; _wpSearchQ = ''; }
   var wf = document.getElementById('wfiltBar');
   var wg = document.getElementById('wgrid');
   var cg = document.getElementById('compGrid');
   if (cat === 'weapons') {
-    if (wf) wf.style.display = '';
-    if (wg) wg.style.display = '';
-    if (cg) cg.style.display = 'none';
-    buildWeaponsDB('all', 'all');
+    wf.style.display = '';
+    wg.style.display = '';
+    cg.style.display = 'none';
   } else {
-    if (wf) wf.style.display = 'none';
-    if (wg) wg.style.display = 'none';
-    if (cg) cg.style.display = '';
+    wf.style.display = 'none';
+    wg.style.display = 'none';
+    cg.style.display = '';
     buildCompGrid(cat);
   }
 }
@@ -8087,134 +7927,190 @@ function buildCompGrid(cat) {
   var grid = document.getElementById('compGrid');
   if (!grid || typeof COMP_DB === 'undefined') return;
   grid.innerHTML = '';
-
   var db = COMP_DB[cat];
   if (!db) return;
-
-  // Sort state per comp category
-  if (!window._compSort) window._compSort = {};
-  if (!window._compSort[cat]) window._compSort[cat] = {key: 'v1', dir: -1};
-  var cs = window._compSort[cat];
-
-  var colDefs = {
-    pp:     {cols:['NAME','SIZE','OUTPUT','EM SIG','HEAT'],     keys:['name','sz','out','em','heat']},
-    sg:     {cols:['NAME','SIZE','TOTAL HP','FACE HP','REGEN/s'], keys:['name','sz','totalHP','faceHP','regen']},
-    cooler: {cols:['NAME','SIZE','COOLING','DRAW MIN','IR SIG'], keys:['name','sz','cool','drawMin','ir']},
-    qd:     {cols:['NAME','SIZE','RANGE','SPEED','SPOOL'],       keys:['name','sz','range','speed','spool']}
+  var labels = {pp:{h1:'OUTPUT',h2:'HEAT',h3:'EM SIG'},sg:{h1:'TOTAL HP',h2:'FACE HP',h3:'REGEN/s'},cooler:{h1:'COOLING',h2:'DRAW MIN',h3:'IR SIG'},qd:{h1:'RANGE',h2:'SPEED',h3:'SPOOL'}};
+  var icons = {
+    pp:'<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    sg:'<svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    cooler:'<svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="1.5"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>',
+    qd:'<svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>'
   };
-  var def = colDefs[cat] || {cols:['NAME','SIZE','STAT1','STAT2','STAT3'], keys:['name','sz','v1','v2','v3']};
-  var rowClass = 'comp-row-' + cat;
-  var colClass = 'comp-cols-' + cat;
-
-  // Build entries array
-  var entries = Object.keys(db).map(function(name){
+  var lbl = labels[cat] || {h1:'STAT1',h2:'STAT2',h3:'STAT3'};
+  var icon = icons[cat] || '';
+  var names = Object.keys(db).sort(function(a,b){ return (db[b].sz||0)-(db[a].sz||0) || a.localeCompare(b); });
+  names.forEach(function(name) {
     var c = db[name];
+    var card = document.createElement('div');
+    card.className = 'wcard';
+    card.setAttribute('data-cat', cat);
+    var sz = c.sz || '?';
     var v1, v2, v3;
-    if (cat === 'pp')     { v1 = c.out;     v2 = c.em;      v3 = c.heat; }
-    else if (cat === 'sg')     { v1 = c.totalHP; v2 = c.faceHP;  v3 = c.regen; }
-    else if (cat === 'cooler') { v1 = c.cool;    v2 = c.drawMin; v3 = c.ir; }
-    else if (cat === 'qd')     { v1 = c.range;   v2 = c.speed;   v3 = c.spool; }
-    return {name: name, sz: c.sz || 0, v1: v1, v2: v2, v3: v3, raw: c};
+    if (cat === 'pp') { v1 = c.out; v2 = c.heat; v3 = c.em; }
+    else if (cat === 'sg') { v1 = c.totalHP; v2 = c.faceHP; v3 = c.regen; }
+    else if (cat === 'cooler') { v1 = c.cool; v2 = c.drawMin; v3 = c.ir; }
+    else if (cat === 'qd') { v1 = c.range + ' Mkm'; v2 = c.speed + ' Mm/s'; v3 = c.spool + 's'; }
+    card.innerHTML = '<div class="wcard-icon">' + icon + '</div>' +
+      '<div class="wc-hd"><span class="wc-nm">' + name + '</span><span class="wc-sz">S' + sz + '</span></div>' +
+      '<div class="wc-sub">' + (cat==='pp'?'Power Plant':cat==='sg'?'Shield Generator':cat==='cooler'?'Cooler':'Quantum Drive') + '</div>' +
+      '<div class="wc-stats"><div class="wc-st"><span class="wc-sl">' + lbl.h1 + '</span><span class="wc-sv">' + v1 + '</span></div>' +
+      '<div class="wc-st"><span class="wc-sl">' + lbl.h2 + '</span><span class="wc-sv">' + v2 + '</span></div>' +
+      '<div class="wc-st"><span class="wc-sl">' + lbl.h3 + '</span><span class="wc-sv">' + v3 + '</span></div></div>';
+    grid.appendChild(card);
   });
-
-  // Apply search filter
-  if (_wpSearchQ) {
-    entries = entries.filter(function(e){ return e.name.toLowerCase().indexOf(_wpSearchQ) > -1; });
-  }
-
-  // Sort
-  entries.sort(function(a, b){
-    var av = a[cs.key], bv = b[cs.key];
-    if (typeof av === 'string') return cs.dir * av.localeCompare(bv);
-    return cs.dir * ((parseFloat(bv)||0) - (parseFloat(av)||0));
-  });
-
-  // Group by size
-  var sizes = [];
-  var bySz = {};
-  entries.forEach(function(e){
-    var k = 'S' + e.sz;
-    if (!bySz[k]) { bySz[k] = []; sizes.push(k); }
-    bySz[k].push(e);
-  });
-  sizes.sort(function(a, b){ return parseInt(b.slice(1)) - parseInt(a.slice(1)); });
-
-  var catLabel = {pp:'Power Plant', sg:'Shield Generator', cooler:'Cooler', qd:'Quantum Drive'}[cat] || cat;
-
-  sizes.forEach(function(sz){
-    var items = bySz[sz];
-    var section = document.createElement('div');
-    section.className = 'wsz-section';
-
-    // Header
-    var hdr = document.createElement('div');
-    var collKey = 'comp_' + cat + '_' + sz;
-    hdr.className = 'wsz-hdr' + (_wpCollapsed[collKey] ? ' collapsed' : '');
-    hdr.innerHTML = '<span class="wsz-hdr-badge">' + sz + '</span><span class="wsz-hdr-label">' + catLabel + '</span><span class="wsz-hdr-count">' + items.length + ' items</span><span class="wsz-hdr-arrow">&#9660;</span>';
-    hdr.onclick = function(){
-      _wpCollapsed[collKey] = !_wpCollapsed[collKey];
-      hdr.classList.toggle('collapsed', !!_wpCollapsed[collKey]);
-      body.style.display = _wpCollapsed[collKey] ? 'none' : '';
-    };
-    section.appendChild(hdr);
-
-    if (_wpCollapsed[collKey]) { grid.appendChild(section); return; }
-
-    // Column headers
-    var colHdr = document.createElement('div');
-    colHdr.className = 'wlist-cols ' + colClass;
-    def.cols.forEach(function(c, i){
-      var span = document.createElement('span');
-      var ck = def.keys[i];
-      span.className = 'wlist-col-hdr' + (cs.key === ck ? (cs.dir < 0 ? ' sort-desc' : ' sort-asc') : '');
-      span.textContent = c;
-      span.onclick = function(){
-        if (cs.key === ck) cs.dir *= -1; else { cs.key = ck; cs.dir = (ck === 'name') ? 1 : -1; }
-        buildCompGrid(cat);
-      };
-      colHdr.appendChild(span);
-    });
-    section.appendChild(colHdr);
-
-    // Rows
-    var body = document.createElement('div');
-    body.className = 'wlist-body';
-    items.forEach(function(e){
-      var row = document.createElement('div');
-      row.className = 'wlist-row ' + rowClass;
-      row.setAttribute('data-cat', cat);
-      var v1Disp = cat === 'qd' ? (e.v1 + ' Mkm') : e.v1;
-      var v2Disp = cat === 'qd' ? (e.v2 + ' Mm/s') : e.v2;
-      var v3Disp = cat === 'qd' ? (e.v3 + 's') : e.v3;
-      row.innerHTML =
-        '<span class="wlr-name">' + e.name + '</span>' +
-        '<span class="wlr-mfr">S' + e.sz + '</span>' +
-        '<span class="wlr-val hi">' + v1Disp + '</span>' +
-        '<span class="wlr-val">' + v2Disp + '</span>' +
-        '<span class="wlr-val mid">' + v3Disp + '</span>';
-      row.onclick = function(){
-        openWpModal('comp', e.name, {
-          sub: catLabel + ' · Size ' + e.sz,
-          sz: String(e.sz),
-          stats: [
-            {label: def.cols[2], value: v1Disp},
-            {label: def.cols[3], value: v2Disp},
-            {label: def.cols[4], value: v3Disp}
-          ]
-        });
-      };
-      body.appendChild(row);
-    });
-    section.appendChild(body);
-    grid.appendChild(section);
-  });
-
-  if (entries.length === 0) {
-    grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t3);font-family:var(--fmono);font-size:12px">No items match your search</div>';
-  }
 }
 
+// Tag weapon cards with data-wtype after they render
+var _origBuildWpn = buildWeaponsDB;
+buildWeaponsDB = function() {
+  _origBuildWpn.apply(this, arguments);
+  var cards = document.querySelectorAll('#wgrid .wcard');
+  cards.forEach(function(c) {
+    var typeEl = c.querySelector('.wc-b');
+    if (typeEl) {
+      var t = typeEl.textContent.trim().toLowerCase();
+      c.setAttribute('data-wtype', t);
+    }
+  });
+};
+// Patch buildCompGrid to add data-cat
+var _origBuildComp = buildCompGrid;
+buildCompGrid = function(cat) {
+  _origBuildComp(cat);
+  var cards = document.querySelectorAll('#compGrid .wcard');
+  cards.forEach(function(c) { c.setAttribute('data-cat', cat); });
+};
+// Run the weapon tagger now if cards already exist
+setTimeout(function() {
+  var cards = document.querySelectorAll('#wgrid .wcard');
+  cards.forEach(function(c) {
+    var typeEl = c.querySelector('.wc-b');
+    if (typeEl) c.setAttribute('data-wtype', typeEl.textContent.trim().toLowerCase());
+  });
 
+    // Add weapon icons
+    cards.forEach(function(c) {
+      if (!c.querySelector('.wcard-icon')) {
+        var type = c.getAttribute('data-wtype') || '';
+        var iconSvg = type === 'ballistic' 
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+        var iconDiv = document.createElement('div');
+        iconDiv.className = 'wcard-icon';
+        iconDiv.innerHTML = iconSvg;
+        c.insertBefore(iconDiv, c.firstChild);
+      }
+    });
+  }, 500);
+
+function closeWpModal(){document.getElementById('wpModal').classList.remove('open')}
+function openWpModal(type, name, data) {
+  var mc = document.getElementById('wpModalContent');
+  var html = '<h2 class="wpm-title">' + name + '</h2>';
+  html += '<div class="wpm-sub">' + (data.sub || '') + '</div>';
+  // Stats grid
+  html += '<div class="wpm-stats">';
+  if (data.stats) {
+    data.stats.forEach(function(s) {
+      html += '<div class="wpm-stat"><span class="wpm-stat-label">' + s.label + '</span><span class="wpm-stat-val">' + s.value + '</span></div>';
+    });
+  }
+  html += '</div>';
+  // Compatible ships
+  html += '<div class="wpm-section">Compatible Ships</div>';
+  html += '<div class="wpm-ships">';
+  var ships = findCompatibleShips(type, data.sz);
+  if (ships.length === 0) {
+    html += '<span style="color:#5a6577;font-size:11px">No compatible ships found</span>';
+  } else {
+    ships.forEach(function(s) {
+      html += '<span class="wpm-ship" onclick="closeWpModal();pick(\'' + s.name.replace(/'/g, "\\'") + '\');showTab(\'lo\',document.querySelector(\'[data-t=lo]\'))">' + s.name + '<span class="wpm-ship-sz">' + s.size + '</span></span>';
+    });
+  }
+  html += '</div>';
+  mc.innerHTML = html;
+  document.getElementById('wpModal').classList.add('open');
+}
+function findCompatibleShips(type, sz) {
+  if (typeof SHIP_DATA === 'undefined') return [];
+  var results = [];
+  var sizeNum = parseInt(sz) || 0;
+  Object.keys(SHIP_DATA).forEach(function(name) {
+    var s = SHIP_DATA[name];
+    if (type === 'weapon') {
+      // Check if ship has weapon slots of this size
+      if (s.slots) {
+        var hasSlot = s.slots.some(function(slot) { return slot.sz === sizeNum && (slot.type === 'weapon' || slot.type === 'turret'); });
+        if (hasSlot) results.push({name: name, size: s.size});
+      }
+    } else {
+      // Components: match compSz
+      var compSzNum = parseInt((s.compSz || '').replace('S', '')) || 0;
+      if (compSzNum === sizeNum) results.push({name: name, size: s.size});
+    }
+  });
+  results.sort(function(a,b) { return a.name.localeCompare(b.name); });
+  return results;
+}
+// Add click handlers to weapon cards
+function attachWcardClicks() {
+  document.querySelectorAll('#wgrid .wcard').forEach(function(c) {
+    if (c._wpClick) return;
+    c._wpClick = true;
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function() {
+      var nm = c.querySelector('.wc-name');
+      var mfr = c.querySelector('.wc-mfr');
+      var type = c.getAttribute('data-wtype') || 'energy';
+      var szEl = c.querySelector('.wc-sz');
+      var sz = szEl ? szEl.textContent.replace('S','') : '1';
+      var stats = [];
+      c.querySelectorAll('.wcs-row, .wc-stats > span').forEach(function(row) {
+        var k = row.querySelector('.wcs-k');
+        var v = row.querySelector('.wcs-v');
+        if (k && v) stats.push({label: k.textContent, value: v.textContent});
+      });
+      openWpModal('weapon', nm ? nm.textContent : '?', {
+        sub: (mfr ? mfr.textContent : '') + ' \u00B7 Size ' + sz + ' ' + type,
+        sz: sz,
+        stats: stats
+      });
+    });
+  });
+  // Component cards
+  document.querySelectorAll('#compGrid .wcard').forEach(function(c) {
+    if (c._wpClick) return;
+    c._wpClick = true;
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', function() {
+      var nm = c.querySelector('.wc-nm');
+      var cat = c.getAttribute('data-cat') || 'pp';
+      var szEl = c.querySelector('.wc-sz');
+      var sz = szEl ? szEl.textContent.replace('S','') : '1';
+      var catLabel = {pp:'Power Plant',sg:'Shield Generator',cooler:'Cooler',qd:'Quantum Drive'}[cat] || cat;
+      var stats = [];
+      c.querySelectorAll('.wc-st').forEach(function(row) {
+        var k = row.querySelector('.wc-sl');
+        var v = row.querySelector('.wc-sv');
+        if (k && v) stats.push({label: k.textContent, value: v.textContent});
+      });
+      openWpModal('comp', nm ? nm.textContent : '?', {
+        sub: catLabel + ' \u00B7 Size ' + sz,
+        sz: sz,
+        stats: stats
+      });
+    });
+  });
+}
+// Attach on initial load and when switching categories
+var _origSwitch2 = switchWpCat;
+switchWpCat = function(cat, btn) {
+  _origSwitch2(cat, btn);
+   if(typeof requestIdleCallback==='function') requestIdleCallback(attachWcardClicks);
+  else setTimeout(attachWcardClicks, 100);
+}
+if(typeof requestIdleCallback==='function') requestIdleCallback(attachWcardClicks,{timeout:1500});
+else setTimeout(attachWcardClicks, 1000);
 
 function closeShipModal(){document.getElementById('shipModal').classList.remove('open')}
 function openShipModal(name) {
