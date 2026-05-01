@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.79</title>
+<title>SC-ShipForge v8.80</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1108,7 +1108,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.79</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.80</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -8511,8 +8511,14 @@ function fixShipImages() {
     // Skip if image already loaded
     if (img && img.src && img.naturalWidth > 0) return;
     var name = c.getAttribute('data-ship');
+    // Fast-path: use pre-built FleetYards image map
+    var _pb = window.COMPLETE_SHIP_IMAGE_MAP && window.COMPLETE_SHIP_IMAGE_MAP[name];
+    if (_pb) {
+      if (img) { img.src = _pb; img.onload = function(){ if(placeholder) placeholder.style.display='none'; }; }
+      return;
+    }
     var wikiTitle = (window._WIKIMAP && window._WIKIMAP[name]) ? window._WIKIMAP[name] : name.replace(/ /g, '_');
-    // Try: get page images list then fetch first image URL
+    // Fallback: wiki API
     var apiBase = 'https://starcitizen.tools/api.php?format=json&origin=*&action=query&titles=';
     fetch(apiBase + encodeURIComponent(wikiTitle) + '&prop=images&imlimit=5')
       .then(function(r){return r.json()})
@@ -9779,7 +9785,9 @@ function buildShipBuilder(shipName){
       if(phEl)phEl.style.display='none';
       imgEl.onerror=function(){imgEl.style.display='none';if(phEl){phEl.style.display='flex';phEl.textContent=shipName;}};
     };
+    var _pbSd = window.COMPLETE_SHIP_IMAGE_MAP && window.COMPLETE_SHIP_IMAGE_MAP[shipName];
     if(cached[shipName]){showImg(cached[shipName]);}
+    else if(_pbSd){cached[shipName]=_pbSd;showImg(_pbSd);}
     else{
       var _wu='https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(title)+'&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*';
       fetch(_wu).then(function(r){return r.json();}).then(function(d){
@@ -11284,7 +11292,9 @@ function loadModalShipImg(containerId, shipName){
     img.onerror = function(){ img.style.display = 'none'; };
     el.insertBefore(img, el.firstChild);
   };
+  var _pb = window.COMPLETE_SHIP_IMAGE_MAP && window.COMPLETE_SHIP_IMAGE_MAP[shipName];
   if(cached[shipName]){ inject(cached[shipName]); return; }
+  else if(_pb){ cached[shipName]=_pb; inject(_pb); return; }
   var wikiMap = window._WIKIMAP || {};
   var title = wikiMap[shipName] || shipName.replace(/ /g,'_');
   fetch('https://starcitizen.tools/api.php?action=query&titles=' + encodeURIComponent(title) + '&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*')
@@ -11328,7 +11338,9 @@ window._loadModalShipImg = function(containerId, shipName){
     img.onerror = function(){ img.style.display='none'; };
     el.insertBefore(img, el.firstChild);
   };
+  var _pb2 = window.COMPLETE_SHIP_IMAGE_MAP && window.COMPLETE_SHIP_IMAGE_MAP[shipName];
   if(cached[shipName]){ inject(cached[shipName]); return; }
+  else if(_pb2){ cached[shipName]=_pb2; inject(_pb2); return; }
   var wikiMap = window._WIKIMAP || {};
   var title = wikiMap[shipName] || shipName.replace(/ /g,'_');
   fetch('https://starcitizen.tools/api.php?action=query&titles='+encodeURIComponent(title)+'&prop=pageimages&format=json&pithumbsize=600&pilimit=1&origin=*')
