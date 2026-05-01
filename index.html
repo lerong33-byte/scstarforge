@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.73</title>
+<title>SC-ShipForge v8.74</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -263,6 +263,9 @@ option,optgroup{background:var(--bg2)}
 #pane-wp{overflow:hidden}
 .wf{padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
 .wfbtn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--t2);cursor:pointer;transition:all .15s}
+.wfb{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:#8a94a3;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+.wfb:hover{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3);color:#e2e8f0}
+.wfb.on{background:rgba(56,189,248,0.15);border-color:rgba(56,189,248,0.4);color:#4fc3f7}
 .wfbtn:hover,.wfbtn.on{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent)}
 .wgrid{flex:1;overflow-y:auto;padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;align-content:start}
 .wcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:visible;cursor:pointer;transition:border-color .15s}
@@ -1086,7 +1089,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.73</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.74</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -5211,8 +5214,7 @@ function buildWeaponsDB(szF,tyF){
           var locStr = w.loc || '';
           var isExcl = locStr.startsWith('⭐');
           var locDisp = isExcl ? '<span style="color:var(--green)">⭐</span> ' + locStr.replace('⭐ ','') : locStr;
-          var wData = JSON.stringify({sz:w.sz,mfr:w.mfr,badgeType:w.type,badgeLabel:w.type,loc:w.loc||'',stats:[{label:'DPS',value:String(w.dps)},{label:'ALPHA',value:String(w.alpha)},{label:'RANGE',value:w.range+'m'},{label:'DRAW',value:w.draw+'EU'},{label:'HEAT',value:String(w.heat||'—')},{label:'PRICE',value:w.price?w.price.toLocaleString()+' aUEC':'—'}]}).replace(/'/g,"&#39;");
-          return '<div class="wl-row" onclick="openWpModal(\'weapon\',\'' + w.name.replace(/'/g,"&#39;") + '\',' + wData + ')" title="Click for details">'
+          return '<div class="wl-row" data-wid="' + w.id + '" onclick="window._openWpRow(this)" title="Click for details">'
             + '<span class="wl-name">' + w.name + (w.new ? ' <span class="wc-new">NEW</span>' : '') + '</span>'
             + '<span class="wl-mfr">' + w.mfr + '</span>'
             + '<span class="wl-type"><span class="' + tc + '">' + w.type + '</span></span>'
@@ -8068,10 +8070,7 @@ function buildCompGrid(cat) {
           else if(cat==='cooler'){ v1=c.cool||'—'; v2=c.drawMin||'—'; v3=c.ir||'—'; }
           else if(cat==='qd'){ v1=(c.range||'—')+' Mkm'; v2=(c.speed||'—')+' Mm/s'; v3=(c.spool||'—')+'s'; }
           else { v1=v2=v3='—'; }
-          var catLabel = {pp:'Power Plant',sg:'Shield Generator',cooler:'Cooler',qd:'Quantum Drive'}[cat]||cat;
-          var cStats = [{label:lbl.h1,value:String(v1)},{label:lbl.h2,value:String(v2)},{label:lbl.h3,value:String(v3)}];
-          var cData = JSON.stringify({sz:c.sz||0,mfr:'',badgeType:cat,badgeLabel:catLabel,loc:'',stats:cStats}).replace(/'/g,"&#39;");
-          return '<div class="wl-row" onclick="openWpModal(\'comp\',\'' + item.name.replace(/'/g,"&#39;") + '\',' + cData + ')" title="Click for details">'
+          return '<div class="wl-row" data-ccat="' + cat + '" data-cname="' + item.name.replace(/"/g,'&quot;') + '" data-cv1="' + v1 + '" data-cv2="' + v2 + '" data-cv3="' + v3 + '" data-csz="' + (c.sz||0) + '" onclick="window._openCompRow(this)" title="Click for details">'
             + '<span class="wl-name">' + item.name + '</span>'
             + '<span class="wl-num">' + v1 + '</span>'
             + '<span class="wl-num">' + v2 + '</span>'
@@ -8084,6 +8083,53 @@ function buildCompGrid(cat) {
 }
 
 
+window._openWpRow = function(el) {
+  var wid = el.getAttribute('data-wid');
+  var w = WEAPONS.find(function(x){ return x.id === wid; });
+  if (!w) return;
+  openWpModal('weapon', w.name, {
+    sz: w.sz,
+    mfr: w.mfr,
+    badgeType: w.type,
+    badgeLabel: w.type,
+    loc: w.loc || '',
+    stats: [
+      {label:'DPS',   value: String(w.dps)},
+      {label:'ALPHA', value: String(w.alpha)},
+      {label:'RANGE', value: w.range + 'm'},
+      {label:'DRAW',  value: w.draw + 'EU'},
+      {label:'HEAT',  value: String(w.heat || '—')},
+      {label:'PRICE', value: w.price ? w.price.toLocaleString() + ' aUEC' : '—'}
+    ]
+  });
+};
+window._openCompRow = function(el) {
+  var cat = el.getAttribute('data-ccat');
+  var name = el.getAttribute('data-cname');
+  var v1 = el.getAttribute('data-cv1');
+  var v2 = el.getAttribute('data-cv2');
+  var v3 = el.getAttribute('data-cv3');
+  var sz = parseInt(el.getAttribute('data-csz')) || 0;
+  var catLabel = {pp:'Power Plant',sg:'Shield Generator',cooler:'Cooler',qd:'Quantum Drive'}[cat] || cat;
+  var lbl = {
+    pp:     {h1:'OUTPUT',    h2:'HEAT',     h3:'EM SIG'},
+    sg:     {h1:'TOTAL HP',  h2:'FACE HP',  h3:'REGEN/s'},
+    cooler: {h1:'COOLING',   h2:'DRAW MIN', h3:'IR SIG'},
+    qd:     {h1:'RANGE',     h2:'SPEED',    h3:'SPOOL'}
+  }[cat] || {h1:'STAT1', h2:'STAT2', h3:'STAT3'};
+  openWpModal('comp', name, {
+    sz: sz,
+    mfr: '',
+    badgeType: cat,
+    badgeLabel: catLabel,
+    loc: '',
+    stats: [
+      {label: lbl.h1, value: v1},
+      {label: lbl.h2, value: v2},
+      {label: lbl.h3, value: v3}
+    ]
+  });
+};
 function closeWpModal(){document.getElementById('wpModal').classList.remove('open')}
 function openWpModal(type, name, data) {
   var mc = document.getElementById('wpModalContent');
