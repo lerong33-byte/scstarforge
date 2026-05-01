@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.60-DEV</title>
+<title>SC-ShipForge v8.63-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -991,7 +991,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.60-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.63-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1139,11 +1139,9 @@ option,optgroup{background:var(--bg2)}
         <button class="tab" data-t="wp" onclick="showTab('wp',this)">WEAPONS &amp; COMPS</button>
         <button class="tab" data-t="lc" onclick="showTab('lc',this)">BUY LOCATIONS</button>
         <button class="tab" data-t="pn" onclick="showTab('pn',this);loadPatchNotes()">PATCH NOTES</button>
-        <button class="tab" data-t="cmp" onclick="showTab('cmp',this);populateCompareSelects();if(selShip){document.getElementById('cmpSelA').value=selShip;renderComparison();}">⬡ COMPARE</button>
         <div class="tab" onclick="showTab('sd',this)">⚔ SHOWDOWN</div>
-        <button class="tab" data-t="ss" onclick="showTab('ss',this);if(window.selShip)renderShipStats(window.selShip)">📊 SHIP STATS</button>
       <button class="tab" id="feedbackBtn" onclick="toggleFeedback()" style="color:var(--accent);border-left:1px solid var(--border)">&#10022; FEEDBACK</button>
-        <button class="tab" id="quickSaveBtn" onclick="quickSave();showTab('sv',this)" style="color:var(--green);border-left:1px solid var(--border)">&#9672; SAVE</button>
+        <button class="tab" id="quickSaveBtn" onclick="quickSave();showTab('sv',this)" style="color:var(--green);border-left:1px solid var(--border)">&#9672; SAVE LOADOUTS</button>
       </div>
 
       <div class="pane on" id="pane-lo" style="flex-direction:column;overflow:hidden;padding:0">
@@ -1379,28 +1377,6 @@ option,optgroup{background:var(--bg2)}
         </div>
       </div>
 
-      <div class="pane" id="pane-cmp">
-        <div id="cmpContent" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;gap:12px;margin-bottom:8px">
-            <div style="flex:1">
-              <label style="font-size:10px;color:var(--t3);font-family:var(--fmono);display:block;margin-bottom:4px">SHIP A</label>
-              <select id="cmpSelA" onchange="renderComparison()" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:8px;font-size:12px;font-family:var(--fmono)">
-                <option value="">— Select ship —</option>
-              </select>
-            </div>
-            <div style="flex:1">
-              <label style="font-size:10px;color:var(--t3);font-family:var(--fmono);display:block;margin-bottom:4px">SHIP B</label>
-              <select id="cmpSelB" onchange="renderComparison()" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);padding:8px;font-size:12px;font-family:var(--fmono)">
-                <option value="">— Select ship —</option>
-              </select>
-            </div>
-
-          </div>
-          <div id="cmpTable" style="color:var(--t3);font-size:13px;text-align:center;padding:20px 0;font-family:var(--fmono)">Select two ships to compare</div>
-        </div>
-      
-
-      </div>
       <div class="pane" id="pane-sd">
   <div class="sd-hero">
   <div class="sd-hero-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -1481,113 +1457,6 @@ option,optgroup{background:var(--bg2)}
       </div>
     </div>
 
-    <!-- PANE: SHIP STATS -->
-    <div class="pane" id="pane-ss" style="flex-direction:column;overflow-y:auto;padding:12px 16px;gap:12px">
-      <div id="ssNoShip" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:12px">
-        <div style="font-family:var(--fmono);font-size:13px;color:var(--t3);letter-spacing:2px">NO SHIP SELECTED</div>
-        <div style="font-size:11px;color:var(--t3)">Select a ship in the Loadout Builder to view full stats</div>
-      </div>
-      <div id="ssContent" style="display:none">
-        <div id="ssHeader" style="display:flex;align-items:center;gap:14px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;margin-bottom:10px">
-          <img id="ssThumb" src="" style="width:90px;height:56px;object-fit:cover;border:1px solid var(--border);border-radius:2px;background:#1a2030" onerror="this.style.display='none'">
-          <div>
-            <div id="ssShipName" style="font-size:20px;font-weight:700;font-family:var(--fmono);letter-spacing:2px"></div>
-            <div id="ssShipSub" style="font-size:10px;color:var(--t2);font-family:var(--fmono);letter-spacing:1px;margin-top:2px"></div>
-          </div>
-          <div id="ssBadges" style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap"></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div class="ss-card"><div class="ss-card-hd">ABOUT</div><div class="ss-card-body">
-              <div id="ssDesc" style="font-size:11px;color:var(--t2);line-height:1.6;padding:6px 8px;background:rgba(0,0,0,0.2);border-radius:2px;border-left:2px solid var(--accent);margin-bottom:6px"></div>
-              <div class="ss-row"><span class="ss-lbl">Manufacturer</span><span class="ss-val" style="color:var(--accent)" id="ssMfr">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Role</span><span class="ss-val" id="ssRole">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Size</span><span class="ss-val" id="ssSize">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Crew</span><span class="ss-val" id="ssCrew">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Cargo</span><span class="ss-val" style="color:var(--cyan)" id="ssCargo">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Pledge Price</span><span class="ss-val" style="color:var(--warn)" id="ssPledge">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Warbond</span><span class="ss-val" style="color:var(--warn)" id="ssWarbond">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">In-game Price</span><span class="ss-val" style="color:var(--cyan)" id="ssIngame">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Status</span><span class="ss-val" style="color:var(--green)" id="ssStatus">—</span></div>
-            </div></div>
-            <div class="ss-card"><div class="ss-card-hd">HULL</div><div class="ss-card-body">
-              <div class="ss-row"><span class="ss-lbl">Dimensions</span><span class="ss-val" id="ssDims" style="font-size:9px">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Mass</span><span class="ss-val" id="ssMass">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Total HP</span><span class="ss-val" style="color:var(--green)" id="ssTotalHP">—</span></div>
-            </div></div>
-            <div class="ss-card"><div class="ss-card-hd">SIGNATURES</div><div class="ss-card-body">
-              <div style="display:flex;gap:8px;margin-bottom:8px">
-                <div class="ss-sig-item"><div style="font-size:14px">🔥</div><div class="ss-sig-val" id="ssIR">—</div><div class="ss-sig-lbl">IR</div></div>
-                <div class="ss-sig-item"><div style="font-size:14px">⚡</div><div class="ss-sig-val" id="ssEM">—</div><div class="ss-sig-lbl">EM IDLE</div></div>
-                <div class="ss-sig-item"><div style="font-size:14px">⚡</div><div class="ss-sig-val" id="ssEMmax">—</div><div class="ss-sig-lbl">EM MAX</div></div>
-              </div>
-              <div class="ss-sec">CROSS SECTION</div>
-              <div style="display:flex;gap:6px">
-                <div class="ss-cs-item"><div class="ss-cs-val" id="ssCSFront">—</div><div class="ss-cs-lbl">FRONT</div></div>
-                <div class="ss-cs-item"><div class="ss-cs-val" id="ssCSSide">—</div><div class="ss-cs-lbl">SIDE</div></div>
-                <div class="ss-cs-item"><div class="ss-cs-val" id="ssCSTop">—</div><div class="ss-cs-lbl">TOP</div></div>
-              </div>
-            </div></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div class="ss-card"><div class="ss-card-hd">WEAPONRY</div><div class="ss-card-body">
-              <div style="display:flex;gap:6px;margin-bottom:8px">
-                <div class="ss-big-stat"><div class="ss-big-val" style="color:var(--warn)" id="ssPilotDPS">—</div><div class="ss-big-lbl">PILOT DPS</div></div>
-                <div class="ss-big-stat"><div class="ss-big-val" style="color:var(--red)" id="ssBurstDPS">—</div><div class="ss-big-lbl">BURST DPS</div></div>
-                <div class="ss-big-stat"><div class="ss-big-val" id="ssAlpha">—</div><div class="ss-big-lbl">ALPHA</div></div>
-              </div>
-              <div class="ss-row"><span class="ss-lbl">Missile Alpha</span><span class="ss-val" style="color:var(--red)" id="ssMissileAlpha">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Shield HP</span><span class="ss-val" style="color:var(--green)" id="ssShieldHP">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Face HP</span><span class="ss-val" style="color:var(--green)" id="ssFaceHP">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Shield Regen</span><span class="ss-val" style="color:var(--cyan)" id="ssShRegen">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Hull HP</span><span class="ss-val" style="color:var(--green)" id="ssHullHP">—</span></div>
-            </div></div>
-            <div class="ss-card"><div class="ss-card-hd">HARDPOINTS</div><div class="ss-card-body" id="ssHardpoints"><div style="color:var(--t3);font-size:10px">No weapons data</div></div></div>
-            <div class="ss-card" id="ssMissileCard" style="display:none"><div class="ss-card-hd">MISSILES &amp; BOMBS</div><div class="ss-card-body" id="ssMissiles"></div></div>
-            <div class="ss-card"><div class="ss-card-hd">FUEL</div><div class="ss-card-body">
-              <div class="ss-row"><span class="ss-lbl">H₂ Fuel</span><span class="ss-val" style="color:var(--cyan)" id="ssH2">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">QT Fuel</span><span class="ss-val" style="color:var(--cyan)" id="ssQT">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">QD Range</span><span class="ss-val" id="ssQDRange">—</span></div>
-            </div></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div class="ss-card"><div class="ss-card-hd">FLIGHT PERFORMANCE</div><div class="ss-card-body">
-              <div style="display:flex;gap:12px;margin-bottom:8px;align-items:flex-end">
-                <div><div style="font-size:8px;color:var(--t2);font-family:var(--fmono);letter-spacing:1px;margin-bottom:2px">SCM / BOOST</div>
-                  <div style="display:flex;align-items:baseline;gap:4px">
-                    <span style="font-family:var(--fmono);font-size:22px;font-weight:700;color:var(--accent)" id="ssSCM">—</span>
-                    <span style="font-family:var(--fmono);font-size:14px;color:var(--warn)" id="ssBoost"></span>
-                    <span style="font-size:10px;color:var(--t2)">m/s</span>
-                  </div>
-                </div>
-                <div><div style="font-size:8px;color:var(--t2);font-family:var(--fmono);letter-spacing:1px;margin-bottom:2px">NAV</div>
-                  <div style="display:flex;align-items:baseline;gap:4px">
-                    <span style="font-family:var(--fmono);font-size:18px;font-weight:700;color:var(--green)" id="ssNAV">—</span>
-                    <span style="font-size:10px;color:var(--t2)">m/s</span>
-                  </div>
-                </div>
-              </div>
-              <div class="ss-sec">ANGULAR VELOCITY</div>
-              <div class="ss-row"><span class="ss-lbl">Pitch / Yaw / Roll (SCM)</span><span class="ss-val" id="ssPYR">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Pitch / Yaw / Roll (Boost)</span><span class="ss-val" style="color:var(--cyan)" id="ssPYRB">—</span></div>
-            </div></div>
-            <div class="ss-card"><div class="ss-card-hd">ACCELERATIONS</div><div class="ss-card-body">
-              <div class="ss-row"><span class="ss-lbl">Main</span><span class="ss-val" id="ssAccMain">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Retro</span><span class="ss-val" id="ssAccRetro">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Up</span><span class="ss-val" id="ssAccUp">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Down</span><span class="ss-val" id="ssAccDown">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Strafe</span><span class="ss-val" id="ssAccStrafe">—</span></div>
-            </div></div>
-            <div class="ss-card"><div class="ss-card-hd">SYSTEMS</div><div class="ss-card-body" id="ssSystems"></div></div>
-            <div class="ss-card"><div class="ss-card-hd">INSURANCE</div><div class="ss-card-body">
-              <div class="ss-row"><span class="ss-lbl">Claim Time</span><span class="ss-val" id="ssClaimTime">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Expedite Time</span><span class="ss-val" style="color:var(--cyan)" id="ssExpTime">—</span></div>
-              <div class="ss-row"><span class="ss-lbl">Expedite Cost</span><span class="ss-val" style="color:var(--warn)" id="ssExpCost">—</span></div>
-            </div></div>
-          </div>
-        </div>
-      </div>
-    </div>
     </div>
 
     <!-- RIGHT: target analysis + saved loadouts -->
@@ -3264,83 +3133,6 @@ var ACTS=['Stock Build','Combat PvP','Combat PvE','Bounty Hunting (HRT)','Bounty
 
 // ═══ INIT ═══
 function onTgtSelChange(val){if(!val){return;}selectTarget(val);}
-function renderComparison(){
-  var a=document.getElementById('cmpSelA'),b=document.getElementById('cmpSelB');
-  if(!a||!b)return;
-  var shipA=a.value,shipB=b.value;
-  var out=document.getElementById('cmpTable');
-  if(!out)return;
-  if(!shipA||!shipB){out.innerHTML='<div style="color:var(--t3);text-align:center;padding:30px;font-family:var(--fmono)">Select two ships to compare</div>';return;}
-  var dA=SHIP_DATA[shipA],dB=SHIP_DATA[shipB];
-  if(!dA||!dB)return;
-  var sgA=COMP_DB.sg&&COMP_DB.sg[dA.comps.sg],sgB=COMP_DB.sg&&COMP_DB.sg[dB.comps.sg];
-  var sgCntA=(dA.comps.counts&&dA.comps.counts.sg)||1,sgCntB=(dB.comps.counts&&dB.comps.counts.sg)||1;
-  var shpA=sgA?Math.round(sgA.totalHP*sgCntA/1000*10)/10:0;
-  var shpB=sgB?Math.round(sgB.totalHP*sgCntB/1000*10)/10:0;
-  var arA=ARMOR_DATA&&ARMOR_DATA[shipA],arB=ARMOR_DATA&&ARMOR_DATA[shipB];
-
-  function row(label,valA,valB,higherIsBetter){
-    var numA=parseFloat(valA),numB=parseFloat(valB);
-    var aBetter=higherIsBetter?(numA>numB):(numA<numB);
-    var bBetter=higherIsBetter?(numB>numA):(numB<numA);
-    var ca=aBetter?'var(--green)':bBetter?'var(--red)':'var(--text)';
-    var cb=bBetter?'var(--green)':aBetter?'var(--red)':'var(--text)';
-    return '<tr>'
-      +'<td style="padding:8px 12px;color:var(--t3);font-size:11px;font-family:var(--fmono);white-space:nowrap">'+label+'</td>'
-      +'<td style="padding:8px 12px;color:'+ca+';font-family:var(--fmono);font-size:13px;text-align:center;font-weight:600">'+valA+'</td>'
-      +'<td style="padding:8px 12px;color:'+cb+';font-family:var(--fmono);font-size:13px;text-align:center;font-weight:600">'+valB+'</td>'
-      +'</tr>';
-  }
-  function hdr(label){
-    return '<tr><td colspan="3" style="padding:10px 12px 4px;font-size:10px;letter-spacing:1.5px;color:var(--t3);font-family:var(--fmono);border-top:1px solid var(--border)">'+label+'</td></tr>';
-  }
-
-  var html='<table style="width:100%;border-collapse:collapse;background:var(--bg2);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">'
-    +'<thead><tr>'
-    +'<th style="padding:12px;text-align:left;font-size:10px;letter-spacing:1px;color:var(--t3);font-family:var(--fmono);font-weight:500;border-bottom:1px solid var(--border)">STAT</th>'
-    +'<th style="padding:12px;text-align:center;font-size:12px;color:var(--accent);font-family:var(--fmono);border-bottom:1px solid var(--border)">'+shipA+'</th>'
-    +'<th style="padding:12px;text-align:center;font-size:12px;color:var(--cyan);font-family:var(--fmono);border-bottom:1px solid var(--border)">'+shipB+'</th>'
-    +'</tr></thead><tbody>'
-    +hdr('GENERAL')
-    +row('Role',dA.role,dB.role,false)
-    +row('Crew',dA.crew,dB.crew,false)
-    +row('Class',dA.size,dB.size,false)
-    +hdr('SPEED')
-    +row('SCM Speed',dA.scm+'m/s',dB.scm+'m/s',true)
-    +hdr('WEAPONS')
-    +row('Gun Hardpoints',dA.slots.length,dB.slots.length,true)
-    +row('Missile Racks',(dA.missiles&&dA.missiles.length)||0,(dB.missiles&&dB.missiles.length)||0,true)
-    +hdr('SHIELDS')
-    +row('Shield HP',shpA+'k',shpB+'k',true)
-    +row('Shield Generators',sgCntA,sgCntB,true)
-    +(arA&&arB?hdr('ARMOR')+row('Phys Resist',arA.phys+'%',arB.phys+'%',true)+row('Energy Resist',arA.energy+'%',arB.energy+'%',true):'')
-    +'</tbody></table>';
-  out.innerHTML=html;
-}
-
-function populateCompareSelects(){
-  ['cmpSelA','cmpSelB'].forEach(function(id){
-    var sel=document.getElementById(id);
-    if(!sel)return;
-    var grouped={};
-    Object.keys(SHIP_DATA).sort().forEach(function(name){
-      var def=SHIP_DATA[name];
-      var mfr=def.mfr||'Other';
-      if(!grouped[mfr])grouped[mfr]=[];
-      grouped[mfr].push(name);
-    });
-    var html='<option value="">— Select ship —</option>';
-    Object.keys(grouped).sort().forEach(function(mfr){
-      html+='<optgroup label="'+mfr+'">';
-      grouped[mfr].forEach(function(n){html+='<option value="'+n+'">'+n+'</option>';});
-      html+='</optgroup>';
-    });
-    sel.innerHTML=html;
-    // Pre-select current ship for A
-    if(id==='cmpSelA'&&selShip)sel.value=selShip;
-  });
-}
-
 function loadPatchNotes(){
   var el=document.getElementById('pnContent');
   if(!el||el.dataset.loaded)return;
