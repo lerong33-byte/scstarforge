@@ -3558,6 +3558,9 @@ function wepOpts(sz,curId,fixed){
     if(_wepTypeFilter==='ballistic'&&w.type!=='ballistic')return false;
     if(_wepTypeFilter==='energy'&&w.type!=='energy')return false;
     if(_wepTypeFilter==='distortion'&&w.type!=='distortion')return false;
+    if(_wepTypeFilter==='cannon'&&!/cannon|mass driver/i.test(w.name))return false;
+    if(_wepTypeFilter==='repeater'&&!/repeater/i.test(w.name))return false;
+    if(_wepTypeFilter==='scattergun'&&!/scattergun|gatling/i.test(w.name))return false;
     if(_wepSearchQ){var q=_wepSearchQ.toLowerCase();if(w.name.toLowerCase().indexOf(q)===-1&&w.mfr.toLowerCase().indexOf(q)===-1)return false;}
     return true;
   }).sort(function(a,b){return b.dps-a.dps;}).forEach(function(w){
@@ -3831,7 +3834,7 @@ function generate(){
     +(ARMOR_DATA&&ARMOR_DATA[selShip]?'<span class="pill" style="background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3)">⛨ '+ARMOR_DATA[selShip].phys+'% PHYS / '+ARMOR_DATA[selShip].energy+'% ENRG</span>':'')
     +'<span class="pill pill-y">'+csz+' COMPONENTS</span>'
     +'</div></div>'
-    +(def.slots.length?'<div class="lo-section-hd">HARDPOINTS</div>'+'<div class="wep-search-row"><input class="wep-search-inp" type="text" placeholder="\uD83D\uDD0D Search weapons\u2026" oninput="setWepSearch(this.value)" onkeydown="event.stopPropagation()"></div>'+'<div class="wep-type-pills">'+'<button class="wtp-btn on" data-wtp="all" onclick="setWepTypeFilter(\'all\')">ALL</button>'+'<button class="wtp-btn" data-wtp="ballistic" onclick="setWepTypeFilter(\'ballistic\')">BALLISTIC</button>'+'<button class="wtp-btn" data-wtp="energy" onclick="setWepTypeFilter(\'energy\')">ENERGY</button>'+'<button class="wtp-btn" data-wtp="distortion" onclick="setWepTypeFilter(\'distortion\')">DISTORTION</button>'+'</div>'+'<div>'+wHTML+'</div>':'<div class="lo-section-hd" style="color:var(--t3)">NO HARDPOINTS</div>')
+    +(def.slots.length?'<div class="lo-section-hd">HARDPOINTS</div>'+'<div class="wep-search-row"><input class="wep-search-inp" type="text" placeholder="\uD83D\uDD0D Search weapons\u2026" oninput="setWepSearch(this.value)" onkeydown="event.stopPropagation()"></div>'+'<div class="wep-type-pills">'+'<button class="wtp-btn on" data-wtp="all" onclick="setWepTypeFilter(\'all\')">ALL</button>'+'<button class="wtp-btn" data-wtp="ballistic" onclick="setWepTypeFilter(\'ballistic\')">BALLISTIC</button>'+'<button class="wtp-btn" data-wtp="energy" onclick="setWepTypeFilter(\'energy\')">ENERGY</button>'+'<button class="wtp-btn" data-wtp="distortion" onclick="setWepTypeFilter(\'distortion\')">DISTORTION</button>'+'<button class="wtp-btn" data-wtp="cannon" onclick="setWepTypeFilter(\'cannon\')">CANNON</button>'+'<button class="wtp-btn" data-wtp="repeater" onclick="setWepTypeFilter(\'repeater\')">REPEATER</button>'+'</div>'+'<div>'+wHTML+'</div>':'<div class="lo-section-hd" style="color:var(--t3)">NO HARDPOINTS</div>')
     +(def.missiles&&def.missiles.length?'<div class="lo-section-hd">MISSILES</div><div>'+mHTML+'</div>':'')
     +'<div class="lo-section-hd">SYSTEMS</div><div>'+cHTML+'</div>'
     +'<div class="tip-box"><ul>'+tips+'</ul></div>'
