@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.50-DEV</title>
+<title>SC-ShipForge v8.51-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.50-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.51-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -9337,11 +9337,9 @@ function buildEnemyLoadout(enemyName,_targetId){
       +'<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--t2);font-family:var(--fmono)">SCM</span><span style="font-size:13px;font-weight:700;font-family:var(--fmono);color:#22d3ee">'+(ship.scm||'—')+' m/s</span></div>'
     +'</div></div>';
   /* FIGHT button removed */
-  /* Power panel placeholder in stats column */
+  /* Power panel placeholder in stats column — only for builder context */
   if(_targetId==='sbResult'){
     statsHTML+='<div id="sbPowerPanel" style="flex-shrink:0"></div>';
-  } else {
-    statsHTML+='<div id="sdPowerPanel" style="flex-shrink:0"></div>';
   }
   statsHTML+='</div>';
 
@@ -9511,12 +9509,11 @@ function _pwrMaxEU(){
 }
 function _pwrUsed(){return _pwrSystems.reduce(function(s,k){return s+(_pwrState[k]||0);},0);}
 function buildPowerPanel(){
-  /* Target the power panel inside the active container */
-  var _ec=document.getElementById(window._eActiveTargetId||'sdResult')||document;
+  /* sbPowerPanel lives inside sbResult (builder); sdPowerPanel lives in sdSelectedShip (showdown left col) */
   var panelId=window._sbBuilderActive?'sbPowerPanel':'sdPowerPanel';
-  var panel=_ec.querySelector('#'+panelId);
-  if(!panel)panel=_ec.querySelector('#sdPowerPanel');
-  if(!panel)panel=_ec.querySelector('#sbPowerPanel');
+  var panel=document.getElementById(panelId);
+  if(!panel)panel=document.getElementById('sdPowerPanel');
+  if(!panel)panel=document.getElementById('sbPowerPanel');
   if(!panel)return;
   var shipName=window._pvpShip;
   var def=SHIP_DATA&&SHIP_DATA[shipName];
@@ -9712,7 +9709,7 @@ function sdSetPwrPip(key,val){
       var cardBtnMap={sg:'eSgToggle',cooler:'eCoolerToggle',radar:'eRadarToggle',qd:'eQdToggle'};
       var _ec2=document.getElementById(window._eActiveTargetId||'sdResult')||document;
       [cardBtnMap[sysKey],'erow_toggle_'+sysKey].forEach(function(bid){
-        var btn=_ec2.querySelector('#'+bid);
+        var btn=_ec2.querySelector('#'+bid)||document.getElementById(bid);
         if(btn){
           btn.textContent=!nowOff?'ON':'OFF';
           btn.style.background=!nowOff?'#22c55e':'transparent';
