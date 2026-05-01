@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.67-DEV</title>
+<title>SC-ShipForge v8.68-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -1005,7 +1005,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.67-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.68-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -3528,6 +3528,65 @@ function showTab(id,btn){
   }
 }
 
+var _wepTypeFilter='all';
+var _wepSearchQ='';
+var WID_ALIAS={
+  "att1":"attrition1re","cf117":"cf117bulldog","omni3":"omniskyiiica","m3a":"omniskyiiica",
+  "ls1":"lightstrikei","db1":"deadboltican","yj210":"yellowjacket","sc215":"scorpiongt21",
+  "nn13":"nn13cannon","laser1":"attrition1re",
+  "cf227":"cf227badgerr","att2":"attrition2re","omni6":"omniskyvican","m4a":"omniskyvican",
+  "ls2":"lightstrikei2","db2":"deadboltiica","gt220":"mantisgt220g","tar2":"tarantulagt82",
+  "saw":"cf227badgerr","nn14":"nn14cannon",
+  "cf337":"cf337panther","att3":"attrition3re","omni9":"omniskyixcan","m6a":"m6acannon",
+  "ls3":"lightstrikei4","rl21":"relentlessl2","tar3":"tarantulagt83","db3":"deadboltiiic",
+  "c788":"c788cannon","nn15":"nn15cannon","gt220s3":"mantisgt220g",
+  "cf447":"cf447rhinore","att4":"attrition4re","m7a":"m7acannon","ad4b":"ad4bballisti",
+  "bnk":"breaknecks4g","rev":"revenantgatl","tar4":"tarantulagt83","db4":"deadboltivca",
+  "att5":"attrition5re","ksb":"deadboltvcan","db5":"deadboltvcan","ad5b":"ad5bballisti",
+  "m5a":"m5acannon","db6":"deadboltvica","ad6b":"ad6bballisti","att6":"attrition6re",
+  "cf557":"cf557galdere","sf7b":"sf7bgatling","sf7e":"sf7ecannon","s8bc":"sf7bgatling",
+  "omni5":"omniskyixcan","terra":"deadboltvcan","crossbow":"cf227badgerr",
+  "m8a":"m8acannon","m9a":"m9acannon"
+};
+function resolveWepId(id){return WID_ALIAS[id]||id;}
+function wepOpts(sz,curId,fixed){
+  var rid=resolveWepId(curId);
+  if(fixed)return '<option value="'+rid+'">'+(WEAPONS.find(function(w){return w.id===rid;})||{name:rid}).name+' ⚠ FIXED</option>';
+  var o='<option value="">[Empty]</option>';
+  WEAPONS.filter(function(w){
+    if(w.sz>sz||w.type.includes('missile')||w.type==='torpedo')return false;
+    if(_wepTypeFilter==='ballistic'&&w.type!=='ballistic')return false;
+    if(_wepTypeFilter==='energy'&&w.type!=='energy')return false;
+    if(_wepTypeFilter==='distortion'&&w.type!=='distortion')return false;
+    if(_wepSearchQ){var q=_wepSearchQ.toLowerCase();if(w.name.toLowerCase().indexOf(q)===-1&&w.mfr.toLowerCase().indexOf(q)===-1)return false;}
+    return true;
+  }).sort(function(a,b){return b.dps-a.dps;}).forEach(function(w){
+    var badge=w.type==='ballistic'?' BAL':w.type==='distortion'?' DIST':'';
+    o+='<option value="'+w.id+'"'+(w.id===rid?' selected':'')+'>'+w.name+' ('+w.dps+'DPS'+badge+') S'+w.sz+'</option>';
+  });
+  return o;
+}
+function setWepTypeFilter(t){
+  _wepTypeFilter=t;
+  document.querySelectorAll('.wtp-btn').forEach(function(b){b.classList.toggle('on',b.dataset.wtp===t);});
+  document.querySelectorAll('select.slot-sel:not([disabled])').forEach(function(sel){
+    var sz=parseInt(sel.dataset.sz)||3;
+    var curVal=sel.value;
+    sel.innerHTML=wepOpts(sz,curVal,false);
+    if(curVal&&sel.querySelector('option[value="'+curVal+'"]'))sel.value=curVal;
+  });
+}
+function setWepSearch(val){
+  _wepSearchQ=val.trim();
+  document.querySelectorAll('select.slot-sel:not([disabled])').forEach(function(sel){
+    var sz=parseInt(sel.dataset.sz)||3;
+    var curVal=sel.value;
+    sel.innerHTML=wepOpts(sz,curVal,false);
+    if(curVal&&sel.querySelector('option[value="'+curVal+'"]'))sel.value=curVal;
+  });
+}
+
+
 // ═══ GENERATE LOADOUT ═══
 function generate(){
   if(!selShip)return;
@@ -3556,63 +3615,6 @@ function generate(){
       +' <span style="color:var(--t2);font-family:var(--fmono);font-size:9px">'+m.range.toLocaleString()+'m</span>'
       +'<br>'+priceStr
       +(m.loc?'<div class="si-loc">'+m.loc+'</div>':'');
-  }
-  var _wepTypeFilter='all';
-  var _wepSearchQ='';
-  var WID_ALIAS={
-    "att1":"attrition1re","cf117":"cf117bulldog","omni3":"omniskyiiica","m3a":"omniskyiiica",
-    "ls1":"lightstrikei","db1":"deadboltican","yj210":"yellowjacket","sc215":"scorpiongt21",
-    "nn13":"nn13cannon","laser1":"attrition1re",
-    "cf227":"cf227badgerr","att2":"attrition2re","omni6":"omniskyvican","m4a":"omniskyvican",
-    "ls2":"lightstrikei2","db2":"deadboltiica","gt220":"mantisgt220g","tar2":"tarantulagt82",
-    "saw":"cf227badgerr","nn14":"nn14cannon",
-    "cf337":"cf337panther","att3":"attrition3re","omni9":"omniskyixcan","m6a":"m6acannon",
-    "ls3":"lightstrikei4","rl21":"relentlessl2","tar3":"tarantulagt83","db3":"deadboltiiic",
-    "c788":"c788cannon","nn15":"nn15cannon","gt220s3":"mantisgt220g",
-    "cf447":"cf447rhinore","att4":"attrition4re","m7a":"m7acannon","ad4b":"ad4bballisti",
-    "bnk":"breaknecks4g","rev":"revenantgatl","tar4":"tarantulagt83","db4":"deadboltivca",
-    "att5":"attrition5re","ksb":"deadboltvcan","db5":"deadboltvcan","ad5b":"ad5bballisti",
-    "m5a":"m5acannon","db6":"deadboltvica","ad6b":"ad6bballisti","att6":"attrition6re",
-    "cf557":"cf557galdere","sf7b":"sf7bgatling","sf7e":"sf7ecannon","s8bc":"sf7bgatling",
-    "omni5":"omniskyixcan","terra":"deadboltvcan","crossbow":"cf227badgerr",
-    "m8a":"m8acannon","m9a":"m9acannon"
-  };
-  function resolveWepId(id){return WID_ALIAS[id]||id;}
-  function wepOpts(sz,curId,fixed){
-    var rid=resolveWepId(curId);
-    if(fixed)return '<option value="'+rid+'">'+(WEAPONS.find(function(w){return w.id===rid;})||{name:rid}).name+' ⚠ FIXED</option>';
-    var o='<option value="">[Empty]</option>';
-    WEAPONS.filter(function(w){
-      if(w.sz>sz||w.type.includes('missile')||w.type==='torpedo')return false;
-      if(_wepTypeFilter==='ballistic'&&w.type!=='ballistic')return false;
-      if(_wepTypeFilter==='energy'&&w.type!=='energy')return false;
-      if(_wepTypeFilter==='distortion'&&w.type!=='distortion')return false;
-      if(_wepSearchQ){var q=_wepSearchQ.toLowerCase();if(w.name.toLowerCase().indexOf(q)===-1&&w.mfr.toLowerCase().indexOf(q)===-1)return false;}
-      return true;
-    }).sort(function(a,b){return b.dps-a.dps;}).forEach(function(w){
-      var badge=w.type==='ballistic'?' BAL':w.type==='distortion'?' DIST':'';
-      o+='<option value="'+w.id+'"'+(w.id===rid?' selected':'')+'>'+w.name+' ('+w.dps+'DPS'+badge+') S'+w.sz+'</option>';
-    });
-    return o;
-  }
-  function setWepTypeFilter(t){
-    _wepTypeFilter=t;
-    document.querySelectorAll('.wtp-btn').forEach(function(b){b.classList.toggle('on',b.dataset.wtp===t);});
-    document.querySelectorAll('select.slot-sel:not([disabled])').forEach(function(sel){
-      var sz=parseInt(sel.dataset.sz)||3;
-      var curVal=sel.value;
-      sel.innerHTML=wepOpts(sz,curVal,false);
-      if(curVal&&sel.querySelector('option[value="'+curVal+'"]'))sel.value=curVal;
-    });
-  }
-  function setWepSearch(val){
-    _wepSearchQ=val.trim();
-    document.querySelectorAll('select.slot-sel:not([disabled])').forEach(function(sel){
-      var sz=parseInt(sel.dataset.sz)||3;
-      var curVal=sel.value;
-      sel.innerHTML=wepOpts(sz,curVal,false);
-      if(curVal&&sel.querySelector('option[value="'+curVal+'"]'))sel.value=curVal;
-    });
   }
   function misOpts(maxSz,curId){
     var o='<option value="">[Empty]</option>';
