@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.37-DEV</title>
+<title>SC-ShipForge v8.38-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.37-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.38-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -10604,19 +10604,23 @@ tick();
 
 /* ── Dashboard data population ── */
 function populateDashboard(){
-  if(!window._ships||!window._ships.length)return;
-  var ships=window._ships;
-  // Role counts
+  // Read directly from SHIPS (keyed by manufacturer) and SHIP_DATA
+  if(typeof SHIPS==='undefined'||typeof SHIP_DATA==='undefined')return;
+  var allNames=[];
+  Object.keys(SHIPS).forEach(function(mfr){(SHIPS[mfr]||[]).forEach(function(n){allNames.push(n);});});
+  if(!allNames.length)return;
+  // Role counts — read from SHIP_DATA[name].role
   var roles={fighter:0,bomber:0,freighter:0,mining:0,exploration:0,medical:0,capital:0};
-  ships.forEach(function(s){
-    var r=(s.role||s.type||'').toLowerCase();
-    if(r.includes('fighter'))roles.fighter++;
-    else if(r.includes('bomb'))roles.bomber++;
-    else if(r.includes('freight')||r.includes('cargo')||r.includes('hauler'))roles.freighter++;
-    else if(r.includes('min'))roles.mining++;
-    else if(r.includes('explor')||r.includes('scout'))roles.exploration++;
-    else if(r.includes('med')||r.includes('rescue'))roles.medical++;
-    else if(r.includes('capital')||r.includes('corvette')||r.includes('frigate')||r.includes('carrier'))roles.capital++;
+  allNames.forEach(function(n){
+    var d=SHIP_DATA[n]||{};
+    var r=(d.role||'').toLowerCase();
+    if(r==='fighter')roles.fighter++;
+    else if(r==='bomber')roles.bomber++;
+    else if(r==='cargo'||r==='transport'||r==='freighter')roles.freighter++;
+    else if(r==='mining')roles.mining++;
+    else if(r==='exploration')roles.exploration++;
+    else if(r==='support'||r==='medical')roles.medical++;
+    else if(r==='capital'||r==='gunship'||r==='interdiction')roles.capital++;
   });
   var el;
   if(el=document.getElementById('dRoleFighter'))el.textContent=roles.fighter||'—';
@@ -10626,11 +10630,9 @@ function populateDashboard(){
   if(el=document.getElementById('dRoleExploration'))el.textContent=roles.exploration||'—';
   if(el=document.getElementById('dRoleMedical'))el.textContent=roles.medical||'—';
   if(el=document.getElementById('dRoleCapital'))el.textContent=roles.capital||'—';
-  if(el=document.getElementById('dRoleAll'))el.textContent=ships.length;
-  // Manufacturer bar chart
-  var mfrMap={};
-  ships.forEach(function(s){var m=s.manufacturer||s.mfr||'Unknown';mfrMap[m]=(mfrMap[m]||0)+1;});
-  var mfrArr=Object.keys(mfrMap).map(function(k){return{name:k,count:mfrMap[k]};});
+  if(el=document.getElementById('dRoleAll'))el.textContent=allNames.length;
+  // Manufacturer bar chart — SHIPS keys are manufacturer names
+  var mfrArr=Object.keys(SHIPS).map(function(k){return{name:k,count:(SHIPS[k]||[]).length};});
   mfrArr.sort(function(a,b){return b.count-a.count;});
   var top=mfrArr.slice(0,7);
   var maxC=top[0]?top[0].count:1;
@@ -10646,18 +10648,16 @@ function populateDashboard(){
     }).join('');
     if(mfrArr.length>7){
       var rest=mfrArr.slice(7).reduce(function(a,m){return a+m.count;},0);
-      mfrEl.innerHTML+='<div class="d-mfr-row" style="opacity:.5"><span class="d-mfr-name" style="color:var(--t3)">+ '+(mfrArr.length-7)+' more manufacturers</span><div class="d-mfr-bar-wrap"></div><span class="d-mfr-count">'+rest+'</span></div>';
+      mfrEl.innerHTML+='<div class="d-mfr-row" style="opacity:.5"><span class="d-mfr-name" style="color:var(--t3)">+ '+(mfrArr.length-7)+' more</span><span class="d-mfr-count">'+rest+'</span></div>';
     }
   }
 }
-// Call after data loads — hook into existing data-ready event or poll
-(function(){
-  var tries=0;
-  var t=setInterval(function(){
-    if(window._ships&&window._ships.length){clearInterval(t);populateDashboard();}
-    if(++tries>60)clearInterval(t);
-  },500);
-})();
+// Run immediately after script execution (SHIPS/SHIP_DATA are defined above this point)
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',populateDashboard);
+} else {
+  populateDashboard();
+}
 
 
 /* ── Dashboard ship card image loader ── */
@@ -10674,19 +10674,18 @@ function loadDashboardShipImages(){
     if(!el)return;
     var src=map[s.name];
     if(!src)return;
-    var img=document.createElement('img');
-    img.src=src;
-    img.alt=s.name;
-    img.style.cssText='width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .3s;position:absolute;inset:0';
-    img.onerror=function(){img.style.display='none';};
-    el.insertBefore(img,el.firstChild);
+    // Use background-image on the container — avoids img element insertion timing issues
+    el.style.backgroundImage='url('+src+')';
+    el.style.backgroundSize='cover';
+    el.style.backgroundPosition='center';
+    el.style.backgroundRepeat='no-repeat';
   });
 }
-// Run after DOM ready and after data loads
+// Run immediately — map is defined earlier in the same script block
 if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(loadDashboardShipImages,200);});
+  document.addEventListener('DOMContentLoaded',loadDashboardShipImages);
 } else {
-  setTimeout(loadDashboardShipImages,200);
+  loadDashboardShipImages();
 }
 
 
