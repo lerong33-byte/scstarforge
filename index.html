@@ -10,19 +10,19 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.89</title>
+<title>SC-ShipForge v8.90</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
 <meta name="robots" content="index, follow"/>
-<link rel="canonical" href="https://scstarforge.pages.dev/"/>
+<link rel="canonical" href="https://scstarforge-dev.pages.dev/"/>
 
 <!-- Open Graph / Discord / Reddit previews -->
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://scstarforge.pages.dev/"/>
+<meta property="og:url" content="https://scstarforge-dev.pages.dev/"/>
 <meta property="og:title" content="SC-ShipForge LIVE — Star Citizen Loadout Builder"/>
 <meta property="og:description" content="Build and compare Star Citizen ship loadouts with live game data. Analyze weapon TTK, power allocation, shields and armor penetration."/>
-<meta property="og:image" content="https://scstarforge.pages.dev/preview.png"/>
+<meta property="og:image" content="https://scstarforge-dev.pages.dev/preview.png"/>
 <meta property="og:site_name" content="SC-ShipForge LIVE"/>
 
 <!-- Twitter/X card -->
@@ -1104,12 +1104,15 @@ option,optgroup{background:var(--bg2)}
 .fleet-card-builder:hover{background:rgba(77,255,110,.12);border-color:#4dff6e}
 .fleet-owned-badge{position:absolute;top:6px;right:6px;background:rgba(77,255,110,.85);color:#000;font-family:var(--fmono);font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:3px;pointer-events:none;z-index:2}
 
+
+/* Fix: hide duplicate ship name overlay on ship cards */
+.fleet-card-img-name { display: none !important; }
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.80</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.90</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -1545,6 +1548,7 @@ option,optgroup{background:var(--bg2)}
   <div id="sdResult" style="flex:1;min-width:0;"></div>
 </div>
 </div>
+</div>
 
 <div class="pane" id="pane-ships">
         <div id="shipsPage">
@@ -1574,7 +1578,6 @@ option,optgroup{background:var(--bg2)}
           <div class="ships-grid" id="shipsGrid"></div>
         </div>
       </div>
-    </div>
 
     
 <div class="pane" id="pane-fleet" style="flex-direction:column;background:var(--bg1);overflow:hidden">
