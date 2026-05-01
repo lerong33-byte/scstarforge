@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.65-DEV-DEV</title>
+<title>SC-ShipForge v8.66-DEV-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -993,12 +993,19 @@ option,optgroup{background:var(--bg2)}
 .wtp-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
 .wtp-btn:hover:not(.on){background:var(--dark3);}
 
+
+/* Weapon search input in loadout builder */
+.wep-search-row{margin-bottom:6px;}
+.wep-search-inp{width:100%;box-sizing:border-box;padding:5px 10px;background:var(--dark2);border:1px solid var(--border);border-radius:6px;color:var(--t1);font-family:var(--font);font-size:11px;outline:none;}
+.wep-search-inp:focus{border-color:var(--red);}
+.wep-search-inp::placeholder{color:var(--t3);}
+
 </style>
 
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.65-DEV-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.66-DEV-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -3551,6 +3558,7 @@ function generate(){
       +(m.loc?'<div class="si-loc">'+m.loc+'</div>':'');
   }
   var _wepTypeFilter='all';
+  var _wepSearchQ='';
   var WID_ALIAS={
     "att1":"attrition1re","cf117":"cf117bulldog","omni3":"omniskyiiica","m3a":"omniskyiiica",
     "ls1":"lightstrikei","db1":"deadboltican","yj210":"yellowjacket","sc215":"scorpiongt21",
@@ -3576,9 +3584,10 @@ function generate(){
     var o='<option value="">[Empty]</option>';
     WEAPONS.filter(function(w){
       if(w.sz>sz||w.type.includes('missile')||w.type==='torpedo')return false;
-      if(_wepTypeFilter==='ballistic')return w.type==='ballistic';
-      if(_wepTypeFilter==='energy')return w.type==='energy';
-      if(_wepTypeFilter==='distortion')return w.type==='distortion';
+      if(_wepTypeFilter==='ballistic'&&w.type!=='ballistic')return false;
+      if(_wepTypeFilter==='energy'&&w.type!=='energy')return false;
+      if(_wepTypeFilter==='distortion'&&w.type!=='distortion')return false;
+      if(_wepSearchQ){var q=_wepSearchQ.toLowerCase();if(w.name.toLowerCase().indexOf(q)===-1&&w.mfr.toLowerCase().indexOf(q)===-1)return false;}
       return true;
     }).sort(function(a,b){return b.dps-a.dps;}).forEach(function(w){
       var badge=w.type==='ballistic'?' BAL':w.type==='distortion'?' DIST':'';
@@ -3589,6 +3598,15 @@ function generate(){
   function setWepTypeFilter(t){
     _wepTypeFilter=t;
     document.querySelectorAll('.wtp-btn').forEach(function(b){b.classList.toggle('on',b.dataset.wtp===t);});
+    document.querySelectorAll('select.slot-sel:not([disabled])').forEach(function(sel){
+      var sz=parseInt(sel.dataset.sz)||3;
+      var curVal=sel.value;
+      sel.innerHTML=wepOpts(sz,curVal,false);
+      if(curVal&&sel.querySelector('option[value="'+curVal+'"]'))sel.value=curVal;
+    });
+  }
+  function setWepSearch(val){
+    _wepSearchQ=val.trim();
     document.querySelectorAll('select.slot-sel:not([disabled])').forEach(function(sel){
       var sz=parseInt(sel.dataset.sz)||3;
       var curVal=sel.value;
@@ -9271,7 +9289,7 @@ function buildEnemyLoadout(enemyName,_targetId){
   cols.style.cssText='display:flex;flex-direction:row;gap:12px;align-items:flex-start;width:100%';
   var leftCol=document.createElement('div');
   leftCol.style.cssText='flex:1;min-width:0;display:flex;flex-direction:column;gap:0';
-  if(ship.slots&&ship.slots.length){leftCol.innerHTML+=secHd('HARDPOINTS','resetEHardpoints')+"<div class='wep-type-pills'><button class='wtp-btn on' data-wtp='all' onclick='setWepTypeFilter(\"all\")'>ALL</button><button class='wtp-btn' data-wtp='ballistic' onclick='setWepTypeFilter(\"ballistic\")'>BALLISTIC</button><button class='wtp-btn' data-wtp='energy' onclick='setWepTypeFilter(\"energy\")'>ENERGY</button><button class='wtp-btn' data-wtp='distortion' onclick='setWepTypeFilter(\"distortion\")'>DISTORTION</button></div>"+'<div>'+wHTML+'</div>';}
+  if(ship.slots&&ship.slots.length){leftCol.innerHTML+=secHd('HARDPOINTS','resetEHardpoints')+"<div class='wep-search-row'><input class='wep-search-inp' type='text' placeholder='🔍 Search weapons…' oninput='setWepSearch(this.value)' onkeydown='event.stopPropagation()'></div><div class='wep-type-pills'><button class='wtp-btn on' data-wtp='all' onclick='setWepTypeFilter(\"all\")'>ALL</button><button class='wtp-btn' data-wtp='ballistic' onclick='setWepTypeFilter(\"ballistic\")'>BALLISTIC</button><button class='wtp-btn' data-wtp='energy' onclick='setWepTypeFilter(\"energy\")'>ENERGY</button><button class='wtp-btn' data-wtp='distortion' onclick='setWepTypeFilter(\"distortion\")'>DISTORTION</button></div>"+'<div>'+wHTML+'</div>';}
   if(ship.missiles&&ship.missiles.length){leftCol.innerHTML+=secHd('MISSILES','resetEMissiles')+'<div>'+mHTML+'</div>';}
   leftCol.innerHTML+=secHd('SYSTEMS','resetESystems')+'<div>'+cHTML+'</div>';
   cols.appendChild(leftCol);
