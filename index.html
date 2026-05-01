@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.10</title>
+<title>SC-ShipForge v8.11-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.10</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.11-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -2856,6 +2856,7 @@ var _liveSync = {
   _timer: null,
   _lastHash: null,
   _changeLog: [],
+  _scVer: '4.7.2',
 
   // Size mapping from fleetyards to our size codes
   SIZE_MAP: {
@@ -2904,6 +2905,33 @@ var _liveSync = {
     }).join('|');
   },
 
+  // Fetch current patch version from star-citizen.wiki
+  fetchPatchVersion: function() {
+    return fetch('https://api.star-citizen.wiki/api/vehicles?locale=en_EN&limit=1', {
+      headers: { 'Accept': 'application/json' }
+    }).then(function(r) {
+      if (!r.ok) return;
+      return r.json();
+    }).then(function(d) {
+      if (!d || !d.data || !d.data[0]) return;
+      var raw = d.data[0].version || '';
+      // e.g. "4.7.2-LIVE.11674325" → "4.7.2"
+      var ver = raw.replace(/-LIVE.*$/, '').replace(/-PTU.*$/, '').trim();
+      if (ver && /^[0-9]+\.[0-9]/.test(ver)) {
+        _liveSync._scVer = ver;
+        window._scVer = ver;
+        // Update nav badge
+        var hp = document.getElementById('hpatch');
+        var total = Object.values(SHIPS).reduce(function(a,b){return a+b.length;},0);
+        if (hp) hp.textContent = '\u25cf ' + total + ' HULLS \u00b7 PU ' + ver + ' LIVE';
+        // Update ship panel patch badge
+        var rp = document.getElementById('rpPatch');
+        if (rp && rp.textContent && rp.textContent.indexOf('LIVE') >= 0) {
+          rp.textContent = 'LIVE ' + ver;
+        }
+      }
+    }).catch(function(e) { console.warn('fetchPatchVersion failed:', e); });
+  },
   // Apply live ship data - updates SCM speeds and adds new ships
   applyShipData: function(ships, isBackground) {
     var newShips = [], changedSpeeds = [], newCount = 0, updCount = 0;
@@ -3068,12 +3096,14 @@ var _liveSync = {
 
   // Start polling
   start: function() {
+    // Fetch current patch version immediately
+    _liveSync.fetchPatchVersion();
     // Initial sync on page load
     _liveSync.sync(false);
-
     // Set up recurring poll
     _liveSync._timer = setInterval(function() {
       _liveSync.sync(false);
+      _liveSync.fetchPatchVersion(); // re-check patch version on each poll
     }, _liveSync.POLL_INTERVAL);
 
     // Also sync when tab becomes visible after being hidden
@@ -3104,6 +3134,14 @@ var _liveSync = {
 // Start live sync when page loads
 window.addEventListener('load', function() {
   setTimeout(function() { _liveSync.start(); }, 2000); // 2s delay after load
+  // Auto-sync weapon/component data from star-citizen.wiki on first load
+  setTimeout(function() {
+    var synced = sessionStorage.getItem('scf_wiki_synced');
+    if (!synced && typeof syncWikiData === 'function') {
+      sessionStorage.setItem('scf_wiki_synced', '1');
+      syncWikiData(true); // silent auto-sync
+    }
+  }, 5000); // 5s delay to let page settle
 });
 // ═══ STATE ═══
 window._WIKIMAP = {
@@ -3513,7 +3551,7 @@ function onActChange(val){selAct=val;if(selShip)generate();}
     sel.appendChild(og);
   });
   var total=Object.values(SHIPS).reduce(function(a,b){return a+b.length;},0);
-  document.getElementById('hpatch').textContent='● '+total+' HULLS · PU 4.7.2 LIVE';
+  document.getElementById('hpatch').textContent='● '+total+' HULLS · PU '+(window._scVer||'4.7.2')+' LIVE';
   // SC version shown from hardcoded fallback (scfocus.org has CORS restrictions)
   var as=document.getElementById('actSel');
   if(as){ACTS.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=a;if(a===selAct)o.selected=true;as.appendChild(o);});}
@@ -4091,7 +4129,7 @@ function _scwikiFuzzyMatch(apiName, shipName) {
 async function fetchLiveShipData(shipName) {
   if (liveShipData[shipName]) return liveShipData[shipName];
   var rpPatch = document.getElementById('rpPatch');
-  if (rpPatch && !rpPatch.textContent) rpPatch.textContent = 'LIVE 4.7.2';
+  if (rpPatch && !rpPatch.textContent) rpPatch.textContent = 'LIVE ' + (window._scVer||'4.7.2');
   try {
     // Load full vehicle list once and cache it
     if (!_scwikiAllShips) {
@@ -5232,14 +5270,14 @@ function extractSize(key) {
   return m ? parseInt(m[1]) : 1;
 }
 
-async function syncWikiData() {
+async function syncWikiData(silent) {
   var btn = document.getElementById('syncBtn');
-  btn.disabled = true;
-  setSyncStatus('Connecting to wiki API…', 'sync-busy');
+  if (btn && !silent) btn.disabled = true;
+  if (!silent) setSyncStatus('Connecting to wiki API…', 'sync-busy');
 
   try {
     // Fetch all 4 component types in parallel
-    setSyncStatus('Fetching components (PP/Shield/Cooler/QD/Radar)…', 'sync-busy');
+    if (!silent) setSyncStatus('Fetching components (PP/Shield/Cooler/QD/Radar)…', 'sync-busy');
     var [ppItems, sgItems, coolerItems, qdItems, radarItems] = await Promise.all([
       fetchAll('PowerPlant'),
       fetchAll('Shield'),
@@ -5347,25 +5385,32 @@ async function syncWikiData() {
     });
 
     // Grab patch version from meta
-    var patchVer = '4.7.2';
+    var patchVer = window._scVer || '4.7.2';
     try {
       var stats = await fetch('https://api.star-citizen.wiki/api/stats', {headers:{'Accept':'application/json'}}).then(function(r){return r.json();}); 
       if (stats && stats.data && stats.data.live_version) patchVer = stats.data.live_version;
     } catch(e) {}
 
-    wikiSynced = true;
+     wikiSynced = true;
+    /* Update global patch version */
+    if (patchVer && patchVer !== '4.7.2') {
+      window._scVer = patchVer;
+      _liveSync._scVer = patchVer;
+      var hp = document.getElementById('hpatch');
+      var total = Object.values(SHIPS).reduce(function(a,b){return a+b.length;},0);
+      if (hp) hp.textContent = '\u25cf ' + total + ' HULLS \u00b7 PU ' + patchVer + ' LIVE';
+    }
     var now = new Date();
     var ts = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-    setSyncStatus('✓ Synced patch '+patchVer+' at '+ts+' — '+updated+' components updated'+(failed?' ('+failed+' no match)':''), 'sync-ok');
-
+    if (!silent) setSyncStatus('\u2713 Synced patch '+patchVer+' at '+ts+' \u2014 '+updated+' components updated'+(failed?' ('+failed+' no match)':''), 'sync-ok');
     // Refresh power panel with live data
     updatePower();
 
   } catch(err) {
-    setSyncStatus('✗ Sync failed: ' + err.message, 'sync-err');
+    if (!silent) setSyncStatus('✗ Sync failed: ' + err.message, 'sync-err');
     console.error('Wiki sync error:', err);
   } finally {
-    btn.disabled = false;
+    if (btn && !silent) btn.disabled = false;
   }
 }
 
@@ -8213,7 +8258,7 @@ if(typeof renderShips==="function")setTimeout(renderShips,500);
   </div>
 
 <script>
-/* === v6.91: Live Stats + Showdown + OFF State === */
+/* === v6.91-DEV: Live Stats + Showdown + OFF State === */
 
 /* Power panel vars — declared early so buildShipBuilder/buildPowerPanel can always access them */
 var _pwrState={mode:'scm',weapons:5,shields:5,engines:5,qd:3,radar:3,cooler:3,thrusters:5};
@@ -10300,11 +10345,11 @@ tick();
 <!-- deploy-force --><!-- deploy -->
 </html>
 
-<!-- v3.5 -->
-<!-- v3.6 -->
-<!-- v3.7 -->
-<!-- v3.8 -->
-<!-- v3.9 -->
+<!-- v3.5-DEV -->
+<!-- v3.6-DEV -->
+<!-- v3.7-DEV -->
+<!-- v3.8-DEV -->
+<!-- v3.9-DEV -->
 <script>
 (function(){
   function fmt(n,dec){if(n==null||n===''||isNaN(n))return '—';return Number(n).toLocaleString(undefined,{maximumFractionDigits:dec||0});}
