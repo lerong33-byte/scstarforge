@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.45-DEV</title>
+<title>SC-ShipForge v8.46-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.45-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.46-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -8858,11 +8858,22 @@ function _eUpdateStats(){
     if(cnt>1){return _eComps[k+'_0']||ship.comps[k]||'';}
     return _eComps[k]||ship.comps[k]||'';
   }
+  /* ── Helper: count how many slots of a component type are currently ON ── */
+  function activeSlotCount(k){
+    var total=(ship.comps.counts&&ship.comps.counts[k])||1;
+    if(total<=1) return (_eSysEnabled[k]!==false)?1:0;
+    var on=0;
+    for(var _i=0;_i<total;_i++){
+      if(_eSysEnabled[k+'_'+_i]!==false) on++;
+    }
+    return on;
+  }
   /* ── DEFENSE (Shield — scaled by shield pip ratio) ── */
-  var sgOn=_eSysEnabled['sg']!==false;
+  var sgActiveCount=activeSlotCount('sg');
+  var sgOn=sgActiveCount>0;
   var sgKey=resolveCompKey('sg');
   var sgData=COMP_DB.sg&&COMP_DB.sg[sgKey];
-  var sgCount=(ship.comps.counts&&ship.comps.counts.sg)||1;
+  var sgCount=sgActiveCount;
   var shieldHP=sgOn&&sgData?Math.round(sgData.totalHP*sgCount*shRatio):0;
   var shieldRegen=sgOn&&sgData?Math.round(sgData.regen*sgCount*shRatio):0;
   var shieldDraw=sgOn&&sgData?((sgData.drawMin||0)*sgCount):0;
@@ -8872,17 +8883,18 @@ function _eUpdateStats(){
   var sgCard=document.getElementById('eSgCard');
   if(sgCard)sgCard.style.opacity=sgOn?'1':'0.4';
   /* ── POWER ── */
-  var ppOn=_eSysEnabled['pp']!==false;
+  var ppActiveCount=activeSlotCount('pp');
+  var ppOn=ppActiveCount>0;
   var ppKey=resolveCompKey('pp');
   var ppData=COMP_DB.pp&&COMP_DB.pp[ppKey];
-  var ppCount=(ship.comps.counts&&ship.comps.counts.pp)||1;
+  var ppCount=ppActiveCount;
   var ppOut=ppOn&&ppData?(parseFloat(ppData.out)||0)*ppCount:0;
   /* Total system draw estimate */
   var sgDrawMax=sgData?((sgData.drawMax||0)*sgCount):0;
   var coolDrawMin=0,coolDrawMax=0;
   var coolKey=resolveCompKey('cooler');
   var coolData=COMP_DB.cooler&&COMP_DB.cooler[coolKey];
-  var coolCount=(ship.comps.counts&&ship.comps.counts.cooler)||1;
+  var coolCount=activeSlotCount('cooler');
   if(coolData){coolDrawMin=(coolData.drawMin||0)*coolCount;coolDrawMax=(coolData.drawMax||0)*coolCount;}
   var qdKey=resolveCompKey('qd');
   var qdData=COMP_DB.qd&&COMP_DB.qd[qdKey];
@@ -8898,7 +8910,7 @@ function _eUpdateStats(){
   var ppCard=document.getElementById('ePpCard');
   if(ppCard)ppCard.style.opacity=ppOn?'1':'0.4';
   /* ── COOLER ── */
-  var coolOn=_eSysEnabled['cooler']!==false;
+  var coolOn=coolCount>0;
   var coolOut=coolOn&&coolData?(parseFloat(coolData.cool)||0)*coolCount:0;
   var coolOutScaled=Math.round(coolOut*coolRatio);
   setE('eSysCooler',coolOut>0?coolOut.toLocaleString()+'/s':'—');
@@ -8906,7 +8918,7 @@ function _eUpdateStats(){
   var coolCard=document.getElementById('eCoolerCard');
   if(coolCard)coolCard.style.opacity=coolOn?'1':'0.4';
   /* ── QUANTUM DRIVE ── */
-  var qdOn=_eSysEnabled['qd']!==false;
+  var qdOn=activeSlotCount('qd')>0;
   var qdSpeed=qdOn&&qdData?(qdData.speed||0):0;
   var qdSpeedScaled=Math.round(qdSpeed*qdRatio);
   var qdRange=qdOn&&qdData?(qdData.range||0):0;
@@ -8917,7 +8929,7 @@ function _eUpdateStats(){
   var qdCard=document.getElementById('eQdCard');
   if(qdCard)qdCard.style.opacity=qdOn?'1':'0.4';
   /* ── RADAR ── */
-  var radarOn=_eSysEnabled['radar']!==false;
+  var radarOn=activeSlotCount('radar')>0;
   var radarDist=radarOn&&radarData?(radarData.dist||0):0;
   var radarDistScaled=Math.round(radarDist*radarRatio);
   setE('eSysRadar',radarDistScaled>0?radarDistScaled.toLocaleString()+' m':'—');
