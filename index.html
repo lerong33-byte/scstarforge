@@ -10,7 +10,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SC-ShipForge v8.42-DEV</title>
+<title>SC-ShipForge v8.43-DEV</title>
 <meta name="description" content="SC-ShipForge LIVE — Star Citizen ship loadout builder with live game data. Compare weapons, analyze TTK, optimize power for PvP and PvE combat."/>
 <meta name="keywords" content="Star Citizen, ship loadout builder, weapon comparison, TTK calculator, PvP builds, shield analysis, SC ship tools, scstarforge"/>
 <meta name="author" content="SC-ShipForge"/>
@@ -989,7 +989,7 @@ option,optgroup{background:var(--bg2)}
 <div id="app">
 
   <nav class="nav">
-    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.42-DEV</span></div>
+    <div class="nav-logo" onclick="_liveSync && _liveSync.forceSync()" title="Click to force sync live data" style="cursor:pointer">SC-ShipForge LIVE <span style="font-size:9px;color:#4dff6e;font-family:var(--fmono);font-weight:400;letter-spacing:1px;text-shadow:0 0 6px rgba(77,255,110,.4)">v8.43-DEV</span></div>
 <!-- nav search removed -->
     
     <div class="nav-divider" style="display:none"></div>
@@ -7383,35 +7383,33 @@ window.addEventListener('load', function() {
     if(window.updateSvCurrentShip) window.updateSvCurrentShip();
   };
   window.ss_clear_sb  = function(){
+    /* Clear ship input */
     var inp=document.getElementById('sbShipInput');
     if(inp){inp.value='';inp.classList.remove('has-val');}
     var clr=document.getElementById('sbShipClear');
     if(clr) clr.classList.remove('show');
     window._sbShip=null;
     selShip=null;
+    /* Hide the loadout content area padding */
     var res=document.getElementById('sbResult');
-    /* Detach dashboard FIRST so innerHTML='' doesn't destroy it */
-    var _dash=document.getElementById('sbDashboard');
-    if(_dash && _dash.parentNode) _dash.parentNode.removeChild(_dash);
-    /* Now safe to wipe sbResult */
-    if(res){res.innerHTML='';res.style.padding='0';}
+    if(res) res.style.padding='0';
+    /* Hide power panel */
     var pp=document.getElementById('sbPowerPanel');
     if(pp){pp.style.display='none';pp.innerHTML='';}
-    /* Re-attach and show dashboard */
-    if(_dash && res){
-      _dash.style.display='flex';
-      res.appendChild(_dash);
-    }
-    /* Call renderDashboard to refresh counts */
-    if(typeof renderDashboard==='function') renderDashboard();
+    /* Show dashboard (buildShipBuilder hides it with display:none) */
+    var _dash=document.getElementById('sbDashboard');
+    if(_dash) _dash.style.display='flex';
+    /* Refresh dashboard counts */
+    if(typeof populateDashboard==='function') populateDashboard();
+    if(typeof loadDashboardShipImages==='function') loadDashboardShipImages();
     /* Hide left panel */
     var lp=document.getElementById('sbLeftPanel');
-    if(lp)lp.style.display='none';
+    if(lp) lp.style.display='none';
     /* Hide Return to Dashboard + Test in Showdown buttons */
     var _rdb=document.getElementById('returnDashBtn');
-    if(_rdb)_rdb.style.display='none';
+    if(_rdb) _rdb.style.display='none';
     var _tsb=document.getElementById('testShowdownBtn');
-    if(_tsb)_tsb.style.display='none';
+    if(_tsb) _tsb.style.display='none';
     /* Clear ship input display name */
     var shipTag=document.getElementById('sbShipTag');
     if(shipTag) shipTag.textContent='';
